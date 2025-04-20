@@ -58,7 +58,7 @@ class Characteristic(OswBaseModel):
         min_items=1,
         title="Types/Categories",
     )
-    uuid: UUID = Field(default_factory=uuid4, title="UUID")
+    #uuid: UUID = Field(default_factory=uuid4, title="UUID") # should be optional
 
 ureg = UnitRegistry()
 
@@ -103,9 +103,18 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     
     def to_pint(self) -> pint.Quantity:
         pint_unit_name = self.unit.name.replace("_", " ")
-        prefixes = ["kilo", "centi", "milli", "micro", "nano", "pico"]
+        # SI prefixes, see https://en.wikipedia.org/wiki/Metric_prefix
+        prefixes = [
+            "quetta", "ronna", "yotta", "zetta", "exa", "peta", "tera", 
+            "giga", "mega", "kilo", "hecto", "deca", "deci", "centi",
+            "milli", "micro", "nano", "pico", "femto", "atto",
+            "zepto", "yocto", "ronto", "quecto"
+        ]
+
         for prefix in prefixes:
             pint_unit_name = pint_unit_name.replace(prefix + " ", prefix)
+        if pint_unit_name.split(" ")[0] == "per":
+            pint_unit_name = pint_unit_name.replace("per", "1 /")
         return self.value * ureg[pint_unit_name]
        
     @classmethod 
