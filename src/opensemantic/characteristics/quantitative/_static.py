@@ -1,84 +1,103 @@
-from typing import Any, List, Optional
-from uuid import UUID
+import sys
+from enum import Enum
 
-from osw.model.static import OswBaseModel
-from pydantic.v1 import Field
+if sys.version_info >= (3, 11):
+    # Python 3.11 or higher
+    from enum import EnumType
+else:
+    # Python < 3.11
+    from enum import EnumMeta as EnumType
 
-
-from uuid import uuid4
-from typing import Type, TypeVar
-from osw.model.static import OswBaseModel, Ontology
-
-from datetime import datetime
-from enum import Enum, EnumType
-import json
-from os import times
-from pprint import pprint
-from re import A
-from typing import Any, Dict, Optional, List, Union
-from uuid import UUID, uuid4
-from annotated_types import Le
-from inflect import unit
-from numpy import test
-from pydantic import Field
-from pydantic.v1 import BaseModel, create_model
-from pydantic.v1.main import ModelMetaclass
-from pydantic.v1.fields import FieldInfo
+from typing import Any, Dict, List, Optional, Union
 
 # pip install pint
 import pint
+from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
 from pint import UnitRegistry
-import pandas as pd
-#import pint_pandas
+from pydantic.v1 import Field
+from pydantic.v1.fields import FieldInfo
 
-from osw.model.entity import Characteristic # pip install pint-pandas
+from opensemantic import OswBaseModel
+
+# import pint_pandas
+
+# from osw.model.entity import Characteristic # pip install pint-pandas
 
 unit_registry: Dict[str, EnumType] = {}
 
+
 class UnitEnumMetaclass(EnumType):
     def __new__(cls, clsname, bases, attrs):
-        #print(attrs["__qualname__"], attrs)
+        # print(attrs["__qualname__"], attrs)
         class_instance = EnumType.__new__(cls, clsname, bases, attrs)
         for key, value in attrs.items():
             if key not in ["__module__", "__qualname__", "_generate_next_value_"]:
                 # register all enum values in the unit_registry
-                unit_registry[key] = class_instance
+                if key in unit_registry:
+                    pass
+                    # warn(
+                    #     (
+                    #         f"Unit {key} already registered in "
+                    #         "unit_registry, skip registration."
+                    #     )
+                    # )
+                else:
+                    unit_registry[key] = class_instance
         return class_instance
+
 
 class UnitEnum(str, Enum, metaclass=UnitEnumMetaclass):
     pass
 
+
 class Characteristic(OswBaseModel):
     """
     Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics.
-    """
+    """  # noqa: E501
+
+    class Config:
+        schema_extra = {
+            "@context": [{"type": {"@id": "@type", "@type": "@id"}}],  # noqa: E501
+            "uuid": "93ccae36-2435-42ce-ac6c-951450a81d47",  # noqa: E501
+            "title": "Characteristic",  # noqa: E501
+            "title*": {"en": "Characteristic", "de": "Charakteristik"},  # noqa: E501
+            "description": "Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics. ",  # noqa: E501
+            "description*": {
+                "en": "Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics. ",  # noqa: E501
+                "de": "Elementarer Baustein für Objekt-Datenschema. Kann Attribute von anderen Charakteristiken erben, übernehmen und/oder eigene definieren. Attribute können als Werte sowohl Literale als auch komplexe Objekte haben die von anderen Charakteristiken beschrieben werden.  ",  # noqa: E501
+            },
+        }
 
     type: Optional[List[str]] = Field(
         ["Category:OSW93ccae36243542ceac6c951450a81d47"],
         min_items=1,
+        options={"hidden": True},
+        propertyOrder=-1010,
         title="Types/Categories",
+        title_={"de": "Typen/Kategorien"},
     )
-    #uuid: UUID = Field(default_factory=uuid4, title="UUID") # should be optional
+    # should be optional:
+    # uuid: UUID = Field(default_factory=uuid4, options={"hidden": True}, title="UUID")
+
 
 ureg = UnitRegistry()
 
 quantity_registry: Dict[EnumType, ModelMetaclass] = {}
 
 
-
 class QuantityValueMetaclass(ModelMetaclass):
     def __new__(cls, clsname, bases, attrs):
-        class_instance =  ModelMetaclass.__new__(cls, clsname, bases, attrs)
-        #print(attrs["__qualname__"], attrs)
+        class_instance = super().__new__(cls, clsname, bases, attrs)
+        # print(attrs["__qualname__"], attrs)
         if "unit" in attrs and attrs["unit"] is not None:
-            #print(attrs["__annotations__"]["unit"].__dict__)#, attrs["unit"].__dict__)
-            #print(attrs["unit"].__dict__["__objclass__"])
-            #print(attrs["__annotations__"]["unit"].__args__[0])
+            # print(attrs["__annotations__"]["unit"].__dict__)#, attrs["unit"].__dict__)
+            # print(attrs["unit"].__dict__["__objclass__"])
+            # print(attrs["__annotations__"]["unit"].__args__[0])
             # register the mapping between the unit enum and the quantity class
-            
+
             unit_field_type = None
             # check if FieldInfo was used for annotation
-            if type(attrs["unit"]) == FieldInfo:
+            if type(attrs["unit"]) is FieldInfo:
                 _types = attrs["__annotations__"]["unit"].__args__
                 # select the first type != None
                 for _type in _types:
@@ -90,25 +109,72 @@ class QuantityValueMetaclass(ModelMetaclass):
             quantity_registry[unit_field_type] = class_instance
         return class_instance
 
+
 class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     """
     A Quantity Value expresses the magnitude and kind of a quantity and is given by the product of a numerical value n and a unit of measure u (from qudt).
-    """
+    """  # noqa: E501
+
+    class Config:
+        schema_extra = {
+            "$comment": "Autogenerated section - do not edit. Generated from Category:Category Category:OSWffe74f291d354037b318c422591c5023",  # noqa: E501
+            "uuid": "40829379-0663-4af9-92cf-9a1b18d772cf",
+            "title": "QuantityValue",
+            "title*": {"en": "Quantity Value"},
+            "description": "A Quantity Value expresses the magnitude and kind of a quantity and is given by the product of a numerical value n and a unit of measure u (from qudt).",  # noqa: E501
+            "description*": {
+                "en": "A Quantity Value expresses the magnitude and kind of a quantity and is given by the product of a numerical value n and a unit of measure u (from qudt)."  # noqa: E501
+            },
+            "defaultProperties": ["type", "unit"],
+            "@context": [
+                "/wiki/Category:OSW93ccae36243542ceac6c951450a81d47?action=raw&slot=jsonschema",  # noqa: E501
+                {"unit": "Property:HasUnit", "value": "Property:HasValue"},
+            ],
+            "$defs": {},
+        }
 
     type: Optional[Any] = ["Category:OSW4082937906634af992cf9a1b18d772cf"]
-    value: float = Field(..., title="value")
-    #unit: Optional[str] = Field(None, title="unit")    
-    #value: float
-    unit: Optional[UnitEnum] = None
-    
+    value: float = Field(
+        ...,
+        options={"grid_columns": 4},
+        title="value",
+        title_={"en": "Value", "de": "Wert"},
+    )
+    unit: Optional[UnitEnum] = Field(
+        None,
+        options={"grid_columns": 4},
+        title="unit",
+        title_={"en": "Unit", "de": "Einheit"},
+    )
+
     def to_pint(self) -> pint.Quantity:
         pint_unit_name = self.unit.name.replace("_", " ")
         # SI prefixes, see https://en.wikipedia.org/wiki/Metric_prefix
         prefixes = [
-            "quetta", "ronna", "yotta", "zetta", "exa", "peta", "tera", 
-            "giga", "mega", "kilo", "hecto", "deca", "deci", "centi",
-            "milli", "micro", "nano", "pico", "femto", "atto",
-            "zepto", "yocto", "ronto", "quecto"
+            "quetta",
+            "ronna",
+            "yotta",
+            "zetta",
+            "exa",
+            "peta",
+            "tera",
+            "giga",
+            "mega",
+            "kilo",
+            "hecto",
+            "deca",
+            "deci",
+            "centi",
+            "milli",
+            "micro",
+            "nano",
+            "pico",
+            "femto",
+            "atto",
+            "zepto",
+            "yocto",
+            "ronto",
+            "quecto",
         ]
 
         for prefix in prefixes:
@@ -116,33 +182,46 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         if pint_unit_name.split(" ")[0] == "per":
             pint_unit_name = pint_unit_name.replace("per", "1 /")
         return self.value * ureg[pint_unit_name]
-       
-    @classmethod 
-    def from_pint(self, quantity: pint.Quantity):
-        #unit_symbol = "{:~P}".format(quantity.units)
-        value = f"{quantity:9f#Lx}" # 9f => round to 8 digits, '#' => simplify the unit
+
+    @classmethod
+    def from_pint(
+        self, quantity: pint.Quantity, simplify: bool = True
+    ) -> "QuantityValue":
+        # see also
+        # https://pint.readthedocs.io/en/stable/getting/tutorial.html#simplifying-units
+        # unit_symbol = "{:~P}".format(quantity.units)
+        if simplify:
+            value = (
+                f"{quantity:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify the unit
+            )
+        else:
+            value = f"{quantity:9fLx}"
         # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
         # select the last curly brace
         unit_symbol = value.split("{")[-1].replace("}", "")
         # replace backslashes with underscores
         unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-        #nummeric_value = quantity.magnitude # simplify the unit may change the scale
+        # nummeric_value = quantity.magnitude # simplify the unit may change the scale
         nummeric_value = float(value.split("{")[1].split("}")[0])
         unit_class = unit_registry[unit_symbol]
         quantity_class = quantity_registry[unit_class]
-        return quantity_class(
-            value=nummeric_value, 
-            unit=unit_class[unit_symbol]
-        )
-    
+        return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
+
+    def to_base(self) -> "QuantityValue":
+        """Converts the QuantityValue to its base unit."""
+        pint_quantity = self.to_pint().to_base_units()
+        return self.from_pint(pint_quantity, simplify=False)
+
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
         return self.from_pint(res_pint)
-    
+
     def __sub__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() - other.to_pint()
         return self.from_pint(res_pint)
-    
-    def __mul__(self, other: "QuantityValue") -> "QuantityValue":
-        res_pint = self.to_pint() * other.to_pint()
+
+    def __mul__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
+        if not isinstance(other, (float, int)):
+            other = other.to_pint()
+        res_pint = self.to_pint() * other
         return self.from_pint(res_pint)
