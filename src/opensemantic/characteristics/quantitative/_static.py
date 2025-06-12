@@ -212,6 +212,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         pint_quantity = self.to_pint().to_base_units()
         return self.from_pint(pint_quantity, simplify=False)
 
+    def __eq__(self, other: "QuantityValue") -> bool:
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return self.to_pint() == other
+
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
         return self.from_pint(res_pint)
@@ -220,8 +225,16 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         res_pint = self.to_pint() - other.to_pint()
         return self.from_pint(res_pint)
 
+    # * operator
     def __mul__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
         if not isinstance(other, (float, int)):
             other = other.to_pint()
         res_pint = self.to_pint() * other
+        return self.from_pint(res_pint)
+
+    # / operator
+    def __truediv__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
+        if not isinstance(other, (float, int)):
+            other = other.to_pint()
+        res_pint = self.to_pint() / other
         return self.from_pint(res_pint)
