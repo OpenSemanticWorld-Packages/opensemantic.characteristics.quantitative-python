@@ -10,11 +10,13 @@ else:
 
 from typing import Any, Dict, List, Optional, Union
 
+import pandas as pd
+
 # pip install pint
 import pint
+import pint_pandas  # noqa: F401
 from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
-from pint import UnitRegistry
-from pydantic.v1 import Field
+from pydantic.v1 import Field, create_model
 from pydantic.v1.fields import FieldInfo
 
 from opensemantic import OswBaseModel
@@ -80,7 +82,7 @@ class Characteristic(OswBaseModel):
     # uuid: UUID = Field(default_factory=uuid4, options={"hidden": True}, title="UUID")
 
 
-ureg = UnitRegistry()
+ureg = pint.get_application_registry()
 
 quantity_registry: Dict[EnumType, ModelMetaclass] = {}
 
@@ -238,3 +240,81 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             other = other.to_pint()
         res_pint = self.to_pint() / other
         return self.from_pint(res_pint)
+
+
+class TabularData(OswBaseModel):
+    # rows: List[Any] # convention for tabular data is a list of rows
+
+    # consider https://stackoverflow.com/questions/51505504/pandas-nesting-dataframes # noqa: E501
+    # consider https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.attrs.html # noqa: E501
+
+    def to_df(self) -> pd.DataFrame:
+        series = []
+        row_class = self.__class__.__fields__["rows"].type_
+        for attr in row_class.__fields__.keys():
+            q_name = (
+                row_class.__fields__[attr]
+                .type_.__fields__["unit"]
+                .default.name.replace("_", " ")
+            )
+            # q_pint = ureg[q_name]
+            s = pd.Series(
+                [
+                    (
+                        getattr(m, attr).to_pint().to(q_name).magnitude
+                        if getattr(m, attr, None) is not None
+                        else None
+                    )
+                    for m in self.rows
+                ],
+                dtype="pint[" + q_name + "]",
+                name=attr,
+            )
+            series.append(s)
+        rows = {s.name: s for s in series}
+        return pd.DataFrame(rows)
+
+    @classmethod
+    def from_df(cls, df: pd.DataFrame):
+        rows = []
+        row_class = OswBaseModel
+        if "rows" in cls.__fields__:
+            row_class = cls.__fields__["rows"].type_
+
+        additional_fields = {}
+        for key in df.columns:
+            # print(df[key].pint.__dict__)
+            if key not in row_class.__fields__.keys():
+                # raise ValueError(f"Column '{key}' not found in '{row_class.__name__}'") # noqa: E501
+                quantity = QuantityValue.from_pint(
+                    1 * getattr(df.dtypes, key).units
+                ).__class__
+                additional_fields[key] = (quantity, ...)
+
+        if len(additional_fields) > 0:
+            row_class = create_model(
+                row_class.__name__ + "Extended", **additional_fields, __base__=row_class
+            )
+            cls = create_model(
+                cls.__name__ + "Extended",
+                **{"rows": (List[row_class], ...)},
+                __base__=cls,
+            )
+
+        # convert all columns to the default unit
+        for attr in row_class.__fields__.keys():
+            q_name = (
+                row_class.__fields__[attr]
+                .type_.__fields__["unit"]
+                .default.name.replace("_", " ")
+            )
+            q_pint = ureg[q_name]
+            df[attr] = df[attr].pint.to(q_pint)
+
+        for i, row in df.iterrows():
+            # create a dictionary with the values of the row
+            # using the column names as keys
+            d = {key: {"value": row[key].magnitude} for key in df.columns}
+            m = row_class(**d)
+            rows.append(m)
+        return cls(rows=rows)

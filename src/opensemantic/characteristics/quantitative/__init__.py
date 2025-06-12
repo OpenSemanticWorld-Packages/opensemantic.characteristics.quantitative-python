@@ -10,3 +10,7 @@ finally:
     del version, PackageNotFoundError
 
 from opensemantic.characteristics.quantitative._model import *  # noqa
+from opensemantic.characteristics.quantitative._static import (  # noqa
+    QuantityValue,
+    TabularData,
+)
