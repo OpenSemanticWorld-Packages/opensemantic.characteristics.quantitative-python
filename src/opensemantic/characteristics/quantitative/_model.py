@@ -369,7 +369,7 @@ class AmountOfSubstancePerMass(QuantityValue):
 
 
 class DimensionlessUnit(UnitEnum):
-    field_ = "Item:OSW5d3fe58ebbac5483bad8904ff8811366"
+    dimensionless = "Item:OSW5d3fe58ebbac5483bad8904ff8811366"
 
 
 class Dimensionless(QuantityValue):
@@ -398,7 +398,7 @@ class Dimensionless(QuantityValue):
 
     type: Optional[Any] = ["Category:OSWbcaa33bd770e53e09d5e6087d141648b"]
     unit: Optional[DimensionlessUnit] = Field(
-        DimensionlessUnit.field_,
+        DimensionlessUnit.dimensionless,
         options={"enum_titles": ["#"]},
         title="DimensionlessUnit",
         x_enum_varnames=[""],
@@ -1595,7 +1595,7 @@ class Dimensionless(QuantityValue):
 
     type: Optional[Any] = ["Category:OSWbcaa33bd770e53e09d5e6087d141648b"]
     unit: Optional[DimensionlessUnit] = Field(
-        DimensionlessUnit.field_,
+        DimensionlessUnit.dimensionless,
         options={"enum_titles": ["#"]},
         title="DimensionlessUnit",
         x_enum_varnames=[""],
