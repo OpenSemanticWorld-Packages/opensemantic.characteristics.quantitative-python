@@ -5,20 +5,23 @@ import pint
 import opensemantic.characteristics.quantitative._model as q
 from opensemantic.characteristics.quantitative._static import quantity_registry
 
-q1 = q.Mobility(
-    value=1.0,
-    unit=q.MobilityUnit.meter_squared_per_second_per_volt,
-)
 
-q2 = q.Mobility(
-    value=1.0,
-    unit=q.MobilityUnit.centi_meter_squared_per_second_per_volt,
-)
+def test_addition():
+    q1 = q.Mobility(
+        value=1.0,
+        unit=q.MobilityUnit.meter_squared_per_second_per_volt,
+    )
 
-q3 = q1 + q2
-assert (
-    q3.value == 1.0001 and q3.unit == q.MobilityUnit.meter_squared_per_second_per_volt
-)
+    q2 = q.Mobility(
+        value=1.0,
+        unit=q.MobilityUnit.centi_meter_squared_per_second_per_volt,
+    )
+
+    q3 = q1 + q2
+    assert (
+        q3.value == 1.0001
+        and q3.unit == q.MobilityUnit.meter_squared_per_second_per_volt
+    )
 
 
 def test_quantity_value():
@@ -74,9 +77,10 @@ def test_pint():
     q5 = q.Length(value=2.0, unit=q.LengthUnit.meter)
     q25 = q2 / q5  # Dimensionless(value=0.5, unit=DimensionLessUnit.dimensionless)
     # will envoke QuantityValue.from_pint(), which will call unit_registry[unit_symbol]
-    q25_ = q.VoltageRatio(value=q25.value)
+    _ = q.VoltageRatio(value=q25.value)
 
-def full_inventory_test():
+
+def test_full_inventory_test():
     # test all QuantityValue classes
     warning_count = 0
     critical_warning_count = 0
@@ -161,9 +165,11 @@ def full_inventory_test():
     # 359 successful, 105 errors and 485 warnings (444 critical) # fix all inverse
 
 
-test_quantity_value()
-test_pint()
-full_inventory_test()
+if __name__ == "__main__":
+    test_addition()
+    test_quantity_value()
+    test_pint()
+    test_full_inventory_test()
 
 # pint_reg = pint.UnitRegistry()
 # pint_q = pint_reg.Quantity(1.0, "petajoule")
