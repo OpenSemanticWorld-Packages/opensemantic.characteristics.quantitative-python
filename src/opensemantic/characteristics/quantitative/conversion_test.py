@@ -51,7 +51,6 @@ def test_quantity_value():
 
 
 def test_pint():
-
     q1 = q.Length(value=1.0, unit=q.LengthUnit.milli_meter)
     # transform to pint
     q_pint = q1.to_pint()
@@ -72,6 +71,10 @@ def test_pint():
     q43 = q41 + q42
     assert q43 == q.Area(value=1.000001, unit=q.AreaUnit.meter_squared)
 
+    q5 = q.Length(value=2.0, unit=q.LengthUnit.meter)
+    q25 = q2 / q5  # Dimensionless(value=0.5, unit=DimensionLessUnit.dimensionless)
+    # will envoke QuantityValue.from_pint(), which will call unit_registry[unit_symbol]
+    q25_ = q.VoltageRatio(value=q25.value)
 
 def full_inventory_test():
     # test all QuantityValue classes

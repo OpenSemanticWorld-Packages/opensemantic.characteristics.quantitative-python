@@ -205,6 +205,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         unit_symbol = unit_symbol.replace("\\", "_").strip("_")
         # nummeric_value = quantity.magnitude # simplify the unit may change the scale
         nummeric_value = float(value.split("{")[1].split("}")[0])
+        if len(unit_symbol) == 0:
+            unit_symbol = "dimensionless"  # todo: wite test
         unit_class = unit_registry[unit_symbol]
         quantity_class = quantity_registry[unit_class]
         return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
