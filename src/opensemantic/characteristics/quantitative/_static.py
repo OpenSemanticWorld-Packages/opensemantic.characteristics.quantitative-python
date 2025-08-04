@@ -379,13 +379,22 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     def to_base(self) -> "QuantityValue":
         """Converts the QuantityValue to its base unit."""
         pint_quantity = self.to_pint().to_base_units()
-        return self.from_pint(pint_quantity, simplify=False)
         return QuantityValue.from_pint(pint_quantity, simplify=False)
 
-    def __eq__(self, other: "QuantityValue") -> bool:
-        if isinstance(other, QuantityValue):
-            other = other.to_pint()
-        return self.to_pint() == other
+    def to_unit(self, unit: Union[UnitEnum, str]) -> "QuantityValue":
+        """Converts the QuantityValue to the specified unit."""
+
+        if isinstance(unit, UnitEnum):
+            unit_str = QuantityValue.get_pint_ureg_compatible_str(unit.name)
+        elif isinstance(unit, str):
+            # Assuming the string is a valid unit from the pint unit registry
+            unit_str = QuantityValue.get_pint_ureg_compatible_str(unit)
+        else:
+            raise ValueError(f"Invalid unit type: {type(unit)}. Must be UnitEnum or str.")
+
+        pint_quantity = self.to_pint().to(unit_str)
+        return QuantityValue.from_pint(quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
+
     def __neg__(self) -> "QuantityValue":
         return QuantityValue.from_pint(-self.to_pint())
 
