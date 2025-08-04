@@ -1,3 +1,5 @@
+"""This is an integration test for the QuantityValue functionality"""
+
 import json
 from typing import List, Optional
 
@@ -7,6 +9,8 @@ from opensemantic import OswBaseModel
 from opensemantic.characteristics.quantitative import (
     Area,
     AreaUnit,
+    Diameter,
+    DimensionlessUnit,
     Force,
     ForcePerAreaUnit,
     ForceUnit,
@@ -21,7 +25,7 @@ from opensemantic.characteristics.quantitative import (
     Width,
 )
 
-# to we have to adapt VSCode settings to include the package index?
+# Do we have to adapt VSCode settings to include the package index?
 # "python.analysis.packageIndexDepths": [
 #       {"name": "opensemantic.characteristics.quantitative",
 #       "depth": 4, "includeAllSymbols": true}
@@ -49,6 +53,68 @@ def test_pint():
     # 'square_meter' is not a valid unit for pint, but 'square_meter' is
     q43 = q41 + q42
     assert q43 == Area(value=1.000001, unit=AreaUnit.meter_squared)
+
+
+def test_quantityvalue_magic_methods():
+
+    l1 = Length(value=10, unit=LengthUnit.meter)
+    l2 = Length(value=3, unit=LengthUnit.meter)
+    # __neg__
+    neg = -l1
+    assert isinstance(neg, Length)
+    assert neg.value == -10
+    # __pos__
+    pos = +l1
+    assert isinstance(pos, Length)
+    assert pos.value == 10
+    # __abs__
+    absval = abs(Length(value=-5, unit=LengthUnit.meter))
+    assert isinstance(absval, Length)
+    assert absval.value == 5
+    # __add__
+    add = l1 + l2
+    assert isinstance(add, Length)
+    assert add.value == 13
+    # __sub__
+    sub = l1 - l2
+    assert isinstance(sub, Length)
+    assert sub.value == 7
+    # __mul__
+    mul = l1 * l2
+    assert isinstance(mul, Area)
+    # __truediv__
+    truediv = l1 / l2
+    assert isinstance(truediv, QuantityValue)
+    assert truediv.unit == DimensionlessUnit.dimensionless
+    # __floordiv__
+    floordiv = l1 // l2
+    assert isinstance(floordiv, QuantityValue)
+    assert floordiv.value == 3.0
+    # __mod__
+    mod = l1 % l2
+    assert isinstance(mod, QuantityValue)
+    assert mod.value == 1.0
+    # __pow__
+    pow_result = l1**2
+    assert isinstance(pow_result, Area)
+    # __eq__
+    eq = l1 == Length(value=10, unit=LengthUnit.meter)
+    assert eq is True
+    # __ne__
+    ne = l1 != l2
+    assert ne is True
+    # __ge__
+    ge = l1 >= l2
+    assert ge is True
+    # __gt__
+    gt = l1 > l2
+    assert gt is True
+    # __le__
+    le = l1 <= Length(value=10, unit=LengthUnit.meter)
+    assert le is True
+    # __lt__
+    lt = l1 < Length(value=11, unit=LengthUnit.meter)
+    assert lt is True
 
 
 def test_export():
@@ -231,8 +297,62 @@ def test_tensile_test():
     )
 
 
+def test_init():
+    # Overload 1: __init__(self, value: float, unit: Optional[UnitEnum])
+    l1 = Length(value=5.0, unit=LengthUnit.meter)
+    assert isinstance(l1, Length)
+    assert l1.value == 5.0
+    assert l1.unit == LengthUnit.meter
+
+    # Overload 2: __init__(self, v: float, u: Optional[UnitEnum])
+    l2 = Length(v=10.0, u=LengthUnit.milli_meter)
+    assert isinstance(l2, Length)
+    assert l2.value == 10.0
+    assert l2.unit == LengthUnit.milli_meter
+
+    # Overload 3: __init__(self, quantity_value: "QuantityValue")
+    d3 = Diameter(quantity_value=l1)
+    assert isinstance(d3, Diameter)
+    assert d3.value == l1.value
+    assert d3.unit == l1.unit
+
+    # Overload 4: __init__(self, pint_quantity: pint.Quantity,
+    #                      quantity_type: Type[QuantityValue])
+    import pint
+
+    ureg = pint.get_application_registry()
+    pq = 2.5 * ureg.meter
+    l4 = Length(pint_quantity=pq, quantity_type=Length)
+    assert isinstance(l4, Length)
+    assert l4.value == 2.5
+    assert l4.unit == LengthUnit.meter
+
+    # Overload 5: __init__(self, **data: Any)
+    l5 = Length(**{"value": 7.0, "unit": LengthUnit.meter})
+    assert isinstance(l5, Length)
+    assert l5.value == 7.0
+    assert l5.unit == LengthUnit.meter
+
+
+def test_to_unit():
+    # Test conversion from meters to millimeters
+    length = Length(value=1.0, unit=LengthUnit.meter)
+    l_mm = length.to_unit(LengthUnit.milli_meter)
+    assert isinstance(l_mm, Length)
+    assert l_mm.unit == LengthUnit.milli_meter
+    assert l_mm.value == 1000.0
+
+    # Test conversion using string
+    l_cm = length.to_unit("centi_meter")
+    assert isinstance(l_cm, Length)
+    assert l_cm.unit.name == "centi_meter"
+    assert l_cm.value == 100.0
+
+
 if __name__ == "__main__":
     test_pint()
     test_export()
     test_pandas()
     test_tensile_test()
+    test_quantityvalue_magic_methods()
+    test_init()

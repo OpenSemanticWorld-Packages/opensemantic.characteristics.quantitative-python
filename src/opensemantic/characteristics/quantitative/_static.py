@@ -8,7 +8,7 @@ else:
     # Python < 3.11
     from enum import EnumMeta as EnumType
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union, overload
 
 import pandas as pd
 
@@ -24,6 +24,9 @@ from opensemantic import OswBaseModel
 # import pint_pandas
 
 # from osw.model.entity import Characteristic # pip install pint-pandas
+
+QV = TypeVar("QV", bound="QuantityValue")
+
 
 unit_registry: Dict[str, EnumType] = {}
 
@@ -149,6 +152,80 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         title_={"en": "Unit", "de": "Einheit"},
     )
 
+    # fmt: off
+    @overload
+    def __init__(self, value: float, unit: Optional[UnitEnum]) -> None:
+        ...
+
+    @overload
+    def __init__(self, v: float, u: Optional[UnitEnum]) -> None:
+        ...
+
+    @overload
+    def __init__(self, quantity_value: "QuantityValue") -> None:
+        ...
+
+    @overload
+    def __init__(self, pint_quantity: pint.Quantity, quantity_type: Type["QuantityValue"]) -> None:
+        ...
+
+    # @overload
+    # def __init__(self, **data: Any) -> None:
+    #     ...
+    # fmt: on
+
+    def __init__(self, *args, **kwargs) -> None:
+        if "v" in kwargs or "u" in kwargs:
+            # support for v, u as keyword arguments
+            kwargs["value"] = kwargs.pop("v")
+            kwargs["unit"] = kwargs.pop("u")
+            # will raise error if alias and original names are mixed
+        elif (
+            len(args) == 2
+            and isinstance(args[0], float)
+            and isinstance(args[1], UnitEnum)
+        ):
+            # support for float, UnitEnum as positional arguments
+            raise AttributeError(
+                "QuantityValue.__init__() takes either a pint.Quantity and QuantityValue subclass as positional arguments, "
+                "or a QuantityValue as positional arguments, but not a float and UnitEnum. These are keyword arguments only!"
+            )
+        elif (
+            len(args) == 2
+            and isinstance(args[0], pint.Quantity)
+            and issubclass(args[1], "QuantityValue")
+        ):
+            # support for pint.Quantity and Type[QuantityValue] as positional arguments
+            qv_dict = QuantityValue.from_pint(
+                quantity=args[0], simplify=True, quantity_type=args[1], return_dict=True
+            )
+            kwargs["value"] = qv_dict["value"]
+            kwargs["unit"] = qv_dict["unit"]
+
+        elif "pint_quantity" in kwargs and "quantity_type" in kwargs:
+            # support for pint.Quantity and Type[QuantityValue] as keyword arguments
+            qv_dict = QuantityValue.from_pint(
+                quantity=kwargs.pop("pint_quantity"),
+                simplify=True,
+                quantity_type=kwargs.pop("quantity_type"),
+                return_dict=True,
+            )
+            kwargs["value"] = qv_dict["value"]
+            kwargs["unit"] = qv_dict["unit"]
+        elif "pint_quantity" in kwargs and "quantity_type" not in kwargs:
+            raise ValueError(
+                "If 'pint_quantity' is provided, a 'quantity_type' to cast to must also be provided."
+            )
+        elif len(args) == 1 and len(kwargs) == 0 and isinstance([0], QuantityValue):
+            # support for QuantityValue as positional argument
+            kwargs = args[0].dict()
+        elif "quantity_value" in kwargs:
+            # support for QuantityValue as keyword argument
+            quantity_value = kwargs.pop("quantity_value")
+            kwargs["value"] = quantity_value.value
+            kwargs["unit"] = quantity_value.unit
+
+        super().__init__(**kwargs)
     def to_pint(self) -> pint.Quantity:
         pint_unit_name = self.unit.name.replace("_", " ")
         # SI prefixes, see https://en.wikipedia.org/wiki/Metric_prefix
@@ -220,14 +297,24 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         if isinstance(other, QuantityValue):
             other = other.to_pint()
         return self.to_pint() == other
+    def __neg__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(-self.to_pint())
+
+    def __pos__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(+self.to_pint())
+
+    def __abs__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(abs(self.to_pint()))
 
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
         return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
 
     def __sub__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() - other.to_pint()
         return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
 
     # * operator
     def __mul__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
@@ -235,13 +322,55 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             other = other.to_pint()
         res_pint = self.to_pint() * other
         return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
 
     # / operator
     def __truediv__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
         if not isinstance(other, (float, int)):
             other = other.to_pint()
         res_pint = self.to_pint() / other
-        return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
+
+    def __floordiv__(self, other: "QuantityValue") -> "QuantityValue":
+        """Floor division is supported by pint only for dimensionless quantities and
+        quantities with the same dimension"""
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() // other)
+
+    def __mod__(self, other: "QuantityValue") -> "QuantityValue":
+        """Modulo is supported by pint only for dimensionless quantities and
+        quantities with the same dimension"""
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() % other)
+
+    def __pow__(self, other: Union[int, float, "QuantityValue"]) -> "QuantityValue":
+        # todo: test if supported with dimensionless unit / quantity
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() ** other)
+
+    def __eq__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() == other.to_pint()
+
+    def __ne__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() != other.to_pint()
+
+    def __ge__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() >= other.to_pint()
+
+    def __gt__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() > other.to_pint()
+
+    def __le__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() <= other.to_pint()
+
+    def __lt__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() < other.to_pint()
+
+
+QuantityValue.update_forward_refs()
 
 
 class TabularData(OswBaseModel):
