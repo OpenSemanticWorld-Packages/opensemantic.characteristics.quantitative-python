@@ -178,6 +178,19 @@ def test_export():
     # a2 = QuantityValue.from_jsonld(jsonld_dict)
     # print(a2)
 
+    a3 = Area(value=4.0, unit=AreaUnit.meter_squared)
+    a4 = a3.to_unit(AreaUnit.centi_meter_squared)
+    assert a4.unit == AreaUnit.centi_meter_squared
+    assert a4.value == 100 ** 2 * a3.value
+    assert a3 == a4
+
+    json_dict4 = a4.dict(exclude_none=True, exclude_defaults=True)
+    print(json_dict4)
+    assert json_dict4["value"] == 40000
+    assert json_dict4["unit"] == (
+        "Item:OSWd10e5841c68e5aad94b481b58ef9dfb9#OSWe36916dd7a34557b8a52c38d6dd7b832"
+    )
+    assert len(json_dict4.keys()) == 2
 
 def test_pandas():
 
