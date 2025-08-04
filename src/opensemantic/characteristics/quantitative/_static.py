@@ -193,7 +193,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         elif (
             len(args) == 2
             and isinstance(args[0], pint.Quantity)
-            and issubclass(args[1], "QuantityValue")
+            and issubclass(args[1], QuantityValue)
         ):
             # support for pint.Quantity and Type[QuantityValue] as positional arguments
             qv_dict = QuantityValue.from_pint(
@@ -226,8 +226,10 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             kwargs["unit"] = quantity_value.unit
 
         super().__init__(**kwargs)
-    def to_pint(self) -> pint.Quantity:
-        pint_unit_name = self.unit.name.replace("_", " ")
+
+    @classmethod
+    def get_pint_ureg_compatible_str(cls, string: str) -> str:
+        pint_unit_name = string.replace("_", " ")
         # SI prefixes, see https://en.wikipedia.org/wiki/Metric_prefix
         prefixes = [
             "quetta",
@@ -260,38 +262,125 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             pint_unit_name = pint_unit_name.replace(prefix + " ", prefix)
         if pint_unit_name.split(" ")[0] == "per":
             pint_unit_name = pint_unit_name.replace("per", "1 /")
+        return pint_unit_name
+
+    def to_pint(self) -> pint.Quantity:
+        pint_unit_name = QuantityValue.get_pint_ureg_compatible_str(self.unit.name)
+
         return self.value * ureg[pint_unit_name]
+
+    # fmt: on
+    @classmethod
+    @overload
+    def from_pint(
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = ...,
+        quantity_type: Optional[Type[QV]] = ...,
+        return_dict: bool = False,
+    ) -> QV: ...
+
+    @classmethod
+    @overload
+    def from_pint(
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = ...,
+        quantity_type: Optional[Type[QV]] = ...,
+        return_dict: bool = True,
+    ) -> Dict[str, Any]: ...
+
+    # fmt: off
 
     @classmethod
     def from_pint(
-        self, quantity: pint.Quantity, simplify: bool = True
-    ) -> "QuantityValue":
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = True,
+        quantity_type: Optional[Type[QV]] = None,
+        return_dict: bool = False,
+    ) -> Union[QV, Dict[str, Any]]:
         # see also
         # https://pint.readthedocs.io/en/stable/getting/tutorial.html#simplifying-units
         # unit_symbol = "{:~P}".format(quantity.units)
-        if simplify:
-            value = (
-                f"{quantity:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify the unit
+        if quantity_type and not issubclass(quantity_type, QuantityValue):
+            raise ValueError(
+                f"Provided quantity_type '{quantity_type}' is not a subclass of QuantityValue."
             )
-        else:
-            value = f"{quantity:9fLx}"
-        # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
-        # select the last curly brace
-        unit_symbol = value.split("{")[-1].replace("}", "")
-        # replace backslashes with underscores
-        unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-        # nummeric_value = quantity.magnitude # simplify the unit may change the scale
-        nummeric_value = float(value.split("{")[1].split("}")[0])
-        if len(unit_symbol) == 0:
-            unit_symbol = "dimensionless"  # todo: wite test
-        unit_class = unit_registry[unit_symbol]
-        quantity_class = quantity_registry[unit_class]
-        return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
+
+        def original(quantity_: pint.Quantity):
+            if simplify:
+                value = (
+                    f"{quantity_:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify
+                    # the unit
+                )
+            else:
+                value = f"{quantity_:9fLx}"
+            # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
+            # select the last curly brace
+            unit_symbol = value.split("{")[-1].replace("}", "")
+            # replace backslashes with underscores
+            unit_symbol = unit_symbol.replace("\\", "_").strip("_")
+            # nummeric_value = quantity.magnitude # simplify the unit may change the scale
+            nummeric_value = float(value.split("{")[1].split("}")[0])
+            if len(unit_symbol) == 0:
+                unit_symbol = "dimensionless"
+            unit_class = unit_registry[unit_symbol]
+            quantity_class = quantity_registry[unit_class]
+            if quantity_type is not None:
+                # if a specific quantity type is provided, use it instead of the
+                # default one
+                quantity_class = quantity_type
+            if return_dict:
+                return {
+                    "value": nummeric_value,
+                    "unit": unit_class[unit_symbol],
+                    "quantity_type": quantity_class,
+                }
+            return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
+
+        def altered(quantity_: pint.Quantity):
+            """
+            Converts a Pint Quantity to base units (removing prefixes),
+            and returns a LaTeX-formatted string with adjusted numeric value.
+            """
+            # Convert to base units to remove prefixes
+            base_quantity = quantity_.to_base_units()
+
+            # Format the numeric value and unit separately
+            nummeric_value = base_quantity.magnitude
+            unit_latex = f"{base_quantity.units:Lx}"
+            if simplify:
+                unit_latex = f"{base_quantity.units:#Lx}"
+
+            unit_symbol_1 = unit_latex.split("{")[-1].replace("}", "")
+            unit_symbol_2 = unit_symbol_1.replace("\\", "_").strip("_")
+            if len(unit_symbol_2) == 0:
+                unit_symbol_2 = "dimensionless"
+            unit_class = unit_registry[unit_symbol_2]
+            quantity_class = quantity_registry[unit_class]
+            if quantity_type is not None:
+                # if a specific quantity type is provided, use it instead of the
+                # default one
+                quantity_class = quantity_type
+            if return_dict:
+                return {
+                    "value": nummeric_value,
+                    "unit": unit_class[unit_symbol_2],
+                    "quantity_type": quantity_class,
+                }
+            return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol_2])
+
+        try:
+            return original(quantity)
+        except KeyError:
+            return altered(quantity)
 
     def to_base(self) -> "QuantityValue":
         """Converts the QuantityValue to its base unit."""
         pint_quantity = self.to_pint().to_base_units()
         return self.from_pint(pint_quantity, simplify=False)
+        return QuantityValue.from_pint(pint_quantity, simplify=False)
 
     def __eq__(self, other: "QuantityValue") -> bool:
         if isinstance(other, QuantityValue):
@@ -308,12 +397,10 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
 
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
-        return self.from_pint(res_pint)
         return QuantityValue.from_pint(res_pint)
 
     def __sub__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() - other.to_pint()
-        return self.from_pint(res_pint)
         return QuantityValue.from_pint(res_pint)
 
     # * operator
@@ -321,7 +408,6 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         if not isinstance(other, (float, int)):
             other = other.to_pint()
         res_pint = self.to_pint() * other
-        return self.from_pint(res_pint)
         return QuantityValue.from_pint(res_pint)
 
     # / operator
