@@ -181,7 +181,7 @@ def test_export():
     a3 = Area(value=4.0, unit=AreaUnit.meter_squared)
     a4 = a3.to_unit(AreaUnit.centi_meter_squared)
     assert a4.unit == AreaUnit.centi_meter_squared
-    assert a4.value == 100 ** 2 * a3.value
+    assert a4.value == 100**2 * a3.value
     assert a3 == a4
 
     json_dict4 = a4.dict(exclude_none=True, exclude_defaults=True)
@@ -191,6 +191,7 @@ def test_export():
         "Item:OSWd10e5841c68e5aad94b481b58ef9dfb9#OSWe36916dd7a34557b8a52c38d6dd7b832"
     )
     assert len(json_dict4.keys()) == 2
+
 
 def test_pandas():
 

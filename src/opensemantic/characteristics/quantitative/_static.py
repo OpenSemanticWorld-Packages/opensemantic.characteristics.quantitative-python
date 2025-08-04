@@ -166,7 +166,9 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         ...
 
     @overload
-    def __init__(self, pint_quantity: pint.Quantity, quantity_type: Type["QuantityValue"]) -> None:
+    def __init__(
+        self, pint_quantity: pint.Quantity, quantity_type: Type["QuantityValue"]
+    ) -> None:
         ...
 
     # @overload
@@ -187,8 +189,10 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         ):
             # support for float, UnitEnum as positional arguments
             raise AttributeError(
-                "QuantityValue.__init__() takes either a pint.Quantity and QuantityValue subclass as positional arguments, "
-                "or a QuantityValue as positional arguments, but not a float and UnitEnum. These are keyword arguments only!"
+                "QuantityValue.__init__() takes either a pint.Quantity and "
+                "QuantityValue subclass as positional arguments, or a QuantityValue "
+                "as positional arguments, but not a float and UnitEnum. These are "
+                "keyword arguments only!"
             )
         elif (
             len(args) == 2
@@ -214,7 +218,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             kwargs["unit"] = qv_dict["unit"]
         elif "pint_quantity" in kwargs and "quantity_type" not in kwargs:
             raise ValueError(
-                "If 'pint_quantity' is provided, a 'quantity_type' to cast to must also be provided."
+                "If 'pint_quantity' is provided, a 'quantity_type' to cast to must "
+                "also be provided."
             )
         elif len(args) == 1 and len(kwargs) == 0 and isinstance([0], QuantityValue):
             # support for QuantityValue as positional argument
@@ -305,7 +310,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         # unit_symbol = "{:~P}".format(quantity.units)
         if quantity_type and not issubclass(quantity_type, QuantityValue):
             raise ValueError(
-                f"Provided quantity_type '{quantity_type}' is not a subclass of QuantityValue."
+                f"Provided quantity_type '{quantity_type}' is not a subclass of "
+                f"QuantityValue."
             )
 
         def original(quantity_: pint.Quantity):
@@ -321,7 +327,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             unit_symbol = value.split("{")[-1].replace("}", "")
             # replace backslashes with underscores
             unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-            # nummeric_value = quantity.magnitude # simplify the unit may change the scale
+            # nummeric_value = quantity.magnitude
+            # simplifying the unit may change the scale
             nummeric_value = float(value.split("{")[1].split("}")[0])
             if len(unit_symbol) == 0:
                 unit_symbol = "dimensionless"
@@ -390,10 +397,12 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             # Assuming the string is a valid unit from the pint unit registry
             unit_str = QuantityValue.get_pint_ureg_compatible_str(unit)
         else:
-            raise ValueError(f"Invalid unit type: {type(unit)}. Must be UnitEnum or str.")
+            raise ValueError(
+                f"Invalid unit type: {type(unit)}. Must be UnitEnum or str.")
 
         pint_quantity = self.to_pint().to(unit_str)
-        return QuantityValue.from_pint(quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
+        return QuantityValue.from_pint(
+            quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
 
     def __neg__(self) -> "QuantityValue":
         return QuantityValue.from_pint(-self.to_pint())
