@@ -189,21 +189,21 @@ def test_pandas():
     class MeasurementData(TabularData):
         rows: List[Measurement]
 
-    measurement = MeasurementData(
+    measurement_data = MeasurementData(
         rows=[
             Measurement(length=Length(value=1.0), width=Width(value=2.0)),
             Measurement(length=Length(value=3.0), width=Width(value=4.0)),
         ]
     )
-    df = measurement.to_df()
+    df = measurement_data.to_df()
     print(df)
     df["area"] = df["length"] * df["width"]
     print(df)
-    measurement2 = MeasurementData.from_df(df)
-    print(measurement2)
-    measurement3 = TabularData.from_df(df)
-    print(measurement3.json(exclude_none=True, exclude_defaults=True, indent=2))
-    # print(measurement3.__class__.schema_json(indent=2))
+    measurement_data2 = MeasurementData.from_df(df)
+    print(measurement_data2)
+    measurement_data3 = TabularData.from_df(df)
+    print(measurement_data3.json(exclude_none=True, exclude_defaults=True, indent=2))
+    # print(measurement_data3.__class__.schema_json(indent=2))
 
 
 def test_tensile_test():
