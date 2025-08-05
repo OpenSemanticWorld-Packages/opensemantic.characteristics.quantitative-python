@@ -265,8 +265,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
 
         for prefix in prefixes:
             pint_unit_name = pint_unit_name.replace(prefix + " ", prefix)
+        pint_unit_name = pint_unit_name.strip(" ")
         if pint_unit_name.split(" ")[0] == "per":
             pint_unit_name = pint_unit_name.replace("per", "1 /")
+        # Make sure unit names like Celsius and Ohm don't break the ureg access
+        pint_unit_name = pint_unit_name.lower()
         return pint_unit_name
 
     def to_pint(self) -> pint.Quantity:
@@ -327,9 +330,9 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             unit_symbol = value.split("{")[-1].replace("}", "")
             # replace backslashes with underscores
             unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-            # nummeric_value = quantity.magnitude
+            # numeric_value = quantity.magnitude
             # simplifying the unit may change the scale
-            nummeric_value = float(value.split("{")[1].split("}")[0])
+            numeric_value = float(value.split("{")[1].split("}")[0])
             if len(unit_symbol) == 0:
                 unit_symbol = "dimensionless"
             unit_class = unit_registry[unit_symbol]
@@ -340,11 +343,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 quantity_class = quantity_type
             if return_dict:
                 return {
-                    "value": nummeric_value,
+                    "value": numeric_value,
                     "unit": unit_class[unit_symbol],
                     "quantity_type": quantity_class,
                 }
-            return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
+            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol])
 
         def altered(quantity_: pint.Quantity):
             """
@@ -355,7 +358,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             base_quantity = quantity_.to_base_units()
 
             # Format the numeric value and unit separately
-            nummeric_value = base_quantity.magnitude
+            numeric_value = base_quantity.magnitude
             unit_latex = f"{base_quantity.units:Lx}"
             if simplify:
                 unit_latex = f"{base_quantity.units:#Lx}"
@@ -372,11 +375,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 quantity_class = quantity_type
             if return_dict:
                 return {
-                    "value": nummeric_value,
+                    "value": numeric_value,
                     "unit": unit_class[unit_symbol_2],
                     "quantity_type": quantity_class,
                 }
-            return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol_2])
+            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol_2])
 
         try:
             return original(quantity)
