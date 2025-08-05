@@ -221,7 +221,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 "If 'pint_quantity' is provided, a 'quantity_type' to cast to must "
                 "also be provided."
             )
-        elif len(args) == 1 and len(kwargs) == 0 and isinstance([0], QuantityValue):
+        elif len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], QuantityValue):
             # support for QuantityValue as positional argument
             kwargs = args[0].dict()
         elif "quantity_value" in kwargs:
