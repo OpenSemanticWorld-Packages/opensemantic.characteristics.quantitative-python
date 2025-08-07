@@ -177,11 +177,13 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     # fmt: on
 
     def __init__(self, *args, **kwargs) -> None:
-        if "v" in kwargs or "u" in kwargs:
+        if "v" in kwargs and "u" in kwargs:
             # support for v, u as keyword arguments
             kwargs["value"] = kwargs.pop("v")
             kwargs["unit"] = kwargs.pop("u")
             # will raise error if alias and original names are mixed
+        elif "v" in kwargs and "u" not in kwargs and "unit" not in kwargs:
+            kwargs["value"] = kwargs.pop("v")
         elif (
             len(args) == 2
             and isinstance(args[0], float)
