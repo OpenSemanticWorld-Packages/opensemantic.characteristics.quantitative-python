@@ -481,7 +481,7 @@ QuantityValue.update_forward_refs()
 
 
 class TabularData(OswBaseModel):
-    # rows: List[Any] # convention for tabular data is a list of rows
+    rows: List[Characteristic]  # convention for tabular data is a list of rows
 
     # consider https://stackoverflow.com/questions/51505504/pandas-nesting-dataframes # noqa: E501
     # consider https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.attrs.html # noqa: E501
@@ -490,6 +490,8 @@ class TabularData(OswBaseModel):
         series = []
         row_class = self.__class__.__fields__["rows"].type_
         for attr in row_class.__fields__.keys():
+            if attr == "type":
+                continue
             q_name = (
                 row_class.__fields__[attr]
                 .type_.__fields__["unit"]
