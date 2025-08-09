@@ -24,7 +24,7 @@ def class_in_list(cls: Union[str, type], lst: list[type]) -> bool:
 
 
 def move_matching_class_to_end(lst: list[type], cls_name: str) -> list:
-    if not lst:  # todo
+    if not lst:
         return lst
     for item in lst:
         if item.__name__ == cls_name:
@@ -37,8 +37,6 @@ class UnitEnumMetaclass(EnumType):
     def __new__(cls, clsname, bases, attrs):
         # print(attrs["__qualname__"], attrs)
         class_instance = EnumType.__new__(cls, clsname, bases, attrs)
-        # todo: eventually make the enum member follow up the reference to ensure
-        #  that they are a string not an enum member
         for key, value in attrs.items():
             if key not in ["__module__", "__qualname__", "_generate_next_value_"]:
                 # register all enum values in the unit_registry

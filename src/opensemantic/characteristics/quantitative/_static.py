@@ -138,13 +138,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             # If the generic QuantityValue is used, all Unit members are valid
             expected_enum = Unit
         if isinstance(v, expected_enum):
-            print("expected enum case")
             # Returns the enum as is - causes Error because the validator of unit
             # won't find any Member in UnitEnum --> The unit field type must be changed
             return v
         # Also accept other UnitEnum types, map by name
         if isinstance(v, UnitEnum):
-            print("UnitEnum case")
             try:
                 return getattr(expected_enum, v.name)
             except KeyError:
@@ -360,7 +358,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 #  default one
                 quantity_class = quantity_type
             if quantity_class is None:
-                # todo: @Simon check if this should axtually cause an error or this
+                # todo: @Simon check if this should actually cause an error or this
                 #  catch is ok
                 quantity_class = QuantityValue
             if return_dict:

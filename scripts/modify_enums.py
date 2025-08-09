@@ -101,7 +101,7 @@ for match in re.finditer(pattern2, content, flags=re.MULTILINE):
     var_name = match.group(1)
     if not var_name:
         continue
-    replacement = f"{var_name} = {unit_enum_class_name}.{var_name}"
+    replacement = f"{var_name} = {unit_enum_class_name}.{var_name}.value"
     if full_match.endswith("\n"):
         # If the line starts with one or more newlines, we need to keep the newlines
         replacement += "\n" * (len(full_match) - len(full_match.rstrip("\n")))
@@ -117,7 +117,7 @@ for match in re.finditer(pattern2, content, flags=re.MULTILINE):
 
 collection_modulename = "_collection"
 # Create a unit enum collection
-collection = f"""from opensemantic.characteristics.quantitative._static import UnitEnum
+collection = f"""from opensemantic.characteristics.quantitative._enum import UnitEnum
 
 
 class {unit_enum_class_name}(UnitEnum):

@@ -1,6 +1,6 @@
 from typing import Literal
-from opensemantic.characteristics.quantitative._collection import Unit
 
+from opensemantic.characteristics.quantitative._collection import Unit
 
 UnitLiteral = Literal[
     "kilo_gram_meter_squared",
@@ -439,5 +439,4 @@ UnitLiteral = Literal[
 
 
 def unit(name: UnitLiteral) -> Unit:
-    # todo: use simplification logic to allow units
     return getattr(Unit, name)

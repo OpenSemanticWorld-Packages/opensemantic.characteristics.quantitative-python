@@ -7,7 +7,7 @@ from opensemantic.characteristics.quantitative._static import QuantityValue, Uni
 
 
 class MomentOfInertiaUnit(UnitEnum):
-    kilo_gram_meter_squared = Unit.kilo_gram_meter_squared
+    kilo_gram_meter_squared = Unit.kilo_gram_meter_squared.value
 
 
 class MomentOfInertia(QuantityValue):
@@ -71,7 +71,7 @@ class MomentOfInertiaInTheYAxis(MomentOfInertia):
 
 
 class LengthMolarEnergyUnit(UnitEnum):
-    joule_meter_per_mole = Unit.joule_meter_per_mole
+    joule_meter_per_mole = Unit.joule_meter_per_mole.value
 
 
 class LengthMolarEnergy(QuantityValue):
@@ -106,8 +106,8 @@ class LengthMolarEnergy(QuantityValue):
 
 
 class ViscosityUnit(UnitEnum):
-    pascal_second = Unit.pascal_second
-    milli_pascal_second = Unit.milli_pascal_second
+    pascal_second = Unit.pascal_second.value
+    milli_pascal_second = Unit.milli_pascal_second.value
 
 
 class Viscosity(QuantityValue):
@@ -144,8 +144,8 @@ class Viscosity(QuantityValue):
 
 
 class TemperatureUnit(UnitEnum):
-    Celsius = Unit.Celsius
-    milli_Celsius = Unit.milli_Celsius
+    Celsius = Unit.Celsius.value
+    milli_Celsius = Unit.milli_Celsius.value
 
 
 class Temperature(QuantityValue):
@@ -241,7 +241,7 @@ class RankineTemperature(ThermodynamicTemperature):
 
 
 class SpecificEnergyUnit(UnitEnum):
-    joule_per_kilo_gram = Unit.joule_per_kilo_gram
+    joule_per_kilo_gram = Unit.joule_per_kilo_gram.value
 
 
 class SpecificEnergy(QuantityValue):
@@ -288,14 +288,14 @@ class SpecificEnergy(QuantityValue):
 
 
 class AmountOfSubstancePerMassUnit(UnitEnum):
-    mole_per_kilo_gram = Unit.mole_per_kilo_gram
-    pico_mole_per_kilo_gram = Unit.pico_mole_per_kilo_gram
-    nano_mole_per_kilo_gram = Unit.nano_mole_per_kilo_gram
-    kilo_mole_per_kilo_gram = Unit.kilo_mole_per_kilo_gram
-    femto_mole_per_kilo_gram = Unit.femto_mole_per_kilo_gram
-    centi_mole_per_kilo_gram = Unit.centi_mole_per_kilo_gram
-    milli_mole_per_kilo_gram = Unit.milli_mole_per_kilo_gram
-    micro_mole_per_kilo_gram = Unit.micro_mole_per_kilo_gram
+    mole_per_kilo_gram = Unit.mole_per_kilo_gram.value
+    pico_mole_per_kilo_gram = Unit.pico_mole_per_kilo_gram.value
+    nano_mole_per_kilo_gram = Unit.nano_mole_per_kilo_gram.value
+    kilo_mole_per_kilo_gram = Unit.kilo_mole_per_kilo_gram.value
+    femto_mole_per_kilo_gram = Unit.femto_mole_per_kilo_gram.value
+    centi_mole_per_kilo_gram = Unit.centi_mole_per_kilo_gram.value
+    milli_mole_per_kilo_gram = Unit.milli_mole_per_kilo_gram.value
+    micro_mole_per_kilo_gram = Unit.micro_mole_per_kilo_gram.value
 
 
 class AmountOfSubstancePerMass(QuantityValue):
@@ -350,7 +350,7 @@ class AmountOfSubstancePerMass(QuantityValue):
 
 
 class DimensionlessUnit(UnitEnum):
-    dimensionless = Unit.dimensionless
+    dimensionless = Unit.dimensionless.value
 
 
 class Dimensionless(QuantityValue):
@@ -468,7 +468,7 @@ class DutyCycle(DimensionlessRatio):
 
 
 class MassUnit(UnitEnum):
-    kilo_gram = Unit.kilo_gram
+    kilo_gram = Unit.kilo_gram.value
 
 
 class Mass(QuantityValue):
@@ -530,7 +530,7 @@ class StageStructureMass(Mass):
 
 
 class TotalLinearStoppingPowerUnit(UnitEnum):
-    joule_per_meter = Unit.joule_per_meter
+    joule_per_meter = Unit.joule_per_meter.value
 
 
 class TotalLinearStoppingPower(QuantityValue):
@@ -567,7 +567,7 @@ class TotalLinearStoppingPower(QuantityValue):
 
 
 class ThermalResistanceUnit(UnitEnum):
-    kelvin_per_watt = Unit.kelvin_per_watt
+    kelvin_per_watt = Unit.kelvin_per_watt.value
 
 
 class ThermalResistance(QuantityValue):
@@ -604,11 +604,11 @@ class ThermalResistance(QuantityValue):
 
 
 class DisplacementCurrentDensityUnit(UnitEnum):
-    ampere_per_meter_squared = Unit.ampere_per_meter_squared
-    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared
-    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared
-    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared
-    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared
+    ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
+    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared.value
+    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared.value
+    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared.value
+    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared.value
 
 
 class DisplacementCurrentDensity(QuantityValue):
@@ -653,12 +653,12 @@ class DisplacementCurrentDensity(QuantityValue):
 
 
 class VolumeUnit(UnitEnum):
-    meter_cubed = Unit.meter_cubed
-    milli_meter_cubed = Unit.milli_meter_cubed
-    deci_meter_cubed = Unit.deci_meter_cubed
-    micro_meter_cubed = Unit.micro_meter_cubed
-    deca_meter_cubed = Unit.deca_meter_cubed
-    centi_meter_cubed = Unit.centi_meter_cubed
+    meter_cubed = Unit.meter_cubed.value
+    milli_meter_cubed = Unit.milli_meter_cubed.value
+    deci_meter_cubed = Unit.deci_meter_cubed.value
+    micro_meter_cubed = Unit.micro_meter_cubed.value
+    deca_meter_cubed = Unit.deca_meter_cubed.value
+    centi_meter_cubed = Unit.centi_meter_cubed.value
 
 
 class Volume(QuantityValue):
@@ -756,14 +756,14 @@ class FermiTemperature(Temperature):
 
 
 class ForcePerAreaUnit(UnitEnum):
-    pascal = Unit.pascal
-    milli_pascal = Unit.milli_pascal
-    deca_pascal = Unit.deca_pascal
-    kilo_pascal = Unit.kilo_pascal
-    micro_pascal = Unit.micro_pascal
-    hecto_pascal = Unit.hecto_pascal
-    mega_pascal = Unit.mega_pascal
-    giga_pascal = Unit.giga_pascal
+    pascal = Unit.pascal.value
+    milli_pascal = Unit.milli_pascal.value
+    deca_pascal = Unit.deca_pascal.value
+    kilo_pascal = Unit.kilo_pascal.value
+    micro_pascal = Unit.micro_pascal.value
+    hecto_pascal = Unit.hecto_pascal.value
+    mega_pascal = Unit.mega_pascal.value
+    giga_pascal = Unit.giga_pascal.value
 
 
 class ForcePerArea(QuantityValue):
@@ -865,17 +865,17 @@ class SystolicBloodPressure(Pressure):
 
 
 class LengthUnit(UnitEnum):
-    meter = Unit.meter
-    micro_meter = Unit.micro_meter
-    nano_meter = Unit.nano_meter
-    centi_meter = Unit.centi_meter
-    pico_meter = Unit.pico_meter
-    deca_meter = Unit.deca_meter
-    kilo_meter = Unit.kilo_meter
-    deci_meter = Unit.deci_meter
-    hecto_meter = Unit.hecto_meter
-    milli_meter = Unit.milli_meter
-    fermi = Unit.fermi
+    meter = Unit.meter.value
+    micro_meter = Unit.micro_meter.value
+    nano_meter = Unit.nano_meter.value
+    centi_meter = Unit.centi_meter.value
+    pico_meter = Unit.pico_meter.value
+    deca_meter = Unit.deca_meter.value
+    kilo_meter = Unit.kilo_meter.value
+    deci_meter = Unit.deci_meter.value
+    hecto_meter = Unit.hecto_meter.value
+    milli_meter = Unit.milli_meter.value
+    fermi = Unit.fermi.value
 
 
 class Length(QuantityValue):
@@ -965,7 +965,7 @@ class RadialDistance(Length):
 
 
 class MassSpecificBiogeochemicalRateUnit(UnitEnum):
-    micro_gram_per_day_per_gram = Unit.micro_gram_per_day_per_gram
+    micro_gram_per_day_per_gram = Unit.micro_gram_per_day_per_gram.value
 
 
 class MassSpecificBiogeochemicalRate(QuantityValue):
@@ -1029,16 +1029,16 @@ class DiffusionCoefficientForFluenceRate(Length):
 
 
 class EnergyUnit(UnitEnum):
-    joule = Unit.joule
-    atto_joule = Unit.atto_joule
-    kilo_joule = Unit.kilo_joule
-    peta_joule = Unit.peta_joule
-    milli_joule = Unit.milli_joule
-    giga_joule = Unit.giga_joule
-    femto_joule = Unit.femto_joule
-    exa_joule = Unit.exa_joule
-    tera_joule = Unit.tera_joule
-    mega_joule = Unit.mega_joule
+    joule = Unit.joule.value
+    atto_joule = Unit.atto_joule.value
+    kilo_joule = Unit.kilo_joule.value
+    peta_joule = Unit.peta_joule.value
+    milli_joule = Unit.milli_joule.value
+    giga_joule = Unit.giga_joule.value
+    femto_joule = Unit.femto_joule.value
+    exa_joule = Unit.exa_joule.value
+    tera_joule = Unit.tera_joule.value
+    mega_joule = Unit.mega_joule.value
 
 
 class Energy(QuantityValue):
@@ -1115,9 +1115,9 @@ class ThermalEnergy(Energy):
 
 
 class ThermalDiffusionCoefficientUnit(UnitEnum):
-    meter_squared_per_second = Unit.meter_squared_per_second
-    milli_meter_squared_per_second = Unit.milli_meter_squared_per_second
-    centi_meter_squared_per_second = Unit.centi_meter_squared_per_second
+    meter_squared_per_second = Unit.meter_squared_per_second.value
+    milli_meter_squared_per_second = Unit.milli_meter_squared_per_second.value
+    centi_meter_squared_per_second = Unit.centi_meter_squared_per_second.value
 
 
 class ThermalDiffusionCoefficient(QuantityValue):
@@ -1157,7 +1157,7 @@ class ThermalDiffusionCoefficient(QuantityValue):
 
 class ElectricChargePerMassUnit(UnitEnum):
     ampere_meter_squared_per_joule_per_second = (
-        Unit.ampere_meter_squared_per_joule_per_second
+        Unit.ampere_meter_squared_per_joule_per_second.value
     )
 
 
@@ -1223,9 +1223,9 @@ class MassEquivalent(Mass):
 
 
 class InverseVolumeUnit(UnitEnum):
-    per_meter_cubed = Unit.per_meter_cubed
-    per_milli_meter_cubed = Unit.per_milli_meter_cubed
-    per_centi_meter_cubed = Unit.per_centi_meter_cubed
+    per_meter_cubed = Unit.per_meter_cubed.value
+    per_milli_meter_cubed = Unit.per_milli_meter_cubed.value
+    per_centi_meter_cubed = Unit.per_centi_meter_cubed.value
 
 
 class InverseVolume(QuantityValue):
@@ -1291,15 +1291,15 @@ class IonConcentration(InverseVolume):
 
 
 class TimeUnit(UnitEnum):
-    second = Unit.second
-    nano_second = Unit.nano_second
-    micro_second = Unit.micro_second
-    pico_second = Unit.pico_second
-    atto_second = Unit.atto_second
-    kilo_second = Unit.kilo_second
-    deci_second = Unit.deci_second
-    femto_second = Unit.femto_second
-    milli_second = Unit.milli_second
+    second = Unit.second.value
+    nano_second = Unit.nano_second.value
+    micro_second = Unit.micro_second.value
+    pico_second = Unit.pico_second.value
+    atto_second = Unit.atto_second.value
+    kilo_second = Unit.kilo_second.value
+    deci_second = Unit.deci_second.value
+    femto_second = Unit.femto_second.value
+    milli_second = Unit.milli_second.value
 
 
 class Time(QuantityValue):
@@ -1488,8 +1488,8 @@ class Dimensionless(QuantityValue):
 
 
 class MagneticFluxUnit(UnitEnum):
-    weber = Unit.weber
-    milli_weber = Unit.milli_weber
+    weber = Unit.weber.value
+    milli_weber = Unit.milli_weber.value
 
 
 class MagneticFlux(QuantityValue):
@@ -1553,9 +1553,9 @@ class ControlMass(Mass):
 
 
 class MolarFlowRateUnit(UnitEnum):
-    mole_per_second = Unit.mole_per_second
-    kilo_mole_per_second = Unit.kilo_mole_per_second
-    micro_mole_per_second = Unit.micro_mole_per_second
+    mole_per_second = Unit.mole_per_second.value
+    kilo_mole_per_second = Unit.kilo_mole_per_second.value
+    micro_mole_per_second = Unit.micro_mole_per_second.value
 
 
 class MolarFlowRate(QuantityValue):
@@ -1650,11 +1650,11 @@ class InformationEntropy(Dimensionless):
 
 
 class EnergyPerElectricChargeUnit(UnitEnum):
-    volt = Unit.volt
-    micro_volt = Unit.micro_volt
-    mega_volt = Unit.mega_volt
-    milli_volt = Unit.milli_volt
-    kilo_volt = Unit.kilo_volt
+    volt = Unit.volt.value
+    micro_volt = Unit.micro_volt.value
+    mega_volt = Unit.mega_volt.value
+    milli_volt = Unit.milli_volt.value
+    kilo_volt = Unit.kilo_volt.value
 
 
 class EnergyPerElectricCharge(QuantityValue):
@@ -1691,7 +1691,7 @@ class EnergyPerElectricCharge(QuantityValue):
 
 
 class CatalyticActivityConcentrationUnit(UnitEnum):
-    mole_per_meter_cubed_per_second = Unit.mole_per_meter_cubed_per_second
+    mole_per_meter_cubed_per_second = Unit.mole_per_meter_cubed_per_second.value
 
 
 class CatalyticActivityConcentration(QuantityValue):
@@ -1728,8 +1728,10 @@ class CatalyticActivityConcentration(QuantityValue):
 
 
 class SpecificModulusUnit(UnitEnum):
-    meter_squared_per_second_squared = Unit.meter_squared_per_second_squared
-    kilo_meter_squared_per_second_squared = Unit.kilo_meter_squared_per_second_squared
+    meter_squared_per_second_squared = Unit.meter_squared_per_second_squared.value
+    kilo_meter_squared_per_second_squared = (
+        Unit.kilo_meter_squared_per_second_squared.value
+    )
 
 
 class SpecificModulus(QuantityValue):
@@ -1769,14 +1771,14 @@ class SpecificModulus(QuantityValue):
 
 
 class IonicStrengthUnit(UnitEnum):
-    mole_per_kilo_gram = Unit.mole_per_kilo_gram
-    pico_mole_per_kilo_gram = Unit.pico_mole_per_kilo_gram
-    nano_mole_per_kilo_gram = Unit.nano_mole_per_kilo_gram
-    kilo_mole_per_kilo_gram = Unit.kilo_mole_per_kilo_gram
-    femto_mole_per_kilo_gram = Unit.femto_mole_per_kilo_gram
-    centi_mole_per_kilo_gram = Unit.centi_mole_per_kilo_gram
-    milli_mole_per_kilo_gram = Unit.milli_mole_per_kilo_gram
-    micro_mole_per_kilo_gram = Unit.micro_mole_per_kilo_gram
+    mole_per_kilo_gram = Unit.mole_per_kilo_gram.value
+    pico_mole_per_kilo_gram = Unit.pico_mole_per_kilo_gram.value
+    nano_mole_per_kilo_gram = Unit.nano_mole_per_kilo_gram.value
+    kilo_mole_per_kilo_gram = Unit.kilo_mole_per_kilo_gram.value
+    femto_mole_per_kilo_gram = Unit.femto_mole_per_kilo_gram.value
+    centi_mole_per_kilo_gram = Unit.centi_mole_per_kilo_gram.value
+    milli_mole_per_kilo_gram = Unit.milli_mole_per_kilo_gram.value
+    micro_mole_per_kilo_gram = Unit.micro_mole_per_kilo_gram.value
 
 
 class IonicStrength(QuantityValue):
@@ -1833,8 +1835,8 @@ class IonicStrength(QuantityValue):
 
 
 class AngularMomentumUnit(UnitEnum):
-    joule_second = Unit.joule_second
-    atto_joule_second = Unit.atto_joule_second
+    joule_second = Unit.joule_second.value
+    atto_joule_second = Unit.atto_joule_second.value
 
 
 class AngularMomentum(QuantityValue):
@@ -1871,8 +1873,8 @@ class AngularMomentum(QuantityValue):
 
 
 class ChemicalAffinityUnit(UnitEnum):
-    joule_per_mole = Unit.joule_per_mole
-    kilo_joule_per_mole = Unit.kilo_joule_per_mole
+    joule_per_mole = Unit.joule_per_mole.value
+    kilo_joule_per_mole = Unit.kilo_joule_per_mole.value
 
 
 class ChemicalAffinity(QuantityValue):
@@ -1909,7 +1911,7 @@ class ChemicalAffinity(QuantityValue):
 
 
 class LuminousExposureUnit(UnitEnum):
-    hour_lux = Unit.hour_lux
+    hour_lux = Unit.hour_lux.value
 
 
 class LuminousExposure(QuantityValue):
@@ -1946,7 +1948,7 @@ class LuminousExposure(QuantityValue):
 
 
 class ElectricCurrentPerAngleUnit(UnitEnum):
-    ampere_per_radian = Unit.ampere_per_radian
+    ampere_per_radian = Unit.ampere_per_radian.value
 
 
 class ElectricCurrentPerAngle(QuantityValue):
@@ -1981,7 +1983,7 @@ class ElectricCurrentPerAngle(QuantityValue):
 
 
 class AngularFrequencyUnit(UnitEnum):
-    radian_per_second = Unit.radian_per_second
+    radian_per_second = Unit.radian_per_second.value
 
 
 class AngularFrequency(QuantityValue):
@@ -2045,8 +2047,8 @@ class LarmorAngularFrequency(AngularFrequency):
 
 
 class MolarEnergyUnit(UnitEnum):
-    joule_per_mole = Unit.joule_per_mole
-    kilo_joule_per_mole = Unit.kilo_joule_per_mole
+    joule_per_mole = Unit.joule_per_mole.value
+    kilo_joule_per_mole = Unit.kilo_joule_per_mole.value
 
 
 class MolarEnergy(QuantityValue):
@@ -2108,11 +2110,11 @@ class MolarThermodynamicEnergy(MolarEnergy):
 
 
 class VelocityUnit(UnitEnum):
-    meter_per_second = Unit.meter_per_second
-    kilo_meter_per_second = Unit.kilo_meter_per_second
-    micro_meter_per_second = Unit.micro_meter_per_second
-    centi_meter_per_second = Unit.centi_meter_per_second
-    milli_meter_per_second = Unit.milli_meter_per_second
+    meter_per_second = Unit.meter_per_second.value
+    kilo_meter_per_second = Unit.kilo_meter_per_second.value
+    micro_meter_per_second = Unit.micro_meter_per_second.value
+    centi_meter_per_second = Unit.centi_meter_per_second.value
+    milli_meter_per_second = Unit.milli_meter_per_second.value
 
 
 class Velocity(QuantityValue):
@@ -2180,7 +2182,7 @@ class SpecificImpulseByMass(Velocity):
 
 
 class MassConcentrationOfWaterUnit(UnitEnum):
-    gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed
+    gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed.value
 
 
 class MassConcentrationOfWater(QuantityValue):
@@ -2217,16 +2219,16 @@ class MassConcentrationOfWater(QuantityValue):
 
 
 class DensityUnit(UnitEnum):
-    gram_per_liter = Unit.gram_per_liter
-    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter
-    gram_per_milli_liter = Unit.gram_per_milli_liter
-    femto_gram_per_liter = Unit.femto_gram_per_liter
-    pico_gram_per_liter = Unit.pico_gram_per_liter
-    kilo_gram_per_liter = Unit.kilo_gram_per_liter
-    micro_gram_per_liter = Unit.micro_gram_per_liter
-    nano_gram_per_liter = Unit.nano_gram_per_liter
-    gram_per_deci_liter = Unit.gram_per_deci_liter
-    milli_gram_per_liter = Unit.milli_gram_per_liter
+    gram_per_liter = Unit.gram_per_liter.value
+    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter.value
+    gram_per_milli_liter = Unit.gram_per_milli_liter.value
+    femto_gram_per_liter = Unit.femto_gram_per_liter.value
+    pico_gram_per_liter = Unit.pico_gram_per_liter.value
+    kilo_gram_per_liter = Unit.kilo_gram_per_liter.value
+    micro_gram_per_liter = Unit.micro_gram_per_liter.value
+    nano_gram_per_liter = Unit.nano_gram_per_liter.value
+    gram_per_deci_liter = Unit.gram_per_deci_liter.value
+    milli_gram_per_liter = Unit.milli_gram_per_liter.value
 
 
 class Density(QuantityValue):
@@ -2291,7 +2293,7 @@ class Density(QuantityValue):
 
 
 class ElectricCurrentPerEnergyUnit(UnitEnum):
-    ampere_per_joule = Unit.ampere_per_joule
+    ampere_per_joule = Unit.ampere_per_joule.value
 
 
 class ElectricCurrentPerEnergy(QuantityValue):
@@ -2380,7 +2382,7 @@ class AcceptorIonizationEnergy(IonizationEnergy):
 
 
 class MassFlowRateUnit(UnitEnum):
-    kilo_gram_per_second = Unit.kilo_gram_per_second
+    kilo_gram_per_second = Unit.kilo_gram_per_second.value
 
 
 class MassFlowRate(QuantityValue):
@@ -2444,11 +2446,11 @@ class Altitude(Length):
 
 
 class ConcentrationUnit(UnitEnum):
-    mole_per_meter_cubed = Unit.mole_per_meter_cubed
-    milli_mole_per_meter_cubed = Unit.milli_mole_per_meter_cubed
-    mole_per_deci_meter_cubed = Unit.mole_per_deci_meter_cubed
-    kilo_mole_per_meter_cubed = Unit.kilo_mole_per_meter_cubed
-    pico_mole_per_meter_cubed = Unit.pico_mole_per_meter_cubed
+    mole_per_meter_cubed = Unit.mole_per_meter_cubed.value
+    milli_mole_per_meter_cubed = Unit.milli_mole_per_meter_cubed.value
+    mole_per_deci_meter_cubed = Unit.mole_per_deci_meter_cubed.value
+    kilo_mole_per_meter_cubed = Unit.kilo_mole_per_meter_cubed.value
+    pico_mole_per_meter_cubed = Unit.pico_mole_per_meter_cubed.value
 
 
 class Concentration(QuantityValue):
@@ -2518,7 +2520,7 @@ class AmountOfSubstanceOfConcentration(Concentration):
 
 
 class MassPerAreaUnit(UnitEnum):
-    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared
+    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
 
 
 class MassPerArea(QuantityValue):
@@ -2555,7 +2557,7 @@ class MassPerArea(QuantityValue):
 
 
 class ParticleFluenceUnit(UnitEnum):
-    per_meter_squared = Unit.per_meter_squared
+    per_meter_squared = Unit.per_meter_squared.value
 
 
 class ParticleFluence(QuantityValue):
@@ -2671,8 +2673,8 @@ class Gain(DimensionlessRatio):
 
 
 class VolumeThermalExpansionUnit(UnitEnum):
-    meter_cubed_per_kelvin = Unit.meter_cubed_per_kelvin
-    centi_meter_cubed_per_kelvin = Unit.centi_meter_cubed_per_kelvin
+    meter_cubed_per_kelvin = Unit.meter_cubed_per_kelvin.value
+    centi_meter_cubed_per_kelvin = Unit.centi_meter_cubed_per_kelvin.value
 
 
 class VolumeThermalExpansion(QuantityValue):
@@ -2744,7 +2746,7 @@ class PathLength(Length):
 
 
 class MassPerElectricChargeUnit(UnitEnum):
-    second_tesla = Unit.second_tesla
+    second_tesla = Unit.second_tesla.value
 
 
 class MassPerElectricCharge(QuantityValue):
@@ -2781,11 +2783,11 @@ class MassPerElectricCharge(QuantityValue):
 
 
 class AmountOfSubstanceUnit(UnitEnum):
-    mole = Unit.mole
-    milli_mole = Unit.milli_mole
-    femto_mole = Unit.femto_mole
-    kilo_mole = Unit.kilo_mole
-    micro_mole = Unit.micro_mole
+    mole = Unit.mole.value
+    milli_mole = Unit.milli_mole.value
+    femto_mole = Unit.femto_mole.value
+    kilo_mole = Unit.kilo_mole.value
+    micro_mole = Unit.micro_mole.value
 
 
 class AmountOfSubstance(QuantityValue):
@@ -2941,11 +2943,11 @@ class ShannonDiversityIndex(InformationEntropy):
 
 
 class LinearElectricCurrentDensityUnit(UnitEnum):
-    ampere_per_meter = Unit.ampere_per_meter
-    ampere_per_milli_meter = Unit.ampere_per_milli_meter
-    kilo_ampere_per_meter = Unit.kilo_ampere_per_meter
-    ampere_per_centi_meter = Unit.ampere_per_centi_meter
-    milli_ampere_per_milli_meter = Unit.milli_ampere_per_milli_meter
+    ampere_per_meter = Unit.ampere_per_meter.value
+    ampere_per_milli_meter = Unit.ampere_per_milli_meter.value
+    kilo_ampere_per_meter = Unit.kilo_ampere_per_meter.value
+    ampere_per_centi_meter = Unit.ampere_per_centi_meter.value
+    milli_ampere_per_milli_meter = Unit.milli_ampere_per_milli_meter.value
 
 
 class LinearElectricCurrentDensity(QuantityValue):
@@ -3094,7 +3096,7 @@ class CartesianCoordinates(Length):
 
 
 class QuarticElectricDipoleMomentPerCubicEnergyUnit(UnitEnum):
-    field_4_per_joule_cubed = Unit._per_joule_cubed
+    field_4_per_joule_cubed = Unit._per_joule_cubed.value
 
 
 class QuarticElectricDipoleMomentPerCubicEnergy(QuantityValue):
@@ -3210,7 +3212,7 @@ class SpecificGibbsEnergy(SpecificEnergy):
 
 
 class VolumePerUnitAreaUnit(UnitEnum):
-    meter = Unit.meter
+    meter = Unit.meter.value
 
 
 class VolumePerUnitArea(QuantityValue):
@@ -3272,9 +3274,9 @@ class HorizontalVelocity(Velocity):
 
 
 class PlaneAngleUnit(UnitEnum):
-    radian = Unit.radian
-    micro_radian = Unit.micro_radian
-    milli_radian = Unit.milli_radian
+    radian = Unit.radian.value
+    micro_radian = Unit.micro_radian.value
+    milli_radian = Unit.milli_radian.value
 
 
 class PlaneAngle(QuantityValue):
@@ -3338,7 +3340,7 @@ class PositivePlaneAngle(PlaneAngle):
 
 
 class TotalMassStoppingPowerUnit(UnitEnum):
-    joule_meter_squared_per_kilo_gram = Unit.joule_meter_squared_per_kilo_gram
+    joule_meter_squared_per_kilo_gram = Unit.joule_meter_squared_per_kilo_gram.value
 
 
 class TotalMassStoppingPower(QuantityValue):
@@ -3400,12 +3402,12 @@ class AbsoluteTypographicMeasurement(Length):
 
 
 class ElectricCurrentUnit(UnitEnum):
-    ampere = Unit.ampere
-    milli_ampere = Unit.milli_ampere
-    mega_ampere = Unit.mega_ampere
-    pico_ampere = Unit.pico_ampere
-    kilo_ampere = Unit.kilo_ampere
-    micro_ampere = Unit.micro_ampere
+    ampere = Unit.ampere.value
+    milli_ampere = Unit.milli_ampere.value
+    mega_ampere = Unit.mega_ampere.value
+    pico_ampere = Unit.pico_ampere.value
+    kilo_ampere = Unit.kilo_ampere.value
+    micro_ampere = Unit.micro_ampere.value
 
 
 class ElectricCurrent(QuantityValue):
@@ -3476,7 +3478,7 @@ class IonCurrent(ElectricCurrent):
 
 
 class LinearMomentumUnit(UnitEnum):
-    newton_second = Unit.newton_second
+    newton_second = Unit.newton_second.value
 
 
 class LinearMomentum(QuantityValue):
@@ -3594,7 +3596,7 @@ class DynamicFrictionCoefficient(FrictionCoefficient):
 
 
 class IsothermalCompressibilityUnit(UnitEnum):
-    per_pascal = Unit.per_pascal
+    per_pascal = Unit.per_pascal.value
 
 
 class IsothermalCompressibility(QuantityValue):
@@ -3725,11 +3727,11 @@ class SpectralRadiantEnergyDensity(QuantityValue):
 
 
 class ForceUnit(UnitEnum):
-    newton = Unit.newton
-    milli_newton = Unit.milli_newton
-    mega_newton = Unit.mega_newton
-    kilo_newton = Unit.kilo_newton
-    micro_newton = Unit.micro_newton
+    newton = Unit.newton.value
+    milli_newton = Unit.milli_newton.value
+    mega_newton = Unit.mega_newton.value
+    kilo_newton = Unit.kilo_newton.value
+    micro_newton = Unit.micro_newton.value
 
 
 class Force(QuantityValue):
@@ -3851,13 +3853,13 @@ class LatticeVector(Length):
 
 
 class AngularReciprocalLatticeVectorUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class AngularReciprocalLatticeVector(QuantityValue):
@@ -3931,7 +3933,7 @@ class FundamentalReciprocalLatticeVector(AngularReciprocalLatticeVector):
 
 
 class EnergyDensityOfStatesUnit(UnitEnum):
-    per_joule_per_meter_cubed = Unit.per_joule_per_meter_cubed
+    per_joule_per_meter_cubed = Unit.per_joule_per_meter_cubed.value
 
 
 class EnergyDensityOfStates(QuantityValue):
@@ -3968,7 +3970,7 @@ class EnergyDensityOfStates(QuantityValue):
 
 
 class AreaTimeUnit(UnitEnum):
-    centi_meter_squared_minute = Unit.centi_meter_squared_minute
+    centi_meter_squared_minute = Unit.centi_meter_squared_minute.value
 
 
 class AreaTime(QuantityValue):
@@ -4003,11 +4005,11 @@ class AreaTime(QuantityValue):
 
 
 class CoercivityUnit(UnitEnum):
-    ampere_per_meter = Unit.ampere_per_meter
-    ampere_per_milli_meter = Unit.ampere_per_milli_meter
-    kilo_ampere_per_meter = Unit.kilo_ampere_per_meter
-    ampere_per_centi_meter = Unit.ampere_per_centi_meter
-    milli_ampere_per_milli_meter = Unit.milli_ampere_per_milli_meter
+    ampere_per_meter = Unit.ampere_per_meter.value
+    ampere_per_milli_meter = Unit.ampere_per_milli_meter.value
+    kilo_ampere_per_meter = Unit.kilo_ampere_per_meter.value
+    ampere_per_centi_meter = Unit.ampere_per_centi_meter.value
+    milli_ampere_per_milli_meter = Unit.milli_ampere_per_milli_meter.value
 
 
 class Coercivity(QuantityValue):
@@ -4050,13 +4052,13 @@ class Coercivity(QuantityValue):
 
 
 class LinearAttenuationCoefficientUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class LinearAttenuationCoefficient(QuantityValue):
@@ -4103,12 +4105,12 @@ class LinearAttenuationCoefficient(QuantityValue):
 
 
 class AreaUnit(UnitEnum):
-    meter_squared = Unit.meter_squared
-    deci_meter_squared = Unit.deci_meter_squared
-    milli_meter_squared = Unit.milli_meter_squared
-    nano_meter_squared = Unit.nano_meter_squared
-    centi_meter_squared = Unit.centi_meter_squared
-    micro_meter_squared = Unit.micro_meter_squared
+    meter_squared = Unit.meter_squared.value
+    deci_meter_squared = Unit.deci_meter_squared.value
+    milli_meter_squared = Unit.milli_meter_squared.value
+    nano_meter_squared = Unit.nano_meter_squared.value
+    centi_meter_squared = Unit.centi_meter_squared.value
+    micro_meter_squared = Unit.micro_meter_squared.value
 
 
 class Area(QuantityValue):
@@ -4312,7 +4314,7 @@ class ReactorTimeConstant(Time):
 
 
 class ReciprocalMassUnit(UnitEnum):
-    per_gram = Unit.per_gram
+    per_gram = Unit.per_gram.value
 
 
 class ReciprocalMass(QuantityValue):
@@ -4372,15 +4374,15 @@ class TrueExhaustVelocity(Velocity):
 
 
 class ElectrolyticConductivityUnit(UnitEnum):
-    siemens_per_meter = Unit.siemens_per_meter
-    nano_siemens_per_meter = Unit.nano_siemens_per_meter
-    kilo_siemens_per_meter = Unit.kilo_siemens_per_meter
-    milli_siemens_per_meter = Unit.milli_siemens_per_meter
-    micro_siemens_per_meter = Unit.micro_siemens_per_meter
-    deci_siemens_per_meter = Unit.deci_siemens_per_meter
-    pico_siemens_per_meter = Unit.pico_siemens_per_meter
-    mega_siemens_per_meter = Unit.mega_siemens_per_meter
-    siemens_per_centi_meter = Unit.siemens_per_centi_meter
+    siemens_per_meter = Unit.siemens_per_meter.value
+    nano_siemens_per_meter = Unit.nano_siemens_per_meter.value
+    kilo_siemens_per_meter = Unit.kilo_siemens_per_meter.value
+    milli_siemens_per_meter = Unit.milli_siemens_per_meter.value
+    micro_siemens_per_meter = Unit.micro_siemens_per_meter.value
+    deci_siemens_per_meter = Unit.deci_siemens_per_meter.value
+    pico_siemens_per_meter = Unit.pico_siemens_per_meter.value
+    mega_siemens_per_meter = Unit.mega_siemens_per_meter.value
+    siemens_per_centi_meter = Unit.siemens_per_centi_meter.value
 
 
 class ElectrolyticConductivity(QuantityValue):
@@ -4510,7 +4512,7 @@ class SecondMomentOfArea(QuantityValue):
 
 
 class TorquePerAngleUnit(UnitEnum):
-    meter_newton_per_radian = Unit.meter_newton_per_radian
+    meter_newton_per_radian = Unit.meter_newton_per_radian.value
 
 
 class TorquePerAngle(QuantityValue):
@@ -4570,7 +4572,7 @@ class AreaRatio(DimensionlessRatio):
 
 
 class BasicityUnit(UnitEnum):
-    pico_henry = Unit.pico_henry
+    pico_henry = Unit.pico_henry.value
 
 
 class Basicity(QuantityValue):
@@ -4607,13 +4609,13 @@ class Basicity(QuantityValue):
 
 
 class ReactanceUnit(UnitEnum):
-    ohm = Unit.ohm
-    milli_ohm = Unit.milli_ohm
-    mega_ohm = Unit.mega_ohm
-    kilo_ohm = Unit.kilo_ohm
-    micro_ohm = Unit.micro_ohm
-    giga_ohm = Unit.giga_ohm
-    tera_ohm = Unit.tera_ohm
+    ohm = Unit.ohm.value
+    milli_ohm = Unit.milli_ohm.value
+    mega_ohm = Unit.mega_ohm.value
+    kilo_ohm = Unit.kilo_ohm.value
+    micro_ohm = Unit.micro_ohm.value
+    giga_ohm = Unit.giga_ohm.value
+    tera_ohm = Unit.tera_ohm.value
 
 
 class Reactance(QuantityValue):
@@ -4658,7 +4660,7 @@ class Reactance(QuantityValue):
 
 
 class BatteryCapacityUnit(UnitEnum):
-    ampere_second = Unit.ampere_second
+    ampere_second = Unit.ampere_second.value
 
 
 class BatteryCapacity(QuantityValue):
@@ -4723,7 +4725,7 @@ class MassPropertyUncertainty(Mass):
 
 class VaporPermeabilityUnit(UnitEnum):
     kilo_gram_per_meter_per_pascal_per_second = (
-        Unit.kilo_gram_per_meter_per_pascal_per_second
+        Unit.kilo_gram_per_meter_per_pascal_per_second.value
     )
 
 
@@ -4867,16 +4869,16 @@ class LatticePlaneSpacing(Length):
 
 
 class MassDensityUnit(UnitEnum):
-    gram_per_liter = Unit.gram_per_liter
-    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter
-    gram_per_milli_liter = Unit.gram_per_milli_liter
-    femto_gram_per_liter = Unit.femto_gram_per_liter
-    pico_gram_per_liter = Unit.pico_gram_per_liter
-    kilo_gram_per_liter = Unit.kilo_gram_per_liter
-    micro_gram_per_liter = Unit.micro_gram_per_liter
-    nano_gram_per_liter = Unit.nano_gram_per_liter
-    gram_per_deci_liter = Unit.gram_per_deci_liter
-    milli_gram_per_liter = Unit.milli_gram_per_liter
+    gram_per_liter = Unit.gram_per_liter.value
+    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter.value
+    gram_per_milli_liter = Unit.gram_per_milli_liter.value
+    femto_gram_per_liter = Unit.femto_gram_per_liter.value
+    pico_gram_per_liter = Unit.pico_gram_per_liter.value
+    kilo_gram_per_liter = Unit.kilo_gram_per_liter.value
+    micro_gram_per_liter = Unit.micro_gram_per_liter.value
+    nano_gram_per_liter = Unit.nano_gram_per_liter.value
+    gram_per_deci_liter = Unit.gram_per_deci_liter.value
+    milli_gram_per_liter = Unit.milli_gram_per_liter.value
 
 
 class MassDensity(QuantityValue):
@@ -4937,11 +4939,11 @@ class MassDensity(QuantityValue):
 
 
 class LinearVelocityUnit(UnitEnum):
-    meter_per_second = Unit.meter_per_second
-    kilo_meter_per_second = Unit.kilo_meter_per_second
-    micro_meter_per_second = Unit.micro_meter_per_second
-    centi_meter_per_second = Unit.centi_meter_per_second
-    milli_meter_per_second = Unit.milli_meter_per_second
+    meter_per_second = Unit.meter_per_second.value
+    kilo_meter_per_second = Unit.kilo_meter_per_second.value
+    micro_meter_per_second = Unit.micro_meter_per_second.value
+    centi_meter_per_second = Unit.centi_meter_per_second.value
+    milli_meter_per_second = Unit.milli_meter_per_second.value
 
 
 class LinearVelocity(QuantityValue):
@@ -5038,7 +5040,7 @@ class VolumeFraction(DimensionlessRatio):
 
 
 class TimeTemperatureUnit(UnitEnum):
-    kelvin_second = Unit.kelvin_second
+    kelvin_second = Unit.kelvin_second.value
 
 
 class TimeTemperature(QuantityValue):
@@ -5100,14 +5102,14 @@ class MassExcess(Mass):
 
 
 class FugacityUnit(UnitEnum):
-    pascal = Unit.pascal
-    milli_pascal = Unit.milli_pascal
-    deca_pascal = Unit.deca_pascal
-    kilo_pascal = Unit.kilo_pascal
-    micro_pascal = Unit.micro_pascal
-    hecto_pascal = Unit.hecto_pascal
-    mega_pascal = Unit.mega_pascal
-    giga_pascal = Unit.giga_pascal
+    pascal = Unit.pascal.value
+    milli_pascal = Unit.milli_pascal.value
+    deca_pascal = Unit.deca_pascal.value
+    kilo_pascal = Unit.kilo_pascal.value
+    micro_pascal = Unit.micro_pascal.value
+    hecto_pascal = Unit.hecto_pascal.value
+    mega_pascal = Unit.mega_pascal.value
+    giga_pascal = Unit.giga_pascal.value
 
 
 class Fugacity(QuantityValue):
@@ -5180,13 +5182,13 @@ class PropellantMass(Mass):
 
 
 class AttenuationCoefficientUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class AttenuationCoefficient(QuantityValue):
@@ -5233,16 +5235,16 @@ class AttenuationCoefficient(QuantityValue):
 
 
 class LagrangeFunctionUnit(UnitEnum):
-    joule = Unit.joule
-    atto_joule = Unit.atto_joule
-    kilo_joule = Unit.kilo_joule
-    peta_joule = Unit.peta_joule
-    milli_joule = Unit.milli_joule
-    giga_joule = Unit.giga_joule
-    femto_joule = Unit.femto_joule
-    exa_joule = Unit.exa_joule
-    tera_joule = Unit.tera_joule
-    mega_joule = Unit.mega_joule
+    joule = Unit.joule.value
+    atto_joule = Unit.atto_joule.value
+    kilo_joule = Unit.kilo_joule.value
+    peta_joule = Unit.peta_joule.value
+    milli_joule = Unit.milli_joule.value
+    giga_joule = Unit.giga_joule.value
+    femto_joule = Unit.femto_joule.value
+    exa_joule = Unit.exa_joule.value
+    tera_joule = Unit.tera_joule.value
+    mega_joule = Unit.mega_joule.value
 
 
 class LagrangeFunction(QuantityValue):
@@ -5331,15 +5333,15 @@ class LinearElectricCurrentDensity(QuantityValue):
 
 
 class PowerUnit(UnitEnum):
-    watt = Unit.watt
-    pico_watt = Unit.pico_watt
-    micro_watt = Unit.micro_watt
-    tera_watt = Unit.tera_watt
-    nano_watt = Unit.nano_watt
-    mega_watt = Unit.mega_watt
-    giga_watt = Unit.giga_watt
-    milli_watt = Unit.milli_watt
-    kilo_watt = Unit.kilo_watt
+    watt = Unit.watt.value
+    pico_watt = Unit.pico_watt.value
+    micro_watt = Unit.micro_watt.value
+    tera_watt = Unit.tera_watt.value
+    nano_watt = Unit.nano_watt.value
+    mega_watt = Unit.mega_watt.value
+    giga_watt = Unit.giga_watt.value
+    milli_watt = Unit.milli_watt.value
+    kilo_watt = Unit.kilo_watt.value
 
 
 class Power(QuantityValue):
@@ -5477,7 +5479,7 @@ class FlightPerformanceReservePropellantMass(Mass):
 
 
 class TemporalSummationFunctionUnit(UnitEnum):
-    per_second_per_steradian = Unit.per_second_per_steradian
+    per_second_per_steradian = Unit.per_second_per_steradian.value
 
 
 class TemporalSummationFunction(QuantityValue):
@@ -5514,7 +5516,7 @@ class TemporalSummationFunction(QuantityValue):
 
 
 class AreaPerTimeUnit(UnitEnum):
-    hertz_meter_squared = Unit.hertz_meter_squared
+    hertz_meter_squared = Unit.hertz_meter_squared.value
 
 
 class AreaPerTime(QuantityValue):
@@ -5576,9 +5578,9 @@ class ThermalDiffusivity(AreaPerTime):
 
 
 class MolarVolumeUnit(UnitEnum):
-    meter_cubed_per_mole = Unit.meter_cubed_per_mole
-    centi_meter_cubed_per_mole = Unit.centi_meter_cubed_per_mole
-    deci_meter_cubed_per_mole = Unit.deci_meter_cubed_per_mole
+    meter_cubed_per_mole = Unit.meter_cubed_per_mole.value
+    centi_meter_cubed_per_mole = Unit.centi_meter_cubed_per_mole.value
+    deci_meter_cubed_per_mole = Unit.deci_meter_cubed_per_mole.value
 
 
 class MolarVolume(QuantityValue):
@@ -5619,7 +5621,7 @@ class MolarVolume(QuantityValue):
 
 
 class SoundPowerLevelUnit(UnitEnum):
-    byte = Unit.byte
+    byte = Unit.byte.value
 
 
 class SoundPowerLevel(QuantityValue):
@@ -5683,14 +5685,14 @@ class AuditoryThresholds(SoundPowerLevel):
 
 
 class ModulusOfElasticityUnit(UnitEnum):
-    pascal = Unit.pascal
-    milli_pascal = Unit.milli_pascal
-    deca_pascal = Unit.deca_pascal
-    kilo_pascal = Unit.kilo_pascal
-    micro_pascal = Unit.micro_pascal
-    hecto_pascal = Unit.hecto_pascal
-    mega_pascal = Unit.mega_pascal
-    giga_pascal = Unit.giga_pascal
+    pascal = Unit.pascal.value
+    milli_pascal = Unit.milli_pascal.value
+    deca_pascal = Unit.deca_pascal.value
+    kilo_pascal = Unit.kilo_pascal.value
+    micro_pascal = Unit.micro_pascal.value
+    hecto_pascal = Unit.hecto_pascal.value
+    mega_pascal = Unit.mega_pascal.value
+    giga_pascal = Unit.giga_pascal.value
 
 
 class ModulusOfElasticity(QuantityValue):
@@ -5738,8 +5740,8 @@ class ModulusOfElasticity(QuantityValue):
 
 
 class SpecificVolumeUnit(UnitEnum):
-    meter_cubed_per_kilo_gram = Unit.meter_cubed_per_kilo_gram
-    milli_meter_cubed_per_kilo_gram = Unit.milli_meter_cubed_per_kilo_gram
+    meter_cubed_per_kilo_gram = Unit.meter_cubed_per_kilo_gram.value
+    milli_meter_cubed_per_kilo_gram = Unit.milli_meter_cubed_per_kilo_gram.value
 
 
 class SpecificVolume(QuantityValue):
@@ -5812,13 +5814,13 @@ class MomentOfInertia(QuantityValue):
 
 
 class ElectricChargePerAreaUnit(UnitEnum):
-    coulomb_per_meter_squared = Unit.coulomb_per_meter_squared
-    micro_coulomb_per_meter_squared = Unit.micro_coulomb_per_meter_squared
-    milli_coulomb_per_meter_squared = Unit.milli_coulomb_per_meter_squared
-    coulomb_per_milli_meter_squared = Unit.coulomb_per_milli_meter_squared
-    coulomb_per_centi_meter_squared = Unit.coulomb_per_centi_meter_squared
-    mega_coulomb_per_meter_squared = Unit.mega_coulomb_per_meter_squared
-    kilo_coulomb_per_meter_squared = Unit.kilo_coulomb_per_meter_squared
+    coulomb_per_meter_squared = Unit.coulomb_per_meter_squared.value
+    micro_coulomb_per_meter_squared = Unit.micro_coulomb_per_meter_squared.value
+    milli_coulomb_per_meter_squared = Unit.milli_coulomb_per_meter_squared.value
+    coulomb_per_milli_meter_squared = Unit.coulomb_per_milli_meter_squared.value
+    coulomb_per_centi_meter_squared = Unit.coulomb_per_centi_meter_squared.value
+    mega_coulomb_per_meter_squared = Unit.mega_coulomb_per_meter_squared.value
+    kilo_coulomb_per_meter_squared = Unit.kilo_coulomb_per_meter_squared.value
 
 
 class ElectricChargePerArea(QuantityValue):
@@ -5900,7 +5902,7 @@ class ElectricChargeSurfaceDensity(ElectricChargePerArea):
 
 
 class NeonTemperatureVarianceUnit(UnitEnum):
-    Celsius_squared = Unit.Celsius_squared
+    Celsius_squared = Unit.Celsius_squared.value
 
 
 class NeonTemperatureVariance(QuantityValue):
@@ -5937,13 +5939,13 @@ class NeonTemperatureVariance(QuantityValue):
 
 
 class PhaseCoefficientUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class PhaseCoefficient(QuantityValue):
@@ -6017,7 +6019,7 @@ class CalorificValue(SpecificEnergy):
 
 
 class ThermalInsulanceUnit(UnitEnum):
-    kelvin_meter_squared_per_watt = Unit.kelvin_meter_squared_per_watt
+    kelvin_meter_squared_per_watt = Unit.kelvin_meter_squared_per_watt.value
 
 
 class ThermalInsulance(QuantityValue):
@@ -6128,10 +6130,10 @@ class Tilt(Angle):
 
 
 class MagneticFluxDensityUnit(UnitEnum):
-    tesla = Unit.tesla
-    milli_tesla = Unit.milli_tesla
-    micro_tesla = Unit.micro_tesla
-    nano_tesla = Unit.nano_tesla
+    tesla = Unit.tesla.value
+    milli_tesla = Unit.milli_tesla.value
+    micro_tesla = Unit.micro_tesla.value
+    nano_tesla = Unit.nano_tesla.value
 
 
 class MagneticFluxDensity(QuantityValue):
@@ -6249,14 +6251,14 @@ class InternalEnergy(Energy):
 
 
 class MassRatioUnit(UnitEnum):
-    field_ = Unit.field_
+    field_ = Unit.field_.value
     field__1 = (
         "Item:OSW36c3b3d668515d6ba8fd68089a3a0371#OSWae508fcfb7fb56c78ae5250e13758161"
     )
-    micro_gram_per_gram = Unit.micro_gram_per_gram
-    gram_per_kilo_gram = Unit.gram_per_kilo_gram
-    milli_gram_per_gram = Unit.milli_gram_per_gram
-    pico_gram_per_gram = Unit.pico_gram_per_gram
+    micro_gram_per_gram = Unit.micro_gram_per_gram.value
+    gram_per_kilo_gram = Unit.gram_per_kilo_gram.value
+    milli_gram_per_gram = Unit.milli_gram_per_gram.value
+    pico_gram_per_gram = Unit.pico_gram_per_gram.value
 
 
 class MassRatio(QuantityValue):
@@ -6327,9 +6329,9 @@ class SecondStageMassRatio(MassRatio):
 
 
 class DiffusionCoefficientUnit(UnitEnum):
-    meter_squared_per_second = Unit.meter_squared_per_second
-    milli_meter_squared_per_second = Unit.milli_meter_squared_per_second
-    centi_meter_squared_per_second = Unit.centi_meter_squared_per_second
+    meter_squared_per_second = Unit.meter_squared_per_second.value
+    milli_meter_squared_per_second = Unit.milli_meter_squared_per_second.value
+    centi_meter_squared_per_second = Unit.centi_meter_squared_per_second.value
 
 
 class DiffusionCoefficient(QuantityValue):
@@ -6370,16 +6372,16 @@ class DiffusionCoefficient(QuantityValue):
 
 
 class BloodGlucoseLevelByMassUnit(UnitEnum):
-    gram_per_liter = Unit.gram_per_liter
-    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter
-    gram_per_milli_liter = Unit.gram_per_milli_liter
-    femto_gram_per_liter = Unit.femto_gram_per_liter
-    pico_gram_per_liter = Unit.pico_gram_per_liter
-    kilo_gram_per_liter = Unit.kilo_gram_per_liter
-    micro_gram_per_liter = Unit.micro_gram_per_liter
-    nano_gram_per_liter = Unit.nano_gram_per_liter
-    gram_per_deci_liter = Unit.gram_per_deci_liter
-    milli_gram_per_liter = Unit.milli_gram_per_liter
+    gram_per_liter = Unit.gram_per_liter.value
+    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter.value
+    gram_per_milli_liter = Unit.gram_per_milli_liter.value
+    femto_gram_per_liter = Unit.femto_gram_per_liter.value
+    pico_gram_per_liter = Unit.pico_gram_per_liter.value
+    kilo_gram_per_liter = Unit.kilo_gram_per_liter.value
+    micro_gram_per_liter = Unit.micro_gram_per_liter.value
+    nano_gram_per_liter = Unit.nano_gram_per_liter.value
+    gram_per_deci_liter = Unit.gram_per_deci_liter.value
+    milli_gram_per_liter = Unit.milli_gram_per_liter.value
 
 
 class BloodGlucoseLevelByMass(QuantityValue):
@@ -6458,7 +6460,7 @@ class BloodGlucoseLevelByMass(QuantityValue):
 
 class SpecificHeatCapacityUnit(UnitEnum):
     meter_squared_per_kelvin_per_second_squared = (
-        Unit.meter_squared_per_kelvin_per_second_squared
+        Unit.meter_squared_per_kelvin_per_second_squared.value
     )
 
 
@@ -6523,7 +6525,7 @@ class ColdReceptorThreshold(Temperature):
 
 
 class ElectricQuadrupoleMomentUnit(UnitEnum):
-    coulomb_meter_squared = Unit.coulomb_meter_squared
+    coulomb_meter_squared = Unit.coulomb_meter_squared.value
 
 
 class ElectricQuadrupoleMoment(QuantityValue):
@@ -6563,7 +6565,7 @@ class ElectricQuadrupoleMoment(QuantityValue):
 
 
 class MagneticReluctivityUnit(UnitEnum):
-    per_meter_per_tesla = Unit.per_meter_per_tesla
+    per_meter_per_tesla = Unit.per_meter_per_tesla.value
 
 
 class MagneticReluctivity(QuantityValue):
@@ -6627,7 +6629,7 @@ class SpatialSummationFunction(Length):
 
 
 class ParticleSourceDensityUnit(UnitEnum):
-    per_meter_cubed_per_second = Unit.per_meter_cubed_per_second
+    per_meter_cubed_per_second = Unit.per_meter_cubed_per_second.value
 
 
 class ParticleSourceDensity(QuantityValue):
@@ -6793,8 +6795,8 @@ class InitialNozzleThroatDiameter(NozzleThroatDiameter):
 
 
 class StandardGravitationalParameterUnit(UnitEnum):
-    meter_cubed_per_second_squared = Unit.meter_cubed_per_second_squared
-    kilo_meter_cubed_per_second_squared = Unit.kilo_meter_cubed_per_second_squared
+    meter_cubed_per_second_squared = Unit.meter_cubed_per_second_squared.value
+    kilo_meter_cubed_per_second_squared = Unit.kilo_meter_cubed_per_second_squared.value
 
 
 class StandardGravitationalParameter(QuantityValue):
@@ -6834,11 +6836,11 @@ class StandardGravitationalParameter(QuantityValue):
 
 
 class VoltageUnit(UnitEnum):
-    volt = Unit.volt
-    micro_volt = Unit.micro_volt
-    mega_volt = Unit.mega_volt
-    milli_volt = Unit.milli_volt
-    kilo_volt = Unit.kilo_volt
+    volt = Unit.volt.value
+    micro_volt = Unit.micro_volt.value
+    mega_volt = Unit.mega_volt.value
+    milli_volt = Unit.milli_volt.value
+    kilo_volt = Unit.kilo_volt.value
 
 
 class Voltage(QuantityValue):
@@ -6876,7 +6878,7 @@ class Voltage(QuantityValue):
 
 
 class EnergyPerAreaElectricChargeUnit(UnitEnum):
-    volt_per_meter_squared = Unit.volt_per_meter_squared
+    volt_per_meter_squared = Unit.volt_per_meter_squared.value
 
 
 class EnergyPerAreaElectricCharge(QuantityValue):
@@ -6940,12 +6942,12 @@ class NeutronDiffusionLength(Length):
 
 
 class SectionModulusUnit(UnitEnum):
-    meter_cubed = Unit.meter_cubed
-    milli_meter_cubed = Unit.milli_meter_cubed
-    deci_meter_cubed = Unit.deci_meter_cubed
-    micro_meter_cubed = Unit.micro_meter_cubed
-    deca_meter_cubed = Unit.deca_meter_cubed
-    centi_meter_cubed = Unit.centi_meter_cubed
+    meter_cubed = Unit.meter_cubed.value
+    milli_meter_cubed = Unit.milli_meter_cubed.value
+    deci_meter_cubed = Unit.deci_meter_cubed.value
+    micro_meter_cubed = Unit.micro_meter_cubed.value
+    deca_meter_cubed = Unit.deca_meter_cubed.value
+    centi_meter_cubed = Unit.centi_meter_cubed.value
 
 
 class SectionModulus(QuantityValue):
@@ -6989,11 +6991,11 @@ class SectionModulus(QuantityValue):
 
 
 class PowerPerAreaUnit(UnitEnum):
-    watt_per_meter_squared = Unit.watt_per_meter_squared
-    watt_per_centi_meter_squared = Unit.watt_per_centi_meter_squared
-    pico_watt_per_meter_squared = Unit.pico_watt_per_meter_squared
-    milli_watt_per_meter_squared = Unit.milli_watt_per_meter_squared
-    micro_watt_per_meter_squared = Unit.micro_watt_per_meter_squared
+    watt_per_meter_squared = Unit.watt_per_meter_squared.value
+    watt_per_centi_meter_squared = Unit.watt_per_centi_meter_squared.value
+    pico_watt_per_meter_squared = Unit.pico_watt_per_meter_squared.value
+    milli_watt_per_meter_squared = Unit.milli_watt_per_meter_squared.value
+    micro_watt_per_meter_squared = Unit.micro_watt_per_meter_squared.value
 
 
 class PowerPerArea(QuantityValue):
@@ -7034,7 +7036,7 @@ class PowerPerArea(QuantityValue):
 
 
 class ForcePerAngleUnit(UnitEnum):
-    newton_per_radian = Unit.newton_per_radian
+    newton_per_radian = Unit.newton_per_radian.value
 
 
 class ForcePerAngle(QuantityValue):
@@ -7204,8 +7206,8 @@ class HeatFlowRatePerUnitArea(PowerPerArea):
 
 
 class RadiantEnergyDensityUnit(UnitEnum):
-    joule_per_meter_cubed = Unit.joule_per_meter_cubed
-    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed
+    joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
+    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed.value
 
 
 class RadiantEnergyDensity(QuantityValue):
@@ -7242,7 +7244,7 @@ class RadiantEnergyDensity(QuantityValue):
 
 
 class EnergyPerSquareMagneticFluxDensityUnit(UnitEnum):
-    joule_per_tesla_squared = Unit.joule_per_tesla_squared
+    joule_per_tesla_squared = Unit.joule_per_tesla_squared.value
 
 
 class EnergyPerSquareMagneticFluxDensity(QuantityValue):
@@ -7341,7 +7343,7 @@ class PredictedMass(Mass):
 
 
 class PowerAreaUnit(UnitEnum):
-    meter_squared_watt = Unit.meter_squared_watt
+    meter_squared_watt = Unit.meter_squared_watt.value
 
 
 class PowerArea(QuantityValue):
@@ -7376,13 +7378,13 @@ class PowerArea(QuantityValue):
 
 
 class CurvatureUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class Curvature(QuantityValue):
@@ -7429,7 +7431,7 @@ class Curvature(QuantityValue):
 
 
 class TemperatureAmountOfSubstanceUnit(UnitEnum):
-    Celsius_mole = Unit.Celsius_mole
+    Celsius_mole = Unit.Celsius_mole.value
 
 
 class TemperatureAmountOfSubstance(QuantityValue):
@@ -7543,7 +7545,7 @@ class ResonanceEscapeProbabilityForFission(Dimensionless):
 
 
 class FluxUnit(UnitEnum):
-    per_meter_squared_per_second = Unit.per_meter_squared_per_second
+    per_meter_squared_per_second = Unit.per_meter_squared_per_second.value
 
 
 class Flux(QuantityValue):
@@ -7580,9 +7582,9 @@ class Flux(QuantityValue):
 
 
 class SoundVolumeVelocityUnit(UnitEnum):
-    meter_cubed_per_second = Unit.meter_cubed_per_second
-    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second
-    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second
+    meter_cubed_per_second = Unit.meter_cubed_per_second.value
+    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second.value
+    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second.value
 
 
 class SoundVolumeVelocity(QuantityValue):
@@ -7623,14 +7625,14 @@ class SoundVolumeVelocity(QuantityValue):
 
 
 class BulkModulusUnit(UnitEnum):
-    pascal = Unit.pascal
-    milli_pascal = Unit.milli_pascal
-    deca_pascal = Unit.deca_pascal
-    kilo_pascal = Unit.kilo_pascal
-    micro_pascal = Unit.micro_pascal
-    hecto_pascal = Unit.hecto_pascal
-    mega_pascal = Unit.mega_pascal
-    giga_pascal = Unit.giga_pascal
+    pascal = Unit.pascal.value
+    milli_pascal = Unit.milli_pascal.value
+    deca_pascal = Unit.deca_pascal.value
+    kilo_pascal = Unit.kilo_pascal.value
+    micro_pascal = Unit.micro_pascal.value
+    hecto_pascal = Unit.hecto_pascal.value
+    mega_pascal = Unit.mega_pascal.value
+    giga_pascal = Unit.giga_pascal.value
 
 
 class BulkModulus(QuantityValue):
@@ -7782,7 +7784,7 @@ class Weight(Force):
 
 
 class CoefficientOfHeatTransferUnit(UnitEnum):
-    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared
+    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
 
 
 class CoefficientOfHeatTransfer(QuantityValue):
@@ -7898,7 +7900,7 @@ class RelativeMolecularMass(DimensionlessRatio):
 
 
 class AngularVelocityUnit(UnitEnum):
-    radian_per_second = Unit.radian_per_second
+    radian_per_second = Unit.radian_per_second.value
 
 
 class AngularVelocity(QuantityValue):
@@ -7962,9 +7964,9 @@ class Vorticity(AngularVelocity):
 
 
 class MeasurementUnitOfSpectralRadianceUnit(UnitEnum):
-    watt_per_meter_cubed_per_steradian = Unit.watt_per_meter_cubed_per_steradian
+    watt_per_meter_cubed_per_steradian = Unit.watt_per_meter_cubed_per_steradian.value
     watt_per_meter_squared_per_nano_meter_per_steradian = (
-        Unit.watt_per_meter_squared_per_nano_meter_per_steradian
+        Unit.watt_per_meter_squared_per_nano_meter_per_steradian.value
     )
 
 
@@ -8059,8 +8061,8 @@ class IonConcentration(Concentration):
 
 
 class ActionUnit(UnitEnum):
-    joule_second = Unit.joule_second
-    atto_joule_second = Unit.atto_joule_second
+    joule_second = Unit.joule_second.value
+    atto_joule_second = Unit.atto_joule_second.value
 
 
 class Action(QuantityValue):
@@ -8231,11 +8233,11 @@ class PotentialEnergy(Energy):
 
 
 class FrequencyUnit(UnitEnum):
-    hertz = Unit.hertz
-    mega_hertz = Unit.mega_hertz
-    kilo_hertz = Unit.kilo_hertz
-    giga_hertz = Unit.giga_hertz
-    tera_hertz = Unit.tera_hertz
+    hertz = Unit.hertz.value
+    mega_hertz = Unit.mega_hertz.value
+    kilo_hertz = Unit.kilo_hertz.value
+    giga_hertz = Unit.giga_hertz.value
+    tera_hertz = Unit.tera_hertz.value
 
 
 class Frequency(QuantityValue):
@@ -8278,7 +8280,7 @@ class Frequency(QuantityValue):
 
 
 class MolarAbsorptionCoefficientUnit(UnitEnum):
-    meter_squared_per_mole = Unit.meter_squared_per_mole
+    meter_squared_per_mole = Unit.meter_squared_per_mole.value
 
 
 class MolarAbsorptionCoefficient(QuantityValue):
@@ -8382,14 +8384,14 @@ class Volume(Volume1):
 
 
 class ElectricChargeDensityUnit(UnitEnum):
-    coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed
-    mega_coulomb_per_meter_cubed = Unit.mega_coulomb_per_meter_cubed
-    kilo_coulomb_per_meter_cubed = Unit.kilo_coulomb_per_meter_cubed
-    coulomb_per_milli_meter_cubed = Unit.coulomb_per_milli_meter_cubed
-    milli_coulomb_per_meter_cubed = Unit.milli_coulomb_per_meter_cubed
-    micro_coulomb_per_meter_cubed = Unit.micro_coulomb_per_meter_cubed
-    giga_coulomb_per_meter_cubed = Unit.giga_coulomb_per_meter_cubed
-    coulomb_per_centi_meter_cubed = Unit.coulomb_per_centi_meter_cubed
+    coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed.value
+    mega_coulomb_per_meter_cubed = Unit.mega_coulomb_per_meter_cubed.value
+    kilo_coulomb_per_meter_cubed = Unit.kilo_coulomb_per_meter_cubed.value
+    coulomb_per_milli_meter_cubed = Unit.coulomb_per_milli_meter_cubed.value
+    milli_coulomb_per_meter_cubed = Unit.milli_coulomb_per_meter_cubed.value
+    micro_coulomb_per_meter_cubed = Unit.micro_coulomb_per_meter_cubed.value
+    giga_coulomb_per_meter_cubed = Unit.giga_coulomb_per_meter_cubed.value
+    coulomb_per_centi_meter_cubed = Unit.coulomb_per_centi_meter_cubed.value
 
 
 class ElectricChargeDensity(QuantityValue):
@@ -8473,11 +8475,11 @@ class MigrationArea(Area):
 
 
 class PermeanceUnit(UnitEnum):
-    henry = Unit.henry
-    nano_henry = Unit.nano_henry
-    pico_henry = Unit.pico_henry
-    milli_henry = Unit.milli_henry
-    micro_henry = Unit.micro_henry
+    henry = Unit.henry.value
+    nano_henry = Unit.nano_henry.value
+    pico_henry = Unit.pico_henry.value
+    milli_henry = Unit.milli_henry.value
+    micro_henry = Unit.micro_henry.value
 
 
 class Permeance(QuantityValue):
@@ -8606,7 +8608,7 @@ class Length(QuantityValue):
 
 
 class LuminousEnergyUnit(UnitEnum):
-    lumen_second = Unit.lumen_second
+    lumen_second = Unit.lumen_second.value
 
 
 class LuminousEnergy(QuantityValue):
@@ -8643,15 +8645,15 @@ class LuminousEnergy(QuantityValue):
 
 
 class ConductivityUnit(UnitEnum):
-    siemens_per_meter = Unit.siemens_per_meter
-    nano_siemens_per_meter = Unit.nano_siemens_per_meter
-    kilo_siemens_per_meter = Unit.kilo_siemens_per_meter
-    milli_siemens_per_meter = Unit.milli_siemens_per_meter
-    micro_siemens_per_meter = Unit.micro_siemens_per_meter
-    deci_siemens_per_meter = Unit.deci_siemens_per_meter
-    pico_siemens_per_meter = Unit.pico_siemens_per_meter
-    mega_siemens_per_meter = Unit.mega_siemens_per_meter
-    siemens_per_centi_meter = Unit.siemens_per_centi_meter
+    siemens_per_meter = Unit.siemens_per_meter.value
+    nano_siemens_per_meter = Unit.nano_siemens_per_meter.value
+    kilo_siemens_per_meter = Unit.kilo_siemens_per_meter.value
+    milli_siemens_per_meter = Unit.milli_siemens_per_meter.value
+    micro_siemens_per_meter = Unit.micro_siemens_per_meter.value
+    deci_siemens_per_meter = Unit.deci_siemens_per_meter.value
+    pico_siemens_per_meter = Unit.pico_siemens_per_meter.value
+    mega_siemens_per_meter = Unit.mega_siemens_per_meter.value
+    siemens_per_centi_meter = Unit.siemens_per_centi_meter.value
 
 
 class Conductivity(QuantityValue):
@@ -8710,7 +8712,7 @@ class Conductivity(QuantityValue):
 
 
 class MagneticDipoleMomentUnit(UnitEnum):
-    meter_squared_newton_per_ampere = Unit.meter_squared_newton_per_ampere
+    meter_squared_newton_per_ampere = Unit.meter_squared_newton_per_ampere.value
 
 
 class MagneticDipoleMoment(QuantityValue):
@@ -8875,7 +8877,7 @@ class ForcePerArea(QuantityValue):
 
 
 class SpecificHeatCapacityAtConstantVolumeUnit(UnitEnum):
-    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram
+    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram.value
 
 
 class SpecificHeatCapacityAtConstantVolume(QuantityValue):
@@ -8937,7 +8939,7 @@ class KineticOrThermalEnergy(Energy):
 
 
 class MassTemperatureUnit(UnitEnum):
-    kelvin_kilo_gram = Unit.kelvin_kilo_gram
+    kelvin_kilo_gram = Unit.kelvin_kilo_gram.value
 
 
 class MassTemperature(QuantityValue):
@@ -8972,8 +8974,10 @@ class MassTemperature(QuantityValue):
 
 
 class ReactionRateConstantUnit(UnitEnum):
-    meter_cubed_per_mole_per_second = Unit.meter_cubed_per_mole_per_second
-    centi_meter_cubed_per_mole_per_second = Unit.centi_meter_cubed_per_mole_per_second
+    meter_cubed_per_mole_per_second = Unit.meter_cubed_per_mole_per_second.value
+    centi_meter_cubed_per_mole_per_second = (
+        Unit.centi_meter_cubed_per_mole_per_second.value
+    )
 
 
 class ReactionRateConstant(QuantityValue):
@@ -9040,7 +9044,7 @@ class AtmosphericHydroxylationRate(ReactionRateConstant):
 
 
 class ElectricFluxUnit(UnitEnum):
-    meter_volt = Unit.meter_volt
+    meter_volt = Unit.meter_volt.value
 
 
 class ElectricFlux(QuantityValue):
@@ -9104,7 +9108,7 @@ class LiftCoefficient(Dimensionless):
 
 
 class ThermalConductanceUnit(UnitEnum):
-    watt_per_kelvin = Unit.watt_per_kelvin
+    watt_per_kelvin = Unit.watt_per_kelvin.value
 
 
 class ThermalConductance(QuantityValue):
@@ -9141,7 +9145,7 @@ class ThermalConductance(QuantityValue):
 
 
 class RelativePressureCoefficientUnit(UnitEnum):
-    per_kelvin = Unit.per_kelvin
+    per_kelvin = Unit.per_kelvin.value
 
 
 class RelativePressureCoefficient(QuantityValue):
@@ -9176,11 +9180,11 @@ class RelativePressureCoefficient(QuantityValue):
 
 
 class TotalCurrentDensityUnit(UnitEnum):
-    ampere_per_meter_squared = Unit.ampere_per_meter_squared
-    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared
-    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared
-    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared
-    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared
+    ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
+    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared.value
+    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared.value
+    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared.value
+    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared.value
 
 
 class TotalCurrentDensity(QuantityValue):
@@ -9277,7 +9281,7 @@ class GapEnergy(Energy):
 
 
 class MolarOpticalRotatoryPowerUnit(UnitEnum):
-    meter_squared_radian_per_mole = Unit.meter_squared_radian_per_mole
+    meter_squared_radian_per_mole = Unit.meter_squared_radian_per_mole.value
 
 
 class MolarOpticalRotatoryPower(QuantityValue):
@@ -9314,7 +9318,7 @@ class MolarOpticalRotatoryPower(QuantityValue):
 
 
 class DensityOfStatesUnit(UnitEnum):
-    second_per_meter_cubed_per_radian = Unit.second_per_meter_cubed_per_radian
+    second_per_meter_cubed_per_radian = Unit.second_per_meter_cubed_per_radian.value
 
 
 class DensityOfStates(QuantityValue):
@@ -9538,7 +9542,7 @@ class StaticPressure(Pressure):
 
 
 class MagneticVectorPotentialUnit(UnitEnum):
-    second_volt_per_meter = Unit.second_volt_per_meter
+    second_volt_per_meter = Unit.second_volt_per_meter.value
 
 
 class MagneticVectorPotential(QuantityValue):
@@ -9578,8 +9582,8 @@ class MagneticVectorPotential(QuantityValue):
 
 
 class EnergyDensityUnit(UnitEnum):
-    joule_per_meter_cubed = Unit.joule_per_meter_cubed
-    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed
+    joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
+    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed.value
 
 
 class EnergyDensity(QuantityValue):
@@ -9643,16 +9647,16 @@ class StrainEnergyDensity(EnergyDensity):
 
 
 class LevelWidthUnit(UnitEnum):
-    joule = Unit.joule
-    atto_joule = Unit.atto_joule
-    kilo_joule = Unit.kilo_joule
-    peta_joule = Unit.peta_joule
-    milli_joule = Unit.milli_joule
-    giga_joule = Unit.giga_joule
-    femto_joule = Unit.femto_joule
-    exa_joule = Unit.exa_joule
-    tera_joule = Unit.tera_joule
-    mega_joule = Unit.mega_joule
+    joule = Unit.joule.value
+    atto_joule = Unit.atto_joule.value
+    kilo_joule = Unit.kilo_joule.value
+    peta_joule = Unit.peta_joule.value
+    milli_joule = Unit.milli_joule.value
+    giga_joule = Unit.giga_joule.value
+    femto_joule = Unit.femto_joule.value
+    exa_joule = Unit.exa_joule.value
+    tera_joule = Unit.tera_joule.value
+    mega_joule = Unit.mega_joule.value
 
 
 class LevelWidth(QuantityValue):
@@ -9781,13 +9785,13 @@ class Transmittance(DimensionlessRatio):
 
 
 class ResistanceUnit(UnitEnum):
-    ohm = Unit.ohm
-    milli_ohm = Unit.milli_ohm
-    mega_ohm = Unit.mega_ohm
-    kilo_ohm = Unit.kilo_ohm
-    micro_ohm = Unit.micro_ohm
-    giga_ohm = Unit.giga_ohm
-    tera_ohm = Unit.tera_ohm
+    ohm = Unit.ohm.value
+    milli_ohm = Unit.milli_ohm.value
+    mega_ohm = Unit.mega_ohm.value
+    kilo_ohm = Unit.kilo_ohm.value
+    micro_ohm = Unit.micro_ohm.value
+    giga_ohm = Unit.giga_ohm.value
+    tera_ohm = Unit.tera_ohm.value
 
 
 class Resistance(QuantityValue):
@@ -9832,13 +9836,13 @@ class Resistance(QuantityValue):
 
 
 class InverseLengthUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class InverseLength(QuantityValue):
@@ -9910,9 +9914,9 @@ class FermiAngularWavenumber(InverseLength):
 
 
 class PermeabilityUnit(UnitEnum):
-    henry_per_meter = Unit.henry_per_meter
-    micro_henry_per_meter = Unit.micro_henry_per_meter
-    nano_henry_per_meter = Unit.nano_henry_per_meter
+    henry_per_meter = Unit.henry_per_meter.value
+    micro_henry_per_meter = Unit.micro_henry_per_meter.value
+    nano_henry_per_meter = Unit.nano_henry_per_meter.value
 
 
 class Permeability(QuantityValue):
@@ -9988,7 +9992,7 @@ class AngularWavenumber(InverseLength):
 
 
 class LuminousFluxPerAreaUnit(UnitEnum):
-    lux = Unit.lux
+    lux = Unit.lux.value
 
 
 class LuminousFluxPerArea(QuantityValue):
@@ -10079,7 +10083,7 @@ class StoichiometricNumber(Dimensionless):
 
 
 class AreaAngleUnit(UnitEnum):
-    meter_squared_steradian = Unit.meter_squared_steradian
+    meter_squared_steradian = Unit.meter_squared_steradian.value
 
 
 class AreaAngle(QuantityValue):
@@ -10139,11 +10143,11 @@ class ExitPlaneCrossSectionalArea(Area):
 
 
 class RotationalFrequencyUnit(UnitEnum):
-    hertz = Unit.hertz
-    mega_hertz = Unit.mega_hertz
-    kilo_hertz = Unit.kilo_hertz
-    giga_hertz = Unit.giga_hertz
-    tera_hertz = Unit.tera_hertz
+    hertz = Unit.hertz.value
+    mega_hertz = Unit.mega_hertz.value
+    kilo_hertz = Unit.kilo_hertz.value
+    giga_hertz = Unit.giga_hertz.value
+    tera_hertz = Unit.tera_hertz.value
 
 
 class RotationalFrequency(QuantityValue):
@@ -10213,7 +10217,7 @@ class LuminousExitance(LuminousFluxPerArea):
 
 
 class ForcePerLengthUnit(UnitEnum):
-    newton_per_meter = Unit.newton_per_meter
+    newton_per_meter = Unit.newton_per_meter.value
 
 
 class ForcePerLength(QuantityValue):
@@ -10327,7 +10331,7 @@ class FissionCoreRadiusToHeightRatio(DimensionlessRatio):
 
 
 class LengthMassUnit(UnitEnum):
-    kilo_gram_meter = Unit.kilo_gram_meter
+    kilo_gram_meter = Unit.kilo_gram_meter.value
 
 
 class LengthMass(QuantityValue):
@@ -10362,7 +10366,7 @@ class LengthMass(QuantityValue):
 
 
 class SurfaceDensityUnit(UnitEnum):
-    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared
+    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
 
 
 class SurfaceDensity(QuantityValue):
@@ -10533,7 +10537,7 @@ class RelativeHumidity(RelativePartialPressure):
 
 
 class LineicPowerUnit(UnitEnum):
-    watt_per_meter = Unit.watt_per_meter
+    watt_per_meter = Unit.watt_per_meter.value
 
 
 class LineicPower(QuantityValue):
@@ -10568,7 +10572,7 @@ class LineicPower(QuantityValue):
 
 
 class AreaTemperatureUnit(UnitEnum):
-    kelvin_meter_squared = Unit.kelvin_meter_squared
+    kelvin_meter_squared = Unit.kelvin_meter_squared.value
 
 
 class AreaTemperature(QuantityValue):
@@ -10603,7 +10607,7 @@ class AreaTemperature(QuantityValue):
 
 
 class LinearDensityUnit(UnitEnum):
-    kilo_gram_per_meter = Unit.kilo_gram_per_meter
+    kilo_gram_per_meter = Unit.kilo_gram_per_meter.value
 
 
 class LinearDensity(QuantityValue):
@@ -10640,7 +10644,7 @@ class LinearDensity(QuantityValue):
 
 
 class SpecificSurfaceAreaUnit(UnitEnum):
-    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram
+    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
 
 
 class SpecificSurfaceArea(QuantityValue):
@@ -10760,7 +10764,7 @@ class Irradiance(PowerPerArea):
 
 
 class AreaPerLengthUnit(UnitEnum):
-    meter = Unit.meter
+    meter = Unit.meter.value
 
 
 class AreaPerLength(QuantityValue):
@@ -10797,7 +10801,7 @@ class AreaPerLength(QuantityValue):
 
 
 class IsentropicCompressibilityUnit(UnitEnum):
-    per_pascal = Unit.per_pascal
+    per_pascal = Unit.per_pascal.value
 
 
 class IsentropicCompressibility(QuantityValue):
@@ -10834,7 +10838,9 @@ class IsentropicCompressibility(QuantityValue):
 
 
 class CubicElectricDipoleMomentPerSquareEnergyUnit(UnitEnum):
-    coulomb_cubed_meter_per_joule_squared = Unit.coulomb_cubed_meter_per_joule_squared
+    coulomb_cubed_meter_per_joule_squared = (
+        Unit.coulomb_cubed_meter_per_joule_squared.value
+    )
 
 
 class CubicElectricDipoleMomentPerSquareEnergy(QuantityValue):
@@ -10869,7 +10875,7 @@ class CubicElectricDipoleMomentPerSquareEnergy(QuantityValue):
 
 
 class PressureInRelationToVolumeFlowRateUnit(UnitEnum):
-    pascal_second_per_meter_cubed = Unit.pascal_second_per_meter_cubed
+    pascal_second_per_meter_cubed = Unit.pascal_second_per_meter_cubed.value
 
 
 class PressureInRelationToVolumeFlowRate(QuantityValue):
@@ -10931,7 +10937,7 @@ class NucleonNumber(Count):
 
 
 class SpecificPowerUnit(UnitEnum):
-    gray_per_second = Unit.gray_per_second
+    gray_per_second = Unit.gray_per_second.value
 
 
 class SpecificPower(QuantityValue):
@@ -11020,7 +11026,7 @@ class MeanFreePath(Length):
 
 
 class TemperaturePerMagneticFluxDensityUnit(UnitEnum):
-    kelvin_per_tesla = Unit.kelvin_per_tesla
+    kelvin_per_tesla = Unit.kelvin_per_tesla.value
 
 
 class TemperaturePerMagneticFluxDensity(QuantityValue):
@@ -11055,13 +11061,13 @@ class TemperaturePerMagneticFluxDensity(QuantityValue):
 
 
 class ElectricFieldStrengthUnit(UnitEnum):
-    volt_per_meter = Unit.volt_per_meter
-    kilo_volt_per_meter = Unit.kilo_volt_per_meter
-    milli_volt_per_meter = Unit.milli_volt_per_meter
-    volt_per_milli_meter = Unit.volt_per_milli_meter
-    micro_volt_per_meter = Unit.micro_volt_per_meter
-    mega_volt_per_meter = Unit.mega_volt_per_meter
-    volt_per_centi_meter = Unit.volt_per_centi_meter
+    volt_per_meter = Unit.volt_per_meter.value
+    kilo_volt_per_meter = Unit.kilo_volt_per_meter.value
+    milli_volt_per_meter = Unit.milli_volt_per_meter.value
+    volt_per_milli_meter = Unit.volt_per_milli_meter.value
+    micro_volt_per_meter = Unit.micro_volt_per_meter.value
+    mega_volt_per_meter = Unit.mega_volt_per_meter.value
+    volt_per_centi_meter = Unit.volt_per_centi_meter.value
 
 
 class ElectricFieldStrength(QuantityValue):
@@ -11136,7 +11142,7 @@ class SignalStrength(ElectricFieldStrength):
 
 class VolumetricFluxUnit(UnitEnum):
     milli_liter_per_centi_meter_squared_per_minute = (
-        Unit.milli_liter_per_centi_meter_squared_per_minute
+        Unit.milli_liter_per_centi_meter_squared_per_minute.value
     )
 
 
@@ -11448,7 +11454,7 @@ class LinearStrain(LengthRatio):
 
 
 class MagneticAreaMomentUnit(UnitEnum):
-    ampere_meter_squared = Unit.ampere_meter_squared
+    ampere_meter_squared = Unit.ampere_meter_squared.value
 
 
 class MagneticAreaMoment(QuantityValue):
@@ -11588,7 +11594,7 @@ class MagnetizationField(ElectricCurrentPerLength):
 
 
 class SoundPressureLevelUnit(UnitEnum):
-    byte = Unit.byte
+    byte = Unit.byte.value
 
 
 class SoundPressureLevel(QuantityValue):
@@ -11625,7 +11631,7 @@ class SoundPressureLevel(QuantityValue):
 
 
 class RotationalMassUnit(UnitEnum):
-    kilo_gram_meter_squared = Unit.kilo_gram_meter_squared
+    kilo_gram_meter_squared = Unit.kilo_gram_meter_squared.value
 
 
 class RotationalMass(QuantityValue):
@@ -11716,12 +11722,12 @@ class ExhaustGasesSpecificHeat(SpecificHeatCapacity):
 
 
 class ElectricCurrentPhasorUnit(UnitEnum):
-    ampere = Unit.ampere
-    milli_ampere = Unit.milli_ampere
-    mega_ampere = Unit.mega_ampere
-    pico_ampere = Unit.pico_ampere
-    kilo_ampere = Unit.kilo_ampere
-    micro_ampere = Unit.micro_ampere
+    ampere = Unit.ampere.value
+    milli_ampere = Unit.milli_ampere.value
+    mega_ampere = Unit.mega_ampere.value
+    pico_ampere = Unit.pico_ampere.value
+    kilo_ampere = Unit.kilo_ampere.value
+    micro_ampere = Unit.micro_ampere.value
 
 
 class ElectricCurrentPhasor(QuantityValue):
@@ -11792,10 +11798,10 @@ class SpinQuantumNumber(QuantumNumber):
 
 
 class MagneticFieldUnit(UnitEnum):
-    tesla = Unit.tesla
-    milli_tesla = Unit.milli_tesla
-    micro_tesla = Unit.micro_tesla
-    nano_tesla = Unit.nano_tesla
+    tesla = Unit.tesla.value
+    milli_tesla = Unit.milli_tesla.value
+    micro_tesla = Unit.micro_tesla.value
+    nano_tesla = Unit.nano_tesla.value
 
 
 class MagneticField(QuantityValue):
@@ -11936,12 +11942,12 @@ class Incidence(Frequency):
 
 
 class CapacitanceUnit(UnitEnum):
-    farad = Unit.farad
-    pico_farad = Unit.pico_farad
-    nano_farad = Unit.nano_farad
-    milli_farad = Unit.milli_farad
-    micro_farad = Unit.micro_farad
-    atto_farad = Unit.atto_farad
+    farad = Unit.farad.value
+    pico_farad = Unit.pico_farad.value
+    nano_farad = Unit.nano_farad.value
+    milli_farad = Unit.milli_farad.value
+    micro_farad = Unit.micro_farad.value
+    atto_farad = Unit.atto_farad.value
 
 
 class Capacitance(QuantityValue):
@@ -12039,7 +12045,7 @@ class CorrelatedColourTemperature(ThermodynamicTemperature):
 
 
 class ElectricChargeUnit(UnitEnum):
-    ampere_second = Unit.ampere_second
+    ampere_second = Unit.ampere_second.value
 
 
 class ElectricCharge(QuantityValue):
@@ -12209,7 +12215,7 @@ class CelsiusTemperature(ThermodynamicTemperature):
 
 
 class TimeSquaredUnit(UnitEnum):
-    second_squared = Unit.second_squared
+    second_squared = Unit.second_squared.value
 
 
 class TimeSquared(QuantityValue):
@@ -12377,7 +12383,7 @@ class LarmorAngularFrequency(AngularFrequency):
 
 
 class BloodGlucoseLevelUnit(UnitEnum):
-    milli_mole_per_liter = Unit.milli_mole_per_liter
+    milli_mole_per_liter = Unit.milli_mole_per_liter.value
 
 
 class BloodGlucoseLevel(QuantityValue):
@@ -12431,12 +12437,12 @@ class BloodGlucoseLevel(QuantityValue):
 
 
 class MagneticTensionUnit(UnitEnum):
-    ampere = Unit.ampere
-    milli_ampere = Unit.milli_ampere
-    mega_ampere = Unit.mega_ampere
-    pico_ampere = Unit.pico_ampere
-    kilo_ampere = Unit.kilo_ampere
-    micro_ampere = Unit.micro_ampere
+    ampere = Unit.ampere.value
+    milli_ampere = Unit.milli_ampere.value
+    mega_ampere = Unit.mega_ampere.value
+    pico_ampere = Unit.pico_ampere.value
+    kilo_ampere = Unit.kilo_ampere.value
+    micro_ampere = Unit.micro_ampere.value
 
 
 class MagneticTension(QuantityValue):
@@ -12536,7 +12542,7 @@ class ActiveEnergy(Energy):
 class MeasurementUnitForAQuantityApproximatelyProportionalToThermalInertiaUnit(
     UnitEnum
 ):
-    per_kelvin = Unit.per_kelvin
+    per_kelvin = Unit.per_kelvin.value
 
 
 class MeasurementUnitForAQuantityApproximatelyProportionalToThermalInertia(
@@ -12631,8 +12637,8 @@ class PositionVector(Length):
 
 
 class SpecificWeightUnit(UnitEnum):
-    newton_per_meter_cubed = Unit.newton_per_meter_cubed
-    kilo_newton_per_meter_cubed = Unit.kilo_newton_per_meter_cubed
+    newton_per_meter_cubed = Unit.newton_per_meter_cubed.value
+    kilo_newton_per_meter_cubed = Unit.kilo_newton_per_meter_cubed.value
 
 
 class SpecificWeight(QuantityValue):
@@ -12669,7 +12675,7 @@ class SpecificWeight(QuantityValue):
 
 
 class InverseSquareTimeUnit(UnitEnum):
-    per_second_squared = Unit.per_second_squared
+    per_second_squared = Unit.per_second_squared.value
 
 
 class InverseSquareTime(QuantityValue):
@@ -12812,7 +12818,7 @@ class CarrierLifetime(Time):
 
 
 class MolarMassUnit(UnitEnum):
-    kilo_gram_per_mole = Unit.kilo_gram_per_mole
+    kilo_gram_per_mole = Unit.kilo_gram_per_mole.value
 
 
 class MolarMass(QuantityValue):
@@ -12903,8 +12909,8 @@ class MomentOfInertiaInTheZAxis(MomentOfInertia):
 
 
 class AccelerationUnit(UnitEnum):
-    meter_per_second_squared = Unit.meter_per_second_squared
-    centi_meter_per_second_squared = Unit.centi_meter_per_second_squared
+    meter_per_second_squared = Unit.meter_per_second_squared.value
+    centi_meter_per_second_squared = Unit.centi_meter_per_second_squared.value
 
 
 class Acceleration(QuantityValue):
@@ -12977,13 +12983,13 @@ class AccelerationOfGravity(Acceleration):
 
 
 class PropagationCoefficientUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class PropagationCoefficient(QuantityValue):
@@ -13117,7 +13123,7 @@ class ReserveMass(Mass):
 
 
 class PowerPerAreaQuarticTemperatureUnit(UnitEnum):
-    field_4_per_meter_squared = Unit._per_meter_squared
+    field_4_per_meter_squared = Unit._per_meter_squared.value
 
 
 class PowerPerAreaQuarticTemperature(QuantityValue):
@@ -13177,11 +13183,11 @@ class WebTime(Time):
 
 
 class EnergyPerAreaUnit(UnitEnum):
-    joule_per_meter_squared = Unit.joule_per_meter_squared
-    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared
-    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared
-    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared
-    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared
+    joule_per_meter_squared = Unit.joule_per_meter_squared.value
+    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared.value
+    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared.value
+    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared.value
+    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared.value
 
 
 class EnergyPerArea(QuantityValue):
@@ -13224,7 +13230,7 @@ class EnergyPerArea(QuantityValue):
 
 
 class AbsorbedDoseRateUnit(UnitEnum):
-    gray_per_second = Unit.gray_per_second
+    gray_per_second = Unit.gray_per_second.value
 
 
 class AbsorbedDoseRate(QuantityValue):
@@ -13261,7 +13267,7 @@ class AbsorbedDoseRate(QuantityValue):
 
 
 class VentilationRatePerFloorAreaUnit(UnitEnum):
-    liter_per_meter_squared_per_second = Unit.liter_per_meter_squared_per_second
+    liter_per_meter_squared_per_second = Unit.liter_per_meter_squared_per_second.value
 
 
 class VentilationRatePerFloorArea(QuantityValue):
@@ -13406,9 +13412,9 @@ class Strain(DimensionlessRatio):
 
 
 class EntropyUnit(UnitEnum):
-    joule_per_kelvin = Unit.joule_per_kelvin
-    mega_joule_per_kelvin = Unit.mega_joule_per_kelvin
-    kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin
+    joule_per_kelvin = Unit.joule_per_kelvin.value
+    mega_joule_per_kelvin = Unit.mega_joule_per_kelvin.value
+    kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin.value
 
 
 class Entropy(QuantityValue):
@@ -13580,7 +13586,7 @@ class OrbitalAngularMomentumQuantumNumber(QuantumNumber):
 
 
 class MassPerEnergyUnit(UnitEnum):
-    kilo_gram_per_joule = Unit.kilo_gram_per_joule
+    kilo_gram_per_joule = Unit.kilo_gram_per_joule.value
 
 
 class MassPerEnergy(QuantityValue):
@@ -13617,8 +13623,8 @@ class MassPerEnergy(QuantityValue):
 
 
 class LinearAccelerationUnit(UnitEnum):
-    meter_per_second_squared = Unit.meter_per_second_squared
-    centi_meter_per_second_squared = Unit.centi_meter_per_second_squared
+    meter_per_second_squared = Unit.meter_per_second_squared.value
+    centi_meter_per_second_squared = Unit.centi_meter_per_second_squared.value
 
 
 class LinearAcceleration(QuantityValue):
@@ -13705,7 +13711,7 @@ class Piece(Count):
 
 
 class ExposureRateUnit(UnitEnum):
-    coulomb_per_kilo_gram_per_second = Unit.coulomb_per_kilo_gram_per_second
+    coulomb_per_kilo_gram_per_second = Unit.coulomb_per_kilo_gram_per_second.value
 
 
 class ExposureRate(QuantityValue):
@@ -13742,7 +13748,7 @@ class ExposureRate(QuantityValue):
 
 
 class InverseAmountOfSubstanceUnit(UnitEnum):
-    per_mole = Unit.per_mole
+    per_mole = Unit.per_mole.value
 
 
 class InverseAmountOfSubstance(QuantityValue):
@@ -13837,7 +13843,7 @@ class MeanLifetime(Time):
 
 
 class ForcePerAreaTimeUnit(UnitEnum):
-    pascal_per_second = Unit.pascal_per_second
+    pascal_per_second = Unit.pascal_per_second.value
 
 
 class ForcePerAreaTime(QuantityValue):
@@ -13872,7 +13878,7 @@ class ForcePerAreaTime(QuantityValue):
 
 
 class ExpansionRatioUnit(UnitEnum):
-    per_kelvin = Unit.per_kelvin
+    per_kelvin = Unit.per_kelvin.value
 
 
 class ExpansionRatio(QuantityValue):
@@ -14026,14 +14032,14 @@ class EnergyLevel(Energy):
 
 
 class MomentOfForceUnit(UnitEnum):
-    meter_newton = Unit.meter_newton
-    kilo_newton_meter = Unit.kilo_newton_meter
-    mega_newton_meter = Unit.mega_newton_meter
-    centi_newton_meter = Unit.centi_newton_meter
-    meter_milli_newton = Unit.meter_milli_newton
-    meter_micro_newton = Unit.meter_micro_newton
-    deci_newton_meter = Unit.deci_newton_meter
-    centi_meter_newton = Unit.centi_meter_newton
+    meter_newton = Unit.meter_newton.value
+    kilo_newton_meter = Unit.kilo_newton_meter.value
+    mega_newton_meter = Unit.mega_newton_meter.value
+    centi_newton_meter = Unit.centi_newton_meter.value
+    meter_milli_newton = Unit.meter_milli_newton.value
+    meter_micro_newton = Unit.meter_micro_newton.value
+    deci_newton_meter = Unit.deci_newton_meter.value
+    centi_meter_newton = Unit.centi_meter_newton.value
 
 
 class MomentOfForce(QuantityValue):
@@ -14212,14 +14218,14 @@ class InverseLength(QuantityValue):
 
 
 class TorqueUnit(UnitEnum):
-    meter_newton = Unit.meter_newton
-    kilo_newton_meter = Unit.kilo_newton_meter
-    mega_newton_meter = Unit.mega_newton_meter
-    centi_newton_meter = Unit.centi_newton_meter
-    meter_milli_newton = Unit.meter_milli_newton
-    meter_micro_newton = Unit.meter_micro_newton
-    deci_newton_meter = Unit.deci_newton_meter
-    centi_meter_newton = Unit.centi_meter_newton
+    meter_newton = Unit.meter_newton.value
+    kilo_newton_meter = Unit.kilo_newton_meter.value
+    mega_newton_meter = Unit.mega_newton_meter.value
+    centi_newton_meter = Unit.centi_newton_meter.value
+    meter_milli_newton = Unit.meter_milli_newton.value
+    meter_micro_newton = Unit.meter_micro_newton.value
+    deci_newton_meter = Unit.deci_newton_meter.value
+    centi_meter_newton = Unit.centi_meter_newton.value
 
 
 class Torque(QuantityValue):
@@ -14338,7 +14344,7 @@ class DeltaV(Velocity):
 
 
 class ElectricChargeLinearDensityUnit(UnitEnum):
-    coulomb_per_meter = Unit.coulomb_per_meter
+    coulomb_per_meter = Unit.coulomb_per_meter.value
 
 
 class ElectricChargeLinearDensity(QuantityValue):
@@ -14400,7 +14406,7 @@ class NozzleThroatPressure(Pressure):
 
 
 class TemperaturePerTimeUnit(UnitEnum):
-    Celsius_per_second = Unit.Celsius_per_second
+    Celsius_per_second = Unit.Celsius_per_second.value
 
 
 class TemperaturePerTime(QuantityValue):
@@ -14462,7 +14468,7 @@ class TemperatureRateOfChange(TemperaturePerTime):
 
 
 class CombinedNonEvaporativeHeatTransferCoefficientUnit(UnitEnum):
-    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared
+    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
 
 
 class CombinedNonEvaporativeHeatTransferCoefficient(QuantityValue):
@@ -14499,11 +14505,11 @@ class CombinedNonEvaporativeHeatTransferCoefficient(QuantityValue):
 
 
 class ElectromagneticWavePhaseSpeedUnit(UnitEnum):
-    meter_per_second = Unit.meter_per_second
-    kilo_meter_per_second = Unit.kilo_meter_per_second
-    micro_meter_per_second = Unit.micro_meter_per_second
-    centi_meter_per_second = Unit.centi_meter_per_second
-    milli_meter_per_second = Unit.milli_meter_per_second
+    meter_per_second = Unit.meter_per_second.value
+    kilo_meter_per_second = Unit.kilo_meter_per_second.value
+    micro_meter_per_second = Unit.micro_meter_per_second.value
+    centi_meter_per_second = Unit.centi_meter_per_second.value
+    milli_meter_per_second = Unit.milli_meter_per_second.value
 
 
 class ElectromagneticWavePhaseSpeed(QuantityValue):
@@ -14546,11 +14552,11 @@ class ElectromagneticWavePhaseSpeed(QuantityValue):
 
 
 class EnergyFluenceUnit(UnitEnum):
-    joule_per_meter_squared = Unit.joule_per_meter_squared
-    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared
-    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared
-    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared
-    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared
+    joule_per_meter_squared = Unit.joule_per_meter_squared.value
+    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared.value
+    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared.value
+    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared.value
+    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared.value
 
 
 class EnergyFluence(QuantityValue):
@@ -14659,8 +14665,8 @@ class CoefficientOfPerformance(DimensionlessRatio):
 
 
 class LuminousFluxUnit(UnitEnum):
-    lumen = Unit.lumen
-    kilo_lumen = Unit.kilo_lumen
+    lumen = Unit.lumen.value
+    kilo_lumen = Unit.kilo_lumen.value
 
 
 class LuminousFlux(QuantityValue):
@@ -14724,11 +14730,11 @@ class FissionMultiplicationFactor(Dimensionless):
 
 
 class InductanceUnit(UnitEnum):
-    henry = Unit.henry
-    nano_henry = Unit.nano_henry
-    pico_henry = Unit.pico_henry
-    milli_henry = Unit.milli_henry
-    micro_henry = Unit.micro_henry
+    henry = Unit.henry.value
+    nano_henry = Unit.nano_henry.value
+    pico_henry = Unit.pico_henry.value
+    milli_henry = Unit.milli_henry.value
+    micro_henry = Unit.micro_henry.value
 
 
 class Inductance(QuantityValue):
@@ -14798,16 +14804,16 @@ class MutualInductance(Inductance):
 
 
 class MassConcentrationUnit(UnitEnum):
-    gram_per_liter = Unit.gram_per_liter
-    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter
-    gram_per_milli_liter = Unit.gram_per_milli_liter
-    femto_gram_per_liter = Unit.femto_gram_per_liter
-    pico_gram_per_liter = Unit.pico_gram_per_liter
-    kilo_gram_per_liter = Unit.kilo_gram_per_liter
-    micro_gram_per_liter = Unit.micro_gram_per_liter
-    nano_gram_per_liter = Unit.nano_gram_per_liter
-    gram_per_deci_liter = Unit.gram_per_deci_liter
-    milli_gram_per_liter = Unit.milli_gram_per_liter
+    gram_per_liter = Unit.gram_per_liter.value
+    milli_gram_per_milli_liter = Unit.milli_gram_per_milli_liter.value
+    gram_per_milli_liter = Unit.gram_per_milli_liter.value
+    femto_gram_per_liter = Unit.femto_gram_per_liter.value
+    pico_gram_per_liter = Unit.pico_gram_per_liter.value
+    kilo_gram_per_liter = Unit.kilo_gram_per_liter.value
+    micro_gram_per_liter = Unit.micro_gram_per_liter.value
+    nano_gram_per_liter = Unit.nano_gram_per_liter.value
+    gram_per_deci_liter = Unit.gram_per_deci_liter.value
+    milli_gram_per_liter = Unit.milli_gram_per_liter.value
 
 
 class MassConcentration(QuantityValue):
@@ -14947,7 +14953,7 @@ class StructuralEfficiency(Dimensionless):
 
 
 class AcidityUnit(UnitEnum):
-    pico_henry = Unit.pico_henry
+    pico_henry = Unit.pico_henry.value
 
 
 class Acidity(QuantityValue):
@@ -15090,10 +15096,10 @@ class WebTimeAveragePressure(Pressure):
 
 
 class AdmittanceUnit(UnitEnum):
-    siemens = Unit.siemens
-    milli_siemens = Unit.milli_siemens
-    kilo_siemens = Unit.kilo_siemens
-    micro_siemens = Unit.micro_siemens
+    siemens = Unit.siemens.value
+    milli_siemens = Unit.milli_siemens.value
+    kilo_siemens = Unit.kilo_siemens.value
+    micro_siemens = Unit.micro_siemens.value
 
 
 class Admittance(QuantityValue):
@@ -15184,7 +15190,7 @@ class DynamicPressure(Pressure):
 
 
 class SpecificAcousticImpedanceUnit(UnitEnum):
-    newton_second_per_meter_cubed = Unit.newton_second_per_meter_cubed
+    newton_second_per_meter_cubed = Unit.newton_second_per_meter_cubed.value
 
 
 class SpecificAcousticImpedance(QuantityValue):
@@ -15359,9 +15365,9 @@ class OrbitalRadialDistance(Length):
 
 
 class EnergyPerTemperatureUnit(UnitEnum):
-    joule_per_kelvin = Unit.joule_per_kelvin
-    mega_joule_per_kelvin = Unit.mega_joule_per_kelvin
-    kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin
+    joule_per_kelvin = Unit.joule_per_kelvin.value
+    mega_joule_per_kelvin = Unit.mega_joule_per_kelvin.value
+    kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin.value
 
 
 class EnergyPerTemperature(QuantityValue):
@@ -15482,7 +15488,7 @@ class AmbientPressure(Pressure):
 
 
 class MolarAttenuationCoefficientUnit(UnitEnum):
-    meter_squared_per_mole = Unit.meter_squared_per_mole
+    meter_squared_per_mole = Unit.meter_squared_per_mole.value
 
 
 class MolarAttenuationCoefficient(QuantityValue):
@@ -15520,7 +15526,7 @@ class MolarAttenuationCoefficient(QuantityValue):
 
 class SpecificHeatPressureUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram_per_pascal = (
-        Unit.joule_per_kelvin_per_kilo_gram_per_pascal
+        Unit.joule_per_kelvin_per_kilo_gram_per_pascal.value
     )
 
 
@@ -15635,7 +15641,7 @@ class Angle(DimensionlessRatio):
 
 
 class MolarAngularMomentumUnit(UnitEnum):
-    joule_second_per_mole = Unit.joule_second_per_mole
+    joule_second_per_mole = Unit.joule_second_per_mole.value
 
 
 class MolarAngularMomentum(QuantityValue):
@@ -15778,7 +15784,7 @@ class HeatCapacity(EnergyPerTemperature):
 
 
 class UnknownUnit(UnitEnum):
-    Celsius_squared_per_second = Unit.Celsius_squared_per_second
+    Celsius_squared_per_second = Unit.Celsius_squared_per_second.value
 
 
 class Unknown(QuantityValue):
@@ -15815,10 +15821,10 @@ class Unknown(QuantityValue):
 
 
 class SpeedUnit(UnitEnum):
-    hertz_meter = Unit.hertz_meter
-    mega_hertz_meter = Unit.mega_hertz_meter
-    kilo_hertz_meter = Unit.kilo_hertz_meter
-    giga_hertz_meter = Unit.giga_hertz_meter
+    hertz_meter = Unit.hertz_meter.value
+    mega_hertz_meter = Unit.mega_hertz_meter.value
+    kilo_hertz_meter = Unit.kilo_hertz_meter.value
+    giga_hertz_meter = Unit.giga_hertz_meter.value
 
 
 class Speed(QuantityValue):
@@ -16005,7 +16011,7 @@ class DryMass(Mass):
 
 
 class TorsionalSpringConstantUnit(UnitEnum):
-    meter_newton_per_radian = Unit.meter_newton_per_radian
+    meter_newton_per_radian = Unit.meter_newton_per_radian.value
 
 
 class TorsionalSpringConstant(QuantityValue):
@@ -16072,7 +16078,7 @@ class SuperconductionTransitionTemperature(Temperature):
 
 
 class ScalarMagneticPotentialUnit(UnitEnum):
-    second_volt_per_meter = Unit.second_volt_per_meter
+    second_volt_per_meter = Unit.second_volt_per_meter.value
 
 
 class ScalarMagneticPotential(QuantityValue):
@@ -16109,8 +16115,8 @@ class ScalarMagneticPotential(QuantityValue):
 
 
 class VolumicElectromagneticEnergyUnit(UnitEnum):
-    joule_per_meter_cubed = Unit.joule_per_meter_cubed
-    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed
+    joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
+    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed.value
 
 
 class VolumicElectromagneticEnergy(QuantityValue):
@@ -16147,7 +16153,7 @@ class VolumicElectromagneticEnergy(QuantityValue):
 
 
 class SpecificEntropyUnit(UnitEnum):
-    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram
+    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram.value
 
 
 class SpecificEntropy(QuantityValue):
@@ -16236,7 +16242,7 @@ class SpinQuantumNumber(SpinQuantumNumber1):
 
 
 class MassEnergyTransferCoefficientUnit(UnitEnum):
-    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram
+    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
 
 
 class MassEnergyTransferCoefficient(QuantityValue):
@@ -16327,13 +16333,13 @@ class ElectronMeanFreePath(Length):
 
 
 class ElectricPolarizationUnit(UnitEnum):
-    coulomb_per_meter_squared = Unit.coulomb_per_meter_squared
-    micro_coulomb_per_meter_squared = Unit.micro_coulomb_per_meter_squared
-    milli_coulomb_per_meter_squared = Unit.milli_coulomb_per_meter_squared
-    coulomb_per_milli_meter_squared = Unit.coulomb_per_milli_meter_squared
-    coulomb_per_centi_meter_squared = Unit.coulomb_per_centi_meter_squared
-    mega_coulomb_per_meter_squared = Unit.mega_coulomb_per_meter_squared
-    kilo_coulomb_per_meter_squared = Unit.kilo_coulomb_per_meter_squared
+    coulomb_per_meter_squared = Unit.coulomb_per_meter_squared.value
+    micro_coulomb_per_meter_squared = Unit.micro_coulomb_per_meter_squared.value
+    milli_coulomb_per_meter_squared = Unit.milli_coulomb_per_meter_squared.value
+    coulomb_per_milli_meter_squared = Unit.coulomb_per_milli_meter_squared.value
+    coulomb_per_centi_meter_squared = Unit.coulomb_per_centi_meter_squared.value
+    mega_coulomb_per_meter_squared = Unit.mega_coulomb_per_meter_squared.value
+    kilo_coulomb_per_meter_squared = Unit.kilo_coulomb_per_meter_squared.value
 
 
 class ElectricPolarization(QuantityValue):
@@ -16440,11 +16446,11 @@ class PressureRatio(DimensionlessRatio):
 
 
 class RadiantFluenceUnit(UnitEnum):
-    joule_per_meter_squared = Unit.joule_per_meter_squared
-    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared
-    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared
-    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared
-    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared
+    joule_per_meter_squared = Unit.joule_per_meter_squared.value
+    giga_joule_per_meter_squared = Unit.giga_joule_per_meter_squared.value
+    milli_joule_per_meter_squared = Unit.milli_joule_per_meter_squared.value
+    mega_joule_per_meter_squared = Unit.mega_joule_per_meter_squared.value
+    joule_per_centi_meter_squared = Unit.joule_per_centi_meter_squared.value
 
 
 class RadiantFluence(QuantityValue):
@@ -16570,13 +16576,13 @@ class CrossSectionalArea(Area):
 
 
 class LinearIonizationUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class LinearIonization(QuantityValue):
@@ -16771,7 +16777,7 @@ class DebyeAngularFrequency(AngularFrequency):
 
 
 class MolarConductivityUnit(UnitEnum):
-    meter_squared_siemens_per_mole = Unit.meter_squared_siemens_per_mole
+    meter_squared_siemens_per_mole = Unit.meter_squared_siemens_per_mole.value
 
 
 class MolarConductivity(QuantityValue):
@@ -16841,11 +16847,11 @@ class Temperature(QuantityValue):
 
 
 class ElectricCurrentDensityUnit(UnitEnum):
-    ampere_per_meter_squared = Unit.ampere_per_meter_squared
-    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared
-    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared
-    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared
-    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared
+    ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
+    kilo_ampere_per_meter_squared = Unit.kilo_ampere_per_meter_squared.value
+    ampere_per_milli_meter_squared = Unit.ampere_per_milli_meter_squared.value
+    mega_ampere_per_meter_squared = Unit.mega_ampere_per_meter_squared.value
+    ampere_per_centi_meter_squared = Unit.ampere_per_centi_meter_squared.value
 
 
 class ElectricCurrentDensity(QuantityValue):
@@ -16891,7 +16897,7 @@ class ElectricCurrentDensity(QuantityValue):
 
 
 class LuminousEfficacyUnit(UnitEnum):
-    lumen_per_watt = Unit.lumen_per_watt
+    lumen_per_watt = Unit.lumen_per_watt.value
 
 
 class LuminousEfficacy(QuantityValue):
@@ -16980,7 +16986,7 @@ class AngleOfAttack(Angle):
 
 
 class TotalAtomicStoppingPowerUnit(UnitEnum):
-    joule_meter_squared = Unit.joule_meter_squared
+    joule_meter_squared = Unit.joule_meter_squared.value
 
 
 class TotalAtomicStoppingPower(QuantityValue):
@@ -17044,9 +17050,9 @@ class AtomicEnergy(Energy):
 
 
 class SpecificActivityUnit(UnitEnum):
-    becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram
-    milli_becquerel_per_kilo_gram = Unit.milli_becquerel_per_kilo_gram
-    micro_becquerel_per_kilo_gram = Unit.micro_becquerel_per_kilo_gram
+    becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram.value
+    milli_becquerel_per_kilo_gram = Unit.milli_becquerel_per_kilo_gram.value
+    micro_becquerel_per_kilo_gram = Unit.micro_becquerel_per_kilo_gram.value
 
 
 class SpecificActivity(QuantityValue):
@@ -17197,7 +17203,7 @@ class LuminousFluxPerArea(QuantityValue):
 
 
 class SlowingDownDensityUnit(UnitEnum):
-    per_meter_cubed_per_second = Unit.per_meter_cubed_per_second
+    per_meter_cubed_per_second = Unit.per_meter_cubed_per_second.value
 
 
 class SlowingDownDensity(QuantityValue):
@@ -17348,13 +17354,13 @@ class ApogeeRadius(Radius):
 
 
 class ElectricFieldUnit(UnitEnum):
-    volt_per_meter = Unit.volt_per_meter
-    kilo_volt_per_meter = Unit.kilo_volt_per_meter
-    milli_volt_per_meter = Unit.milli_volt_per_meter
-    volt_per_milli_meter = Unit.volt_per_milli_meter
-    micro_volt_per_meter = Unit.micro_volt_per_meter
-    mega_volt_per_meter = Unit.mega_volt_per_meter
-    volt_per_centi_meter = Unit.volt_per_centi_meter
+    volt_per_meter = Unit.volt_per_meter.value
+    kilo_volt_per_meter = Unit.kilo_volt_per_meter.value
+    milli_volt_per_meter = Unit.milli_volt_per_meter.value
+    volt_per_milli_meter = Unit.volt_per_milli_meter.value
+    micro_volt_per_meter = Unit.micro_volt_per_meter.value
+    mega_volt_per_meter = Unit.mega_volt_per_meter.value
+    volt_per_centi_meter = Unit.volt_per_centi_meter.value
 
 
 class ElectricField(QuantityValue):
@@ -17428,13 +17434,13 @@ class MaximumBetaParticleEnergy(Energy):
 
 
 class LinearAbsorptionCoefficientUnit(UnitEnum):
-    per_meter = Unit.per_meter
-    per_centi_meter = Unit.per_centi_meter
-    per_nano_meter = Unit.per_nano_meter
-    per_milli_meter = Unit.per_milli_meter
-    per_pico_meter = Unit.per_pico_meter
-    per_micro_meter = Unit.per_micro_meter
-    per_kilo_meter = Unit.per_kilo_meter
+    per_meter = Unit.per_meter.value
+    per_centi_meter = Unit.per_centi_meter.value
+    per_nano_meter = Unit.per_nano_meter.value
+    per_milli_meter = Unit.per_milli_meter.value
+    per_pico_meter = Unit.per_pico_meter.value
+    per_micro_meter = Unit.per_micro_meter.value
+    per_kilo_meter = Unit.per_kilo_meter.value
 
 
 class LinearAbsorptionCoefficient(QuantityValue):
@@ -17508,8 +17514,8 @@ class SurfaceTension(EnergyPerArea):
 
 
 class PowerPerElectricChargeUnit(UnitEnum):
-    volt_per_second = Unit.volt_per_second
-    volt_per_micro_second = Unit.volt_per_micro_second
+    volt_per_second = Unit.volt_per_second.value
+    volt_per_micro_second = Unit.volt_per_micro_second.value
 
 
 class PowerPerElectricCharge(QuantityValue):
@@ -17573,11 +17579,11 @@ class ElectricFluxDensity(ElectricChargePerArea):
 
 
 class ElectricPotentialDifferenceUnit(UnitEnum):
-    volt = Unit.volt
-    micro_volt = Unit.micro_volt
-    mega_volt = Unit.mega_volt
-    milli_volt = Unit.milli_volt
-    kilo_volt = Unit.kilo_volt
+    volt = Unit.volt.value
+    micro_volt = Unit.micro_volt.value
+    mega_volt = Unit.mega_volt.value
+    milli_volt = Unit.milli_volt.value
+    kilo_volt = Unit.kilo_volt.value
 
 
 class ElectricPotentialDifference(QuantityValue):
@@ -17721,7 +17727,7 @@ class ChemicalConsumptionPerMass(SpecificVolume):
 
 
 class InverseTemperatureUnit(UnitEnum):
-    per_kelvin = Unit.per_kelvin
+    per_kelvin = Unit.per_kelvin.value
 
 
 class InverseTemperature(QuantityValue):
@@ -17853,7 +17859,7 @@ class AreicEnergyFlow(PowerPerArea):
 
 
 class MolarEntropyUnit(UnitEnum):
-    joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole
+    joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole.value
 
 
 class MolarEntropy(QuantityValue):
@@ -17890,7 +17896,7 @@ class MolarEntropy(QuantityValue):
 
 
 class SeebeckCoefficientUnit(UnitEnum):
-    volt_per_kelvin = Unit.volt_per_kelvin
+    volt_per_kelvin = Unit.volt_per_kelvin.value
 
 
 class SeebeckCoefficient(QuantityValue):
@@ -17927,7 +17933,7 @@ class SeebeckCoefficient(QuantityValue):
 
 
 class LuminousIntensityUnit(UnitEnum):
-    candela = Unit.candela
+    candela = Unit.candela.value
 
 
 class LuminousIntensity(QuantityValue):
@@ -17991,8 +17997,8 @@ class SpeedOfLight(Speed):
 
 
 class WarpingMomentUnit(UnitEnum):
-    meter_squared_newton = Unit.meter_squared_newton
-    kilo_newton_meter_squared = Unit.kilo_newton_meter_squared
+    meter_squared_newton = Unit.meter_squared_newton.value
+    kilo_newton_meter_squared = Unit.kilo_newton_meter_squared.value
 
 
 class WarpingMoment(QuantityValue):
@@ -18056,7 +18062,7 @@ class Wavenumber(InverseLength):
 
 
 class MassPerLengthUnit(UnitEnum):
-    kilo_gram_per_meter = Unit.kilo_gram_per_meter
+    kilo_gram_per_meter = Unit.kilo_gram_per_meter.value
 
 
 class MassPerLength(QuantityValue):
@@ -18202,9 +18208,9 @@ class ElectricDisplacementField(ElectricChargePerArea):
 
 
 class MobilityUnit(UnitEnum):
-    meter_squared_per_second_per_volt = Unit.meter_squared_per_second_per_volt
+    meter_squared_per_second_per_volt = Unit.meter_squared_per_second_per_volt.value
     centi_meter_squared_per_second_per_volt = (
-        Unit.centi_meter_squared_per_second_per_volt
+        Unit.centi_meter_squared_per_second_per_volt.value
     )
 
 
@@ -18245,7 +18251,7 @@ class Mobility(QuantityValue):
 
 
 class MeanMassRangeUnit(UnitEnum):
-    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared
+    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
 
 
 class MeanMassRange(QuantityValue):
@@ -18340,9 +18346,9 @@ class EquivalentConcentration(Concentration):
 
 
 class PhotosyntheticPhotonFluxUnit(UnitEnum):
-    mole_per_second = Unit.mole_per_second
-    kilo_mole_per_second = Unit.kilo_mole_per_second
-    micro_mole_per_second = Unit.micro_mole_per_second
+    mole_per_second = Unit.mole_per_second.value
+    kilo_mole_per_second = Unit.kilo_mole_per_second.value
+    micro_mole_per_second = Unit.micro_mole_per_second.value
 
 
 class PhotosyntheticPhotonFlux(QuantityValue):
@@ -18383,7 +18389,7 @@ class PhotosyntheticPhotonFlux(QuantityValue):
 
 
 class TemperatureGradientUnit(UnitEnum):
-    Celsius_per_meter = Unit.Celsius_per_meter
+    Celsius_per_meter = Unit.Celsius_per_meter.value
 
 
 class TemperatureGradient(QuantityValue):
@@ -18499,11 +18505,11 @@ class LengthRatio(DimensionlessRatio):
 
 
 class PermittivityUnit(UnitEnum):
-    farad_per_meter = Unit.farad_per_meter
-    pico_farad_per_meter = Unit.pico_farad_per_meter
-    farad_per_kilo_meter = Unit.farad_per_kilo_meter
-    nano_farad_per_meter = Unit.nano_farad_per_meter
-    micro_farad_per_meter = Unit.micro_farad_per_meter
+    farad_per_meter = Unit.farad_per_meter.value
+    pico_farad_per_meter = Unit.pico_farad_per_meter.value
+    farad_per_kilo_meter = Unit.farad_per_kilo_meter.value
+    nano_farad_per_meter = Unit.nano_farad_per_meter.value
+    micro_farad_per_meter = Unit.micro_farad_per_meter.value
 
 
 class Permittivity(QuantityValue):
@@ -18694,7 +18700,7 @@ class SoundPressure(Pressure):
 
 
 class LengthTemperatureTimeUnit(UnitEnum):
-    centi_meter_Celsius_second = Unit.centi_meter_Celsius_second
+    centi_meter_Celsius_second = Unit.centi_meter_Celsius_second.value
 
 
 class LengthTemperatureTime(QuantityValue):
@@ -18818,7 +18824,7 @@ class InverseVolume(QuantityValue):
 
 
 class SpecificHeatCapacityAtConstantPressureUnit(UnitEnum):
-    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram
+    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram.value
 
 
 class SpecificHeatCapacityAtConstantPressure(QuantityValue):
@@ -18854,7 +18860,7 @@ class SpecificHeatCapacityAtConstantPressure(QuantityValue):
 
 class RichardsonConstantUnit(UnitEnum):
     ampere_per_kelvin_squared_per_meter_squared = (
-        Unit.ampere_per_kelvin_squared_per_meter_squared
+        Unit.ampere_per_kelvin_squared_per_meter_squared.value
     )
 
 
@@ -18925,7 +18931,7 @@ class PlaneAngle(QuantityValue):
 
 
 class LengthTemperatureUnit(UnitEnum):
-    kelvin_meter = Unit.kelvin_meter
+    kelvin_meter = Unit.kelvin_meter.value
 
 
 class LengthTemperature(QuantityValue):
@@ -18960,9 +18966,9 @@ class LengthTemperature(QuantityValue):
 
 
 class MassicActivityUnit(UnitEnum):
-    becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram
-    milli_becquerel_per_kilo_gram = Unit.milli_becquerel_per_kilo_gram
-    micro_becquerel_per_kilo_gram = Unit.micro_becquerel_per_kilo_gram
+    becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram.value
+    milli_becquerel_per_kilo_gram = Unit.milli_becquerel_per_kilo_gram.value
+    micro_becquerel_per_kilo_gram = Unit.micro_becquerel_per_kilo_gram.value
 
 
 class MassicActivity(QuantityValue):
@@ -19097,7 +19103,7 @@ class MassRatio(QuantityValue):
 
 
 class ReluctanceUnit(UnitEnum):
-    per_henry = Unit.per_henry
+    per_henry = Unit.per_henry.value
 
 
 class Reluctance(QuantityValue):
@@ -19161,10 +19167,10 @@ class LandauGinzburgNumber(DimensionlessRatio):
 
 
 class PressureCoefficientUnit(UnitEnum):
-    pascal_per_kelvin = Unit.pascal_per_kelvin
-    mega_pascal_per_kelvin = Unit.mega_pascal_per_kelvin
-    hecto_pascal_per_kelvin = Unit.hecto_pascal_per_kelvin
-    kilo_pascal_per_kelvin = Unit.kilo_pascal_per_kelvin
+    pascal_per_kelvin = Unit.pascal_per_kelvin.value
+    mega_pascal_per_kelvin = Unit.mega_pascal_per_kelvin.value
+    hecto_pascal_per_kelvin = Unit.hecto_pascal_per_kelvin.value
+    kilo_pascal_per_kelvin = Unit.kilo_pascal_per_kelvin.value
 
 
 class PressureCoefficient(QuantityValue):
@@ -19204,7 +19210,7 @@ class PressureCoefficient(QuantityValue):
 
 
 class MomentumUnit(UnitEnum):
-    newton_second = Unit.newton_second
+    newton_second = Unit.newton_second.value
 
 
 class Momentum(QuantityValue):
@@ -19241,7 +19247,7 @@ class Momentum(QuantityValue):
 
 
 class ForcePerElectricChargeUnit(UnitEnum):
-    newton_per_coulomb = Unit.newton_per_coulomb
+    newton_per_coulomb = Unit.newton_per_coulomb.value
 
 
 class ForcePerElectricCharge(QuantityValue):
@@ -19278,9 +19284,9 @@ class ForcePerElectricCharge(QuantityValue):
 
 
 class VolumeFlowRateUnit(UnitEnum):
-    meter_cubed_per_second = Unit.meter_cubed_per_second
-    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second
-    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second
+    meter_cubed_per_second = Unit.meter_cubed_per_second.value
+    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second.value
+    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second.value
 
 
 class VolumeFlowRate(QuantityValue):
@@ -19395,7 +19401,7 @@ class TemperaturePerTime(QuantityValue):
 
 
 class ThermalResistivityUnit(UnitEnum):
-    kelvin_meter_per_watt = Unit.kelvin_meter_per_watt
+    kelvin_meter_per_watt = Unit.kelvin_meter_per_watt.value
 
 
 class ThermalResistivity(QuantityValue):
@@ -19546,7 +19552,7 @@ class Breadth(Length):
 
 
 class RadiantIntensityUnit(UnitEnum):
-    watt_per_steradian = Unit.watt_per_steradian
+    watt_per_steradian = Unit.watt_per_steradian.value
 
 
 class RadiantIntensity(QuantityValue):
@@ -19583,7 +19589,7 @@ class RadiantIntensity(QuantityValue):
 
 
 class AngularMomentumPerAngleUnit(UnitEnum):
-    meter_newton_second_per_radian = Unit.meter_newton_second_per_radian
+    meter_newton_second_per_radian = Unit.meter_newton_second_per_radian.value
 
 
 class AngularMomentumPerAngle(QuantityValue):
@@ -19942,7 +19948,7 @@ class AbsorbedDose(SpecificEnergy):
 
 
 class InverseLengthTemperatureUnit(UnitEnum):
-    per_kelvin_per_meter = Unit.per_kelvin_per_meter
+    per_kelvin_per_meter = Unit.per_kelvin_per_meter.value
 
 
 class InverseLengthTemperature(QuantityValue):
@@ -19977,7 +19983,7 @@ class InverseLengthTemperature(QuantityValue):
 
 
 class SurfaceActivityDensityUnit(UnitEnum):
-    becquerel_per_meter_squared = Unit.becquerel_per_meter_squared
+    becquerel_per_meter_squared = Unit.becquerel_per_meter_squared.value
 
 
 class SurfaceActivityDensity(QuantityValue):
@@ -20070,7 +20076,7 @@ class AericHeatFlowRate(PowerPerArea):
 
 
 class AreaThermalExpansionUnit(UnitEnum):
-    meter_squared_per_kelvin = Unit.meter_squared_per_kelvin
+    meter_squared_per_kelvin = Unit.meter_squared_per_kelvin.value
 
 
 class AreaThermalExpansion(QuantityValue):
@@ -20188,7 +20194,9 @@ class ThermalExpansionCoefficient(ExpansionRatio):
 
 
 class SpectralAngularCrossSectionUnit(UnitEnum):
-    meter_squared_per_joule_per_steradian = Unit.meter_squared_per_joule_per_steradian
+    meter_squared_per_joule_per_steradian = (
+        Unit.meter_squared_per_joule_per_steradian.value
+    )
 
 
 class SpectralAngularCrossSection(QuantityValue):
@@ -20310,12 +20318,12 @@ class ExpansionRatio(QuantityValue):
 
 
 class MolarFluxDensityUnit(UnitEnum):
-    mole_per_meter_squared_per_second = Unit.mole_per_meter_squared_per_second
+    mole_per_meter_squared_per_second = Unit.mole_per_meter_squared_per_second.value
     milli_mole_per_meter_squared_per_second = (
-        Unit.milli_mole_per_meter_squared_per_second
+        Unit.milli_mole_per_meter_squared_per_second.value
     )
     micro_mole_per_meter_squared_per_second = (
-        Unit.micro_mole_per_meter_squared_per_second
+        Unit.micro_mole_per_meter_squared_per_second.value
     )
 
 
@@ -20384,7 +20392,7 @@ class SlowingDownLength(Length):
 
 
 class MassAbsorptionCoefficientUnit(UnitEnum):
-    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram
+    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
 
 
 class MassAbsorptionCoefficient(QuantityValue):
@@ -20479,9 +20487,13 @@ class AreaPerTime(QuantityValue):
 
 
 class MassPerAreaTimeUnit(UnitEnum):
-    gram_per_day_per_meter_squared = Unit.gram_per_day_per_meter_squared
-    milli_gram_per_day_per_meter_squared = Unit.milli_gram_per_day_per_meter_squared
-    micro_gram_per_day_per_meter_squared = Unit.micro_gram_per_day_per_meter_squared
+    gram_per_day_per_meter_squared = Unit.gram_per_day_per_meter_squared.value
+    milli_gram_per_day_per_meter_squared = (
+        Unit.milli_gram_per_day_per_meter_squared.value
+    )
+    micro_gram_per_day_per_meter_squared = (
+        Unit.micro_gram_per_day_per_meter_squared.value
+    )
 
 
 class MassPerAreaTime(QuantityValue):
@@ -20628,12 +20640,12 @@ class DensityOfTheExhaustGases(Density):
 
 
 class CurrentLinkageUnit(UnitEnum):
-    ampere = Unit.ampere
-    milli_ampere = Unit.milli_ampere
-    mega_ampere = Unit.mega_ampere
-    pico_ampere = Unit.pico_ampere
-    kilo_ampere = Unit.kilo_ampere
-    micro_ampere = Unit.micro_ampere
+    ampere = Unit.ampere.value
+    milli_ampere = Unit.milli_ampere.value
+    mega_ampere = Unit.mega_ampere.value
+    pico_ampere = Unit.pico_ampere.value
+    kilo_ampere = Unit.kilo_ampere.value
+    micro_ampere = Unit.micro_ampere.value
 
 
 class CurrentLinkage(QuantityValue):
@@ -20908,7 +20920,7 @@ class StaticFriction(Friction):
 
 class NeonConductivityVarianceUnit(UnitEnum):
     micro_siemens_squared_per_centi_meter_squared = (
-        Unit.micro_siemens_squared_per_centi_meter_squared
+        Unit.micro_siemens_squared_per_centi_meter_squared.value
     )
 
 
@@ -20971,7 +20983,7 @@ class MassOfElectricalPowerSupply(Mass):
 
 
 class ResidualResistivityUnit(UnitEnum):
-    meter_ohm = Unit.meter_ohm
+    meter_ohm = Unit.meter_ohm.value
 
 
 class ResidualResistivity(QuantityValue):
@@ -21095,7 +21107,7 @@ class CompressibilityFactor(DimensionlessRatio):
 
 
 class PolarisabilityUnit(UnitEnum):
-    coulomb_meter_squared_per_volt = Unit.coulomb_meter_squared_per_volt
+    coulomb_meter_squared_per_volt = Unit.coulomb_meter_squared_per_volt.value
 
 
 class Polarisability(QuantityValue):
@@ -21132,7 +21144,7 @@ class Polarisability(QuantityValue):
 
 
 class ElectricDipoleMomentUnit(UnitEnum):
-    coulomb_meter = Unit.coulomb_meter
+    coulomb_meter = Unit.coulomb_meter.value
 
 
 class ElectricDipoleMoment(QuantityValue):
@@ -21199,15 +21211,15 @@ class DiffusionArea(Area):
 
 
 class SpecificImpulseByWeightUnit(UnitEnum):
-    second = Unit.second
-    nano_second = Unit.nano_second
-    micro_second = Unit.micro_second
-    pico_second = Unit.pico_second
-    atto_second = Unit.atto_second
-    kilo_second = Unit.kilo_second
-    deci_second = Unit.deci_second
-    femto_second = Unit.femto_second
-    milli_second = Unit.milli_second
+    second = Unit.second.value
+    nano_second = Unit.nano_second.value
+    micro_second = Unit.micro_second.value
+    pico_second = Unit.pico_second.value
+    atto_second = Unit.atto_second.value
+    kilo_second = Unit.kilo_second.value
+    deci_second = Unit.deci_second.value
+    femto_second = Unit.femto_second.value
+    milli_second = Unit.milli_second.value
 
 
 class SpecificImpulseByWeight(QuantityValue):
@@ -21252,14 +21264,14 @@ class SpecificImpulseByWeight(QuantityValue):
 
 
 class ElectricChargeVolumeDensityUnit(UnitEnum):
-    coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed
-    mega_coulomb_per_meter_cubed = Unit.mega_coulomb_per_meter_cubed
-    kilo_coulomb_per_meter_cubed = Unit.kilo_coulomb_per_meter_cubed
-    coulomb_per_milli_meter_cubed = Unit.coulomb_per_milli_meter_cubed
-    milli_coulomb_per_meter_cubed = Unit.milli_coulomb_per_meter_cubed
-    micro_coulomb_per_meter_cubed = Unit.micro_coulomb_per_meter_cubed
-    giga_coulomb_per_meter_cubed = Unit.giga_coulomb_per_meter_cubed
-    coulomb_per_centi_meter_cubed = Unit.coulomb_per_centi_meter_cubed
+    coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed.value
+    mega_coulomb_per_meter_cubed = Unit.mega_coulomb_per_meter_cubed.value
+    kilo_coulomb_per_meter_cubed = Unit.kilo_coulomb_per_meter_cubed.value
+    coulomb_per_milli_meter_cubed = Unit.coulomb_per_milli_meter_cubed.value
+    milli_coulomb_per_meter_cubed = Unit.milli_coulomb_per_meter_cubed.value
+    micro_coulomb_per_meter_cubed = Unit.micro_coulomb_per_meter_cubed.value
+    giga_coulomb_per_meter_cubed = Unit.giga_coulomb_per_meter_cubed.value
+    coulomb_per_centi_meter_cubed = Unit.coulomb_per_centi_meter_cubed.value
 
 
 class ElectricChargeVolumeDensity(QuantityValue):
@@ -21316,8 +21328,10 @@ class ElectricChargeVolumeDensity(QuantityValue):
 
 
 class VolumetricHeatCapacityUnit(UnitEnum):
-    joule_per_kelvin_per_meter_cubed = Unit.joule_per_kelvin_per_meter_cubed
-    joule_per_centi_meter_cubed_per_kelvin = Unit.joule_per_centi_meter_cubed_per_kelvin
+    joule_per_kelvin_per_meter_cubed = Unit.joule_per_kelvin_per_meter_cubed.value
+    joule_per_centi_meter_cubed_per_kelvin = (
+        Unit.joule_per_centi_meter_cubed_per_kelvin.value
+    )
 
 
 class VolumetricHeatCapacity(QuantityValue):
@@ -21446,7 +21460,7 @@ class MassicActivity(QuantityValue):
 
 
 class ThomsonCoefficientUnit(UnitEnum):
-    volt_per_kelvin = Unit.volt_per_kelvin
+    volt_per_kelvin = Unit.volt_per_kelvin.value
 
 
 class ThomsonCoefficient(QuantityValue):
@@ -21510,7 +21524,7 @@ class StateOfCharge(DimensionlessRatio):
 
 
 class SurfaceCoefficientOfHeatTransferUnit(UnitEnum):
-    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared
+    watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
 
 
 class SurfaceCoefficientOfHeatTransfer(QuantityValue):
@@ -21545,8 +21559,8 @@ class SurfaceCoefficientOfHeatTransfer(QuantityValue):
 
 
 class AngularImpulseUnit(UnitEnum):
-    joule_second = Unit.joule_second
-    atto_joule_second = Unit.atto_joule_second
+    joule_second = Unit.joule_second.value
+    atto_joule_second = Unit.atto_joule_second.value
 
 
 class AngularImpulse(QuantityValue):
@@ -21718,16 +21732,16 @@ class Magnetization(LinearElectricCurrent):
 
 
 class ExchangeIntegralUnit(UnitEnum):
-    joule = Unit.joule
-    atto_joule = Unit.atto_joule
-    kilo_joule = Unit.kilo_joule
-    peta_joule = Unit.peta_joule
-    milli_joule = Unit.milli_joule
-    giga_joule = Unit.giga_joule
-    femto_joule = Unit.femto_joule
-    exa_joule = Unit.exa_joule
-    tera_joule = Unit.tera_joule
-    mega_joule = Unit.mega_joule
+    joule = Unit.joule.value
+    atto_joule = Unit.atto_joule.value
+    kilo_joule = Unit.kilo_joule.value
+    peta_joule = Unit.peta_joule.value
+    milli_joule = Unit.milli_joule.value
+    giga_joule = Unit.giga_joule.value
+    femto_joule = Unit.femto_joule.value
+    exa_joule = Unit.exa_joule.value
+    tera_joule = Unit.tera_joule.value
+    mega_joule = Unit.mega_joule.value
 
 
 class ExchangeIntegral(QuantityValue):
@@ -21777,8 +21791,8 @@ class ExchangeIntegral(QuantityValue):
 
 
 class AreaPerHeatingLoadUnit(UnitEnum):
-    meter_squared_per_watt = Unit.meter_squared_per_watt
-    meter_squared_per_kilo_watt = Unit.meter_squared_per_kilo_watt
+    meter_squared_per_watt = Unit.meter_squared_per_watt.value
+    meter_squared_per_kilo_watt = Unit.meter_squared_per_kilo_watt.value
 
 
 class AreaPerHeatingLoad(QuantityValue):
@@ -21840,7 +21854,7 @@ class NozzleThroatCrossSectionalArea(Area):
 
 
 class ActivityConcentrationUnit(UnitEnum):
-    becquerel_per_meter_cubed = Unit.becquerel_per_meter_cubed
+    becquerel_per_meter_cubed = Unit.becquerel_per_meter_cubed.value
 
 
 class ActivityConcentration(QuantityValue):
@@ -21906,7 +21920,7 @@ class ComplexPower(ElectricPower):
 
 
 class SpecificOpticalRotatoryPowerUnit(UnitEnum):
-    meter_squared_radian_per_kilo_gram = Unit.meter_squared_radian_per_kilo_gram
+    meter_squared_radian_per_kilo_gram = Unit.meter_squared_radian_per_kilo_gram.value
 
 
 class SpecificOpticalRotatoryPower(QuantityValue):
@@ -21969,7 +21983,7 @@ class NuclearEnergy(Energy):
 
 class VaporPermeanceUnit(UnitEnum):
     kilo_gram_per_meter_squared_per_pascal_per_second = (
-        Unit.kilo_gram_per_meter_squared_per_pascal_per_second
+        Unit.kilo_gram_per_meter_squared_per_pascal_per_second.value
     )
 
 
@@ -22007,7 +22021,7 @@ class VaporPermeance(QuantityValue):
 
 
 class MassConcentrationOfWaterVapourUnit(UnitEnum):
-    gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed
+    gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed.value
 
 
 class MassConcentrationOfWaterVapour(QuantityValue):
@@ -22044,11 +22058,11 @@ class MassConcentrationOfWaterVapour(QuantityValue):
 
 
 class PoyntingVectorUnit(UnitEnum):
-    watt_per_meter_squared = Unit.watt_per_meter_squared
-    watt_per_centi_meter_squared = Unit.watt_per_centi_meter_squared
-    pico_watt_per_meter_squared = Unit.pico_watt_per_meter_squared
-    milli_watt_per_meter_squared = Unit.milli_watt_per_meter_squared
-    micro_watt_per_meter_squared = Unit.micro_watt_per_meter_squared
+    watt_per_meter_squared = Unit.watt_per_meter_squared.value
+    watt_per_centi_meter_squared = Unit.watt_per_centi_meter_squared.value
+    pico_watt_per_meter_squared = Unit.pico_watt_per_meter_squared.value
+    milli_watt_per_meter_squared = Unit.milli_watt_per_meter_squared.value
+    micro_watt_per_meter_squared = Unit.micro_watt_per_meter_squared.value
 
 
 class PoyntingVector(QuantityValue):
@@ -22118,9 +22132,9 @@ class CharacteristicVelocity(Velocity):
 
 
 class MolarRefractivityUnit(UnitEnum):
-    meter_cubed_per_mole = Unit.meter_cubed_per_mole
-    centi_meter_cubed_per_mole = Unit.centi_meter_cubed_per_mole
-    deci_meter_cubed_per_mole = Unit.deci_meter_cubed_per_mole
+    meter_cubed_per_mole = Unit.meter_cubed_per_mole.value
+    centi_meter_cubed_per_mole = Unit.centi_meter_cubed_per_mole.value
+    deci_meter_cubed_per_mole = Unit.deci_meter_cubed_per_mole.value
 
 
 class MolarRefractivity(QuantityValue):
@@ -22186,12 +22200,12 @@ class ElectronMobility(Mobility):
 
 
 class TotalCurrentUnit(UnitEnum):
-    ampere = Unit.ampere
-    milli_ampere = Unit.milli_ampere
-    mega_ampere = Unit.mega_ampere
-    pico_ampere = Unit.pico_ampere
-    kilo_ampere = Unit.kilo_ampere
-    micro_ampere = Unit.micro_ampere
+    ampere = Unit.ampere.value
+    milli_ampere = Unit.milli_ampere.value
+    mega_ampere = Unit.mega_ampere.value
+    pico_ampere = Unit.pico_ampere.value
+    kilo_ampere = Unit.kilo_ampere.value
+    micro_ampere = Unit.micro_ampere.value
 
 
 class TotalCurrent(QuantityValue):
@@ -22461,7 +22475,7 @@ class PositiveLength(Length):
 
 
 class MassAttenuationCoefficientUnit(UnitEnum):
-    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram
+    meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
 
 
 class MassAttenuationCoefficient(QuantityValue):
@@ -22541,7 +22555,7 @@ class Power(QuantityValue):
 
 
 class CatalyticActivityUnit(UnitEnum):
-    katal = Unit.katal
+    katal = Unit.katal.value
 
 
 class CatalyticActivity(QuantityValue):
@@ -22799,7 +22813,7 @@ class Width(Length):
 
 
 class SpectralCrossSectionUnit(UnitEnum):
-    meter_squared_per_joule = Unit.meter_squared_per_joule
+    meter_squared_per_joule = Unit.meter_squared_per_joule.value
 
 
 class SpectralCrossSection(QuantityValue):
@@ -22969,7 +22983,7 @@ class OverRangeDistance(Length):
 
 
 class MassPerTimeUnit(UnitEnum):
-    newton_second_per_meter = Unit.newton_second_per_meter
+    newton_second_per_meter = Unit.newton_second_per_meter.value
 
 
 class MassPerTime(QuantityValue):
@@ -23063,7 +23077,7 @@ class BoilingPointTemperature(Temperature):
 
 
 class ElectricChargeLineDensityUnit(UnitEnum):
-    coulomb_per_meter = Unit.coulomb_per_meter
+    coulomb_per_meter = Unit.coulomb_per_meter.value
 
 
 class ElectricChargeLineDensity(QuantityValue):
@@ -23125,7 +23139,7 @@ class RocketAtmosphericTransverseForce(Force):
 
 
 class EvaporativeHeatTransferCoefficientUnit(UnitEnum):
-    watt_per_meter_squared_per_pascal = Unit.watt_per_meter_squared_per_pascal
+    watt_per_meter_squared_per_pascal = Unit.watt_per_meter_squared_per_pascal.value
 
 
 class EvaporativeHeatTransferCoefficient(QuantityValue):
@@ -23162,8 +23176,8 @@ class EvaporativeHeatTransferCoefficient(QuantityValue):
 
 
 class ModulusOfSubgradeReactionUnit(UnitEnum):
-    newton_per_meter_cubed = Unit.newton_per_meter_cubed
-    kilo_newton_per_meter_cubed = Unit.kilo_newton_per_meter_cubed
+    newton_per_meter_cubed = Unit.newton_per_meter_cubed.value
+    kilo_newton_per_meter_cubed = Unit.kilo_newton_per_meter_cubed.value
 
 
 class ModulusOfSubgradeReaction(QuantityValue):
@@ -23227,7 +23241,7 @@ class MechanicalEnergy(Energy):
 
 
 class InversePermittivityUnit(UnitEnum):
-    meter_per_farad = Unit.meter_per_farad
+    meter_per_farad = Unit.meter_per_farad.value
 
 
 class InversePermittivity(QuantityValue):
@@ -23343,13 +23357,13 @@ class BraggAngle(Angle):
 
 
 class ModulusOfImpedanceUnit(UnitEnum):
-    ohm = Unit.ohm
-    milli_ohm = Unit.milli_ohm
-    mega_ohm = Unit.mega_ohm
-    kilo_ohm = Unit.kilo_ohm
-    micro_ohm = Unit.micro_ohm
-    giga_ohm = Unit.giga_ohm
-    tera_ohm = Unit.tera_ohm
+    ohm = Unit.ohm.value
+    milli_ohm = Unit.milli_ohm.value
+    mega_ohm = Unit.mega_ohm.value
+    kilo_ohm = Unit.kilo_ohm.value
+    micro_ohm = Unit.micro_ohm.value
+    giga_ohm = Unit.giga_ohm.value
+    tera_ohm = Unit.tera_ohm.value
 
 
 class ModulusOfImpedance(QuantityValue):
@@ -23423,9 +23437,9 @@ class AcousticImpediance(MassPerAreaTime):
 
 
 class VolumePerTimeUnit(UnitEnum):
-    meter_cubed_per_second = Unit.meter_cubed_per_second
-    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second
-    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second
+    meter_cubed_per_second = Unit.meter_cubed_per_second.value
+    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second.value
+    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second.value
 
 
 class VolumePerTime(QuantityValue):
@@ -23464,7 +23478,7 @@ class VolumePerTime(QuantityValue):
 
 
 class SoundExposureLevelUnit(UnitEnum):
-    byte = Unit.byte
+    byte = Unit.byte.value
 
 
 class SoundExposureLevel(QuantityValue):
@@ -23501,11 +23515,11 @@ class SoundExposureLevel(QuantityValue):
 
 
 class ElectricPotentialUnit(UnitEnum):
-    volt = Unit.volt
-    micro_volt = Unit.micro_volt
-    mega_volt = Unit.mega_volt
-    milli_volt = Unit.milli_volt
-    kilo_volt = Unit.kilo_volt
+    volt = Unit.volt.value
+    micro_volt = Unit.micro_volt.value
+    mega_volt = Unit.mega_volt.value
+    milli_volt = Unit.milli_volt.value
+    kilo_volt = Unit.kilo_volt.value
 
 
 class ElectricPotential(QuantityValue):
@@ -23542,7 +23556,7 @@ class ElectricPotential(QuantityValue):
 
 
 class ResistivityUnit(UnitEnum):
-    meter_ohm = Unit.meter_ohm
+    meter_ohm = Unit.meter_ohm.value
 
 
 class Resistivity(QuantityValue):
@@ -23661,7 +23675,7 @@ class VehicleVelocity(Velocity):
 
 
 class ElectricCurrentPerTemperatureUnit(UnitEnum):
-    ampere_per_Celsius = Unit.ampere_per_Celsius
+    ampere_per_Celsius = Unit.ampere_per_Celsius.value
 
 
 class ElectricCurrentPerTemperature(QuantityValue):
@@ -23783,13 +23797,13 @@ class ExitPlaneTemperature(Temperature):
 
 
 class ImpedanceUnit(UnitEnum):
-    ohm = Unit.ohm
-    milli_ohm = Unit.milli_ohm
-    mega_ohm = Unit.mega_ohm
-    kilo_ohm = Unit.kilo_ohm
-    micro_ohm = Unit.micro_ohm
-    giga_ohm = Unit.giga_ohm
-    tera_ohm = Unit.tera_ohm
+    ohm = Unit.ohm.value
+    milli_ohm = Unit.milli_ohm.value
+    mega_ohm = Unit.mega_ohm.value
+    kilo_ohm = Unit.kilo_ohm.value
+    micro_ohm = Unit.micro_ohm.value
+    giga_ohm = Unit.giga_ohm.value
+    tera_ohm = Unit.tera_ohm.value
 
 
 class Impedance(QuantityValue):
@@ -23886,7 +23900,7 @@ class MaximumExpectedOperatingPressure(Pressure):
 
 
 class InverseSquareEnergyUnit(UnitEnum):
-    per_joule_squared = Unit.per_joule_squared
+    per_joule_squared = Unit.per_joule_squared.value
 
 
 class InverseSquareEnergy(QuantityValue):
@@ -23922,7 +23936,7 @@ class InverseSquareEnergy(QuantityValue):
 
 class WaterVapourDiffusionCoefficientUnit(UnitEnum):
     kilo_gram_per_meter_per_pascal_per_second = (
-        Unit.kilo_gram_per_meter_per_pascal_per_second
+        Unit.kilo_gram_per_meter_per_pascal_per_second.value
     )
 
 
@@ -23963,7 +23977,7 @@ class WaterVapourDiffusionCoefficient(QuantityValue):
 
 
 class TemperaturePerTimeSquaredUnit(UnitEnum):
-    kelvin_per_second_squared = Unit.kelvin_per_second_squared
+    kelvin_per_second_squared = Unit.kelvin_per_second_squared.value
 
 
 class TemperaturePerTimeSquared(QuantityValue):
@@ -24160,7 +24174,7 @@ class Pressure(ForcePerArea):
 
 
 class MagneticMomentUnit(UnitEnum):
-    ampere_meter_squared = Unit.ampere_meter_squared
+    ampere_meter_squared = Unit.ampere_meter_squared.value
 
 
 class MagneticMoment(QuantityValue):
@@ -24278,7 +24292,7 @@ class TotalAngularMomentumQuantumNumber(QuantumNumber):
 
 
 class MagneticFluxPerLengthUnit(UnitEnum):
-    newton_per_ampere = Unit.newton_per_ampere
+    newton_per_ampere = Unit.newton_per_ampere.value
 
 
 class MagneticFluxPerLength(QuantityValue):
@@ -24315,7 +24329,7 @@ class MagneticFluxPerLength(QuantityValue):
 
 
 class LengthEnergyUnit(UnitEnum):
-    fermi_mega_electron_volt = Unit.fermi_mega_electron_volt
+    fermi_mega_electron_volt = Unit.fermi_mega_electron_volt.value
 
 
 class LengthEnergy(QuantityValue):
@@ -24493,7 +24507,7 @@ class NominalAscentPropellantMass(Mass):
 
 
 class BodyMassIndexUnit(UnitEnum):
-    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared
+    kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
 
 
 class BodyMassIndex(QuantityValue):
@@ -24557,7 +24571,7 @@ class PartialPressure(Pressure):
 
 
 class LinearEnergyTransferUnit(UnitEnum):
-    joule_per_meter = Unit.joule_per_meter
+    joule_per_meter = Unit.joule_per_meter.value
 
 
 class LinearEnergyTransfer(QuantityValue):
@@ -24646,10 +24660,10 @@ class Radiosity(PowerPerArea):
 
 
 class ConductanceUnit(UnitEnum):
-    siemens = Unit.siemens
-    milli_siemens = Unit.milli_siemens
-    kilo_siemens = Unit.kilo_siemens
-    micro_siemens = Unit.micro_siemens
+    siemens = Unit.siemens.value
+    milli_siemens = Unit.milli_siemens.value
+    kilo_siemens = Unit.kilo_siemens.value
+    micro_siemens = Unit.micro_siemens.value
 
 
 class Conductance(QuantityValue):
@@ -24686,7 +24700,7 @@ class Conductance(QuantityValue):
 
 
 class InverseEnergyUnit(UnitEnum):
-    per_hour_per_kilo_volt_ampere = Unit.per_hour_per_kilo_volt_ampere
+    per_hour_per_kilo_volt_ampere = Unit.per_hour_per_kilo_volt_ampere.value
 
 
 class InverseEnergy(QuantityValue):
@@ -24937,7 +24951,7 @@ class MassOfTheEarth(Mass):
 
 class PhotonRadianceUnit(UnitEnum):
     per_meter_squared_per_second_per_steradian = (
-        Unit.per_meter_squared_per_second_per_steradian
+        Unit.per_meter_squared_per_second_per_steradian.value
     )
 
 
@@ -25002,9 +25016,9 @@ class DryBulbTemperature(Temperature):
 
 
 class RecombinationCoefficientUnit(UnitEnum):
-    meter_cubed_per_second = Unit.meter_cubed_per_second
-    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second
-    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second
+    meter_cubed_per_second = Unit.meter_cubed_per_second.value
+    deci_meter_cubed_per_second = Unit.deci_meter_cubed_per_second.value
+    centi_meter_cubed_per_second = Unit.centi_meter_cubed_per_second.value
 
 
 class RecombinationCoefficient(QuantityValue):
@@ -25176,8 +25190,8 @@ class Depth(Length):
 
 
 class IonConcentrationUnit(UnitEnum):
-    candela_per_lumen = Unit.candela_per_lumen
-    candela_per_kilo_lumen = Unit.candela_per_kilo_lumen
+    candela_per_lumen = Unit.candela_per_lumen.value
+    candela_per_kilo_lumen = Unit.candela_per_kilo_lumen.value
 
 
 class IonConcentration(QuantityValue):
@@ -25332,7 +25346,7 @@ class DimensionlessRatio(Dimensionless):
 
 
 class PhotonIntensityUnit(UnitEnum):
-    per_second_per_steradian = Unit.per_second_per_steradian
+    per_second_per_steradian = Unit.per_second_per_steradian.value
 
 
 class PhotonIntensity(QuantityValue):
@@ -25501,7 +25515,7 @@ class AreicMass(MassPerArea):
 
 class SpecificHeatVolumeUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram_per_meter_cubed = (
-        Unit.joule_per_kelvin_per_kilo_gram_per_meter_cubed
+        Unit.joule_per_kelvin_per_kilo_gram_per_meter_cubed.value
     )
 
 
@@ -25537,12 +25551,12 @@ class SpecificHeatVolume(QuantityValue):
 
 
 class NuclearQuadrupoleMomentUnit(UnitEnum):
-    meter_squared = Unit.meter_squared
-    deci_meter_squared = Unit.deci_meter_squared
-    milli_meter_squared = Unit.milli_meter_squared
-    nano_meter_squared = Unit.nano_meter_squared
-    centi_meter_squared = Unit.centi_meter_squared
-    micro_meter_squared = Unit.micro_meter_squared
+    meter_squared = Unit.meter_squared.value
+    deci_meter_squared = Unit.deci_meter_squared.value
+    milli_meter_squared = Unit.milli_meter_squared.value
+    nano_meter_squared = Unit.nano_meter_squared.value
+    centi_meter_squared = Unit.centi_meter_squared.value
+    micro_meter_squared = Unit.micro_meter_squared.value
 
 
 class NuclearQuadrupoleMoment(QuantityValue):
@@ -25586,7 +25600,7 @@ class NuclearQuadrupoleMoment(QuantityValue):
 
 
 class PowerAreaPerSolidAngleUnit(UnitEnum):
-    meter_squared_watt_per_steradian = Unit.meter_squared_watt_per_steradian
+    meter_squared_watt_per_steradian = Unit.meter_squared_watt_per_steradian.value
 
 
 class PowerAreaPerSolidAngle(QuantityValue):
@@ -25621,7 +25635,7 @@ class PowerAreaPerSolidAngle(QuantityValue):
 
 
 class LuminanceUnit(UnitEnum):
-    candela_per_meter_squared = Unit.candela_per_meter_squared
+    candela_per_meter_squared = Unit.candela_per_meter_squared.value
 
 
 class Luminance(QuantityValue):
@@ -25712,7 +25726,7 @@ class MagneticFieldStrength(ElectricCurrentPerLength):
 
 
 class SoundExposureUnit(UnitEnum):
-    pascal_squared_second = Unit.pascal_squared_second
+    pascal_squared_second = Unit.pascal_squared_second.value
 
 
 class SoundExposure(QuantityValue):
@@ -25776,7 +25790,7 @@ class MoleFraction(DimensionlessRatio):
 
 
 class KermaRateUnit(UnitEnum):
-    gray_per_second = Unit.gray_per_second
+    gray_per_second = Unit.gray_per_second.value
 
 
 class KermaRate(QuantityValue):
@@ -25892,7 +25906,7 @@ class DebyeAngularWavenumber(InverseLength):
 
 
 class MolarHeatCapacityUnit(UnitEnum):
-    joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole
+    joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole.value
 
 
 class MolarHeatCapacity(QuantityValue):
@@ -26035,7 +26049,7 @@ class ThrustToMassRatio(Acceleration):
 
 
 class MolarMassVariationDueToPressureUnit(UnitEnum):
-    mole_per_kilo_gram_per_pascal = Unit.mole_per_kilo_gram_per_pascal
+    mole_per_kilo_gram_per_pascal = Unit.mole_per_kilo_gram_per_pascal.value
 
 
 class MolarMassVariationDueToPressure(QuantityValue):
@@ -26161,7 +26175,7 @@ class ContractEndItemCeiSpecificationMass(Mass):
 
 
 class MomentumPerAngleUnit(UnitEnum):
-    newton_second_per_radian = Unit.newton_second_per_radian
+    newton_second_per_radian = Unit.newton_second_per_radian.value
 
 
 class MomentumPerAngle(QuantityValue):
@@ -26196,8 +26210,8 @@ class MomentumPerAngle(QuantityValue):
 
 
 class ElectromagneticEnergyDensityUnit(UnitEnum):
-    joule_per_meter_cubed = Unit.joule_per_meter_cubed
-    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed
+    joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
+    mega_joule_per_meter_cubed = Unit.mega_joule_per_meter_cubed.value
 
 
 class ElectromagneticEnergyDensity(QuantityValue):
@@ -26234,7 +26248,7 @@ class ElectromagneticEnergyDensity(QuantityValue):
 
 
 class SpecificHeatCapacityAtSaturationUnit(UnitEnum):
-    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram
+    joule_per_Celsius_per_kilo_gram = Unit.joule_per_Celsius_per_kilo_gram.value
 
 
 class SpecificHeatCapacityAtSaturation(QuantityValue):
@@ -26294,7 +26308,7 @@ class SingleStageLauncherMassRatio(MassRatio):
 
 
 class AngularCrossSectionUnit(UnitEnum):
-    meter_squared_per_steradian = Unit.meter_squared_per_steradian
+    meter_squared_per_steradian = Unit.meter_squared_per_steradian.value
 
 
 class AngularCrossSection(QuantityValue):
@@ -26612,7 +26626,7 @@ class CubicExpansionCoefficient(ExpansionRatio):
 
 
 class CompressibilityUnit(UnitEnum):
-    meter_squared_per_newton = Unit.meter_squared_per_newton
+    meter_squared_per_newton = Unit.meter_squared_per_newton.value
 
 
 class Compressibility(QuantityValue):
@@ -26650,7 +26664,7 @@ class Compressibility(QuantityValue):
 
 class PressureLossPerLengthUnit(UnitEnum):
     kilo_gram_per_meter_squared_per_second_squared = (
-        Unit.kilo_gram_per_meter_squared_per_second_squared
+        Unit.kilo_gram_per_meter_squared_per_second_squared.value
     )
 
 

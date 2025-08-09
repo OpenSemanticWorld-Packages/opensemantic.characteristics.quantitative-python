@@ -376,8 +376,8 @@ def test_generic_unit_enum():
     assert l1 == l2
     assert l1 == l3
     assert l1 == l4
-    assert l1 == q
-    assert l1 == q2
+    assert not l1 == q
+    assert not l1 == q2
     assert q == q2
 
 
@@ -405,7 +405,3 @@ if __name__ == "__main__":
     test_to_unit()
     test_pandas()
     test_export()
-
-# todo: fix
-#  * test_export which returns unit: "Unit.milli_meter" instead of the value of the enum
-#    member
