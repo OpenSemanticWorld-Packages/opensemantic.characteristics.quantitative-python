@@ -22,7 +22,9 @@ from opensemantic.characteristics.quantitative import (
     Stress,
     TabularData,
     Thickness,
+    Unit,
     Width,
+    unit,
 )
 
 # Do we have to adapt VSCode settings to include the package index?
@@ -118,6 +120,17 @@ def test_quantityvalue_magic_methods():
 
 
 def test_export():
+    q2 = Length(value=1.0, unit=Unit.milli_meter)
+    q2_json = json.loads(q2.json(exclude_none=True))
+    print(q2_json)
+    assert q2_json == {
+        "type": ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"],
+        "value": 1.0,
+        "unit": str(
+            "Item:OSWf101d25e944856e3bd4b4c9863db7de2"
+            "#OSW322dec469be75aedb008b3ebff29db86"
+        ),
+    }
 
     q = Length(value=1.0, unit=LengthUnit.milli_meter)
 
@@ -348,6 +361,26 @@ def test_init():
     assert l5.unit == LengthUnit.meter
 
 
+def test_generic_unit_enum():
+    l1 = Length(v=10.0, u=unit("meter"))
+
+    l2 = Length(value=10, unit=Unit.meter)
+
+    l3 = Length(QuantityValue(value=10, unit=Unit.meter))
+
+    l4 = Length(QuantityValue(v=10, u=Unit.meter))
+
+    q = Length(value=10.0, unit=LengthUnit.milli_meter)
+    q2 = Length(value=10.0, unit=Unit.milli_meter)
+
+    assert l1 == l2
+    assert l1 == l3
+    assert l1 == l4
+    assert l1 == q
+    assert l1 == q2
+    assert q == q2
+
+
 def test_to_unit():
     # Test conversion from meters to millimeters
     length = Length(value=1.0, unit=LengthUnit.meter)
@@ -365,8 +398,14 @@ def test_to_unit():
 
 if __name__ == "__main__":
     test_pint()
-    test_export()
-    test_pandas()
     test_tensile_test()
     test_quantityvalue_magic_methods()
     test_init()
+    test_generic_unit_enum()
+    test_to_unit()
+    test_pandas()
+    test_export()
+
+# todo: fix
+#  * test_export which returns unit: "Unit.milli_meter" instead of the value of the enum
+#    member

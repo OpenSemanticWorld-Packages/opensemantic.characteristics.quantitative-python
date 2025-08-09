@@ -167,9 +167,9 @@ def test_full_inventory_test():
 
 if __name__ == "__main__":
     test_addition()
-    test_quantity_value()
     test_pint()
     test_full_inventory_test()
+    test_quantity_value()
 
 # pint_reg = pint.UnitRegistry()
 # pint_q = pint_reg.Quantity(1.0, "petajoule")

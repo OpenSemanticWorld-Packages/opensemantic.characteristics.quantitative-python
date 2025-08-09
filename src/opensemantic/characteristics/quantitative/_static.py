@@ -1,5 +1,4 @@
 import sys
-from enum import Enum
 
 if sys.version_info >= (3, 11):
     # Python 3.11 or higher
@@ -20,39 +19,14 @@ from pydantic.v1 import Field, create_model
 from pydantic.v1.fields import FieldInfo
 
 from opensemantic import OswBaseModel
+from opensemantic.characteristics.quantitative._collection import Unit
+from opensemantic.characteristics.quantitative._enum import UnitEnum, unit_registry
 
 # import pint_pandas
 
 # from osw.model.entity import Characteristic # pip install pint-pandas
 
 QV = TypeVar("QV", bound="QuantityValue")
-
-
-unit_registry: Dict[str, EnumType] = {}
-
-
-class UnitEnumMetaclass(EnumType):
-    def __new__(cls, clsname, bases, attrs):
-        # print(attrs["__qualname__"], attrs)
-        class_instance = EnumType.__new__(cls, clsname, bases, attrs)
-        for key, value in attrs.items():
-            if key not in ["__module__", "__qualname__", "_generate_next_value_"]:
-                # register all enum values in the unit_registry
-                if key in unit_registry:
-                    pass
-                    # warn(
-                    #     (
-                    #         f"Unit {key} already registered in "
-                    #         "unit_registry, skip registration."
-                    #     )
-                    # )
-                else:
-                    unit_registry[key] = class_instance
-        return class_instance
-
-
-class UnitEnum(str, Enum, metaclass=UnitEnumMetaclass):
-    pass
 
 
 class Characteristic(OswBaseModel):
@@ -145,12 +119,45 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         title="value",
         title_={"en": "Value", "de": "Wert"},
     )
-    unit: Optional[UnitEnum] = Field(
+    # unit: Optional[UnitEnum] = Field(
+    # unit: Optional[Union[UnitEnum, Unit]] = Field(
+    unit: Optional[Unit] = Field(
         None,
         options={"grid_columns": 4},
         title="unit",
         title_={"en": "Unit", "de": "Einheit"},
     )
+
+    # @validator("unit", pre=True)
+    @classmethod
+    def accept_any_unit_enum(cls, v):
+        # Get the expected enum class for this QuantityValue
+        expected_enum = cls.__fields__["unit"].type_
+        # Not required anymore if QuantityValue.unit is typed Unit
+        if expected_enum == UnitEnum:
+            # If the generic QuantityValue is used, all Unit members are valid
+            expected_enum = Unit
+        if isinstance(v, expected_enum):
+            print("expected enum case")
+            # Returns the enum as is - causes Error because the validator of unit
+            # won't find any Member in UnitEnum --> The unit field type must be changed
+            return v
+        # Also accept other UnitEnum types, map by name
+        if isinstance(v, UnitEnum):
+            print("UnitEnum case")
+            try:
+                return getattr(expected_enum, v.name)
+            except KeyError:
+                raise ValueError(
+                    f"Unit '{v.name}' is not a valid member of {expected_enum}."
+                )
+        # # Optional: String to Enum
+        # if isinstance(v, str):
+        #     try:
+        #         return expected_enum[v]
+        #     except KeyError:
+        #         raise ValueError(f"Unit '{v}' ist not valid for {expected_enum}.")
+        return v
 
     # fmt: off
     @overload
@@ -232,6 +239,11 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             kwargs["value"] = quantity_value.value
             kwargs["unit"] = quantity_value.unit
 
+        # Validate unit here manually, since we allow alias "u" for "unit" we cant
+        #  use the @validator(unit, pre=True) alone ("v" is not registered as field)
+        if "unit" in kwargs.keys():
+            kwargs["unit"] = self.__class__.accept_any_unit_enum(kwargs["unit"])
+        # Finally call the init
         super().__init__(**kwargs)
 
     @classmethod
@@ -337,12 +349,20 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             numeric_value = float(value.split("{")[1].split("}")[0])
             if len(unit_symbol) == 0:
                 unit_symbol = "dimensionless"
-            unit_class = unit_registry[unit_symbol]
-            quantity_class = quantity_registry[unit_class]
+            # Selecting the first entry for the key in the registry:
+            unit_class = unit_registry[unit_symbol][0]
+            if unit_class == Unit:
+                quantity_class = QuantityValue
+            else:
+                quantity_class = quantity_registry.get(unit_class, None)
             if quantity_type is not None:
-                # if a specific quantity type is provided, use it instead of the
-                # default one
+                # If a specific quantity type is provided, use it instead of the
+                #  default one
                 quantity_class = quantity_type
+            if quantity_class is None:
+                # todo: @Simon check if this should axtually cause an error or this
+                #  catch is ok
+                quantity_class = QuantityValue
             if return_dict:
                 return {
                     "value": numeric_value,
@@ -369,8 +389,14 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             unit_symbol_2 = unit_symbol_1.replace("\\", "_").strip("_")
             if len(unit_symbol_2) == 0:
                 unit_symbol_2 = "dimensionless"
-            unit_class = unit_registry[unit_symbol_2]
-            quantity_class = quantity_registry[unit_class]
+            # Selecting the first entry for the key in the registry:
+            unit_class = unit_registry[unit_symbol_2][0]
+            # To be able to initiate the generic QuantityValue class directly,
+            #  this is required:
+            if unit_class == Unit:
+                quantity_class = QuantityValue
+            else:
+                quantity_class = quantity_registry[unit_class]
             if quantity_type is not None:
                 # if a specific quantity type is provided, use it instead of the
                 # default one
@@ -391,7 +417,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     def to_base(self) -> "QuantityValue":
         """Converts the QuantityValue to its base unit."""
         pint_quantity = self.to_pint().to_base_units()
-        return QuantityValue.from_pint(pint_quantity, simplify=False)
+        return QuantityValue.from_pint(
+            pint_quantity, simplify=False, quantity_type=self.__class__)
 
     def to_unit(self, unit: Union[UnitEnum, str]) -> "QuantityValue":
         """Converts the QuantityValue to the specified unit."""
@@ -410,21 +437,23 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
 
     def __neg__(self) -> "QuantityValue":
-        return QuantityValue.from_pint(-self.to_pint())
+        return QuantityValue.from_pint(-self.to_pint(), quantity_type=self.__class__)
 
     def __pos__(self) -> "QuantityValue":
-        return QuantityValue.from_pint(+self.to_pint())
+        return QuantityValue.from_pint(
+            +self.to_pint(), quantity_type=self.__class__)
 
     def __abs__(self) -> "QuantityValue":
-        return QuantityValue.from_pint(abs(self.to_pint()))
+        return QuantityValue.from_pint(
+            abs(self.to_pint()), quantity_type=self.__class__)
 
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
-        return QuantityValue.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint, quantity_type=self.__class__)
 
     def __sub__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() - other.to_pint()
-        return QuantityValue.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint, quantity_type=self.__class__)
 
     # * operator
     def __mul__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
@@ -455,7 +484,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         return QuantityValue.from_pint(self.to_pint() % other)
 
     def __pow__(self, other: Union[int, float, "QuantityValue"]) -> "QuantityValue":
-        # todo: test if supported with dimensionless unit / quantity
+        # todo: test if supported with dimensionless unit / quantity as exponent
         if isinstance(other, QuantityValue):
             other = other.to_pint()
         return QuantityValue.from_pint(self.to_pint() ** other)
@@ -531,6 +560,7 @@ class TabularData(OswBaseModel):
                 quantity = QuantityValue.from_pint(
                     1 * getattr(df.dtypes, key).units
                 ).__class__
+                # todo: preserve quantity_type
                 additional_fields[key] = (quantity, ...)
 
         if len(additional_fields) > 0:
@@ -545,6 +575,8 @@ class TabularData(OswBaseModel):
 
         # convert all columns to the default unit
         for attr in row_class.__fields__.keys():
+            if attr == "type":
+                continue
             q_name = (
                 row_class.__fields__[attr]
                 .type_.__fields__["unit"]
