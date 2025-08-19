@@ -18,4 +18,3 @@ from opensemantic.characteristics.quantitative._static import (  # noqa
     QuantityValue,
     TabularData,
 )
-from opensemantic.characteristics.quantitative._strings import UnitLiteral, unit  # noqa

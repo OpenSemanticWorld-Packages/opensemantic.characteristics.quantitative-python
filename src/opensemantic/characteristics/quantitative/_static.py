@@ -240,7 +240,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         # Validate unit here manually, since we allow alias "u" for "unit" we cant
         #  use the @validator(unit, pre=True) alone ("v" is not registered as field)
         if "unit" in kwargs.keys():
-            kwargs["unit"] = self.__class__.accept_any_unit_enum(kwargs["unit"])
+            kwargs["unit"] = self.accept_any_unit_enum(kwargs["unit"])
         # Finally call the init
         super().__init__(**kwargs)
 
@@ -297,6 +297,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         quantity: pint.Quantity,
         simplify: bool = ...,
         quantity_type: Optional[Type[QV]] = ...,
+        strict: bool = ...,
         return_dict: bool = False,
     ) -> QV: ...
 
@@ -307,6 +308,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         quantity: pint.Quantity,
         simplify: bool = ...,
         quantity_type: Optional[Type[QV]] = ...,
+        strict: bool = ...,
         return_dict: bool = True,
     ) -> Dict[str, Any]: ...
 
@@ -318,8 +320,37 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         quantity: pint.Quantity,
         simplify: bool = True,
         quantity_type: Optional[Type[QV]] = None,
+        strict: bool = False,
         return_dict: bool = False,
     ) -> Union[QV, Dict[str, Any]]:
+        """Constructs a QuantityValue from a pint.Quantity. If no specific
+        QuantityValue child class is provided via quantity_type, the generic type
+        'QuantityValue' will be used instead. If strict mode is active, a more specific
+        type must be derivable from the unit or must be provided.
+
+        Parameters
+        ----------
+        quantity
+            The pint.Quantity to process
+        simplify
+            If the units should be simplified before trying to derive the
+            QuantityValue type based on the unit
+        quantity_type
+            QuantityValue type that should be cast to. Provide if you don't want to
+            rely on deriving the type based on the unit
+        strict
+            Whether deriving the QuantityValue type based on the unit may fall back
+            to the non-specific type.
+        return_dict
+            Returns a dictionary instead of an instance of QuantityValue
+
+        Returns
+        -------
+        result
+            Instance of QuantityValue or a corresponding dictionary, containing the
+            attributes of the instance as keys.
+        """
+
         # see also
         # https://pint.readthedocs.io/en/stable/getting/tutorial.html#simplifying-units
         # unit_symbol = "{:~P}".format(quantity.units)
@@ -329,7 +360,39 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 f"QuantityValue."
             )
 
+        def class_logic(unit_class_):
+            if cls != QuantityValue:
+                # If the class is not the generic QuantityValue, it must be a subclass
+                #  of QuantityValue, so we can use it directly.
+                quantity_class_ = cls
+            elif unit_class_ == Unit:
+                # If the unit_class is the generic Unit, we can use the generic
+                #  QuantityValue class directly.
+                quantity_class_ = QuantityValue
+            else:
+                # In any other case, we need to look up the quantity class in the
+                #  quantity_registry based on the unit_class.
+                quantity_class_ = quantity_registry.get(unit_class_, None)
+            if quantity_type is not None:
+                # If a specific quantity type is provided, use it instead of the
+                #  (derived) default one
+                quantity_class_ = quantity_type
+            if quantity_class_ is None and strict is False:
+                raise ValueError(
+                    "quantity_class could not be determined and was not provided via "
+                    "quantity_type parameter. With strict mode enabled, no fallback is "
+                    "available. Consider to run with strict=False or providing a "
+                    "target quantity_type."
+                )
+            if quantity_class_ is None:
+                # Fallback to the generic QuantityValue class if no specific
+                # quantity_class could be determined
+                quantity_class_ = QuantityValue
+            return quantity_class_
+
         def original(quantity_: pint.Quantity):
+            """Derives a LaTeX-formatted string from  a pint.Quantity and returns a
+            numeric value along with unit and QuantityValue type."""
             if simplify:
                 value = (
                     f"{quantity_:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify
@@ -349,31 +412,20 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 unit_symbol = "dimensionless"
             # Selecting the first entry for the key in the registry:
             unit_class = unit_registry[unit_symbol][0]
-            if unit_class == Unit:
-                quantity_class = QuantityValue
-            else:
-                quantity_class = quantity_registry.get(unit_class, None)
-            if quantity_type is not None:
-                # If a specific quantity type is provided, use it instead of the
-                #  default one
-                quantity_class = quantity_type
-            if quantity_class is None:
-                # todo: @Simon check if this should actually cause an error or this
-                #  catch is ok
-                quantity_class = QuantityValue
+            quantity_class = class_logic(unit_class)
             if return_dict:
                 return {
                     "value": numeric_value,
                     "unit": unit_class[unit_symbol],
                     "quantity_type": quantity_class,
+                    "type": quantity_class.__fields__["type"].default,
                 }
             return quantity_class(value=numeric_value, unit=unit_class[unit_symbol])
 
         def altered(quantity_: pint.Quantity):
-            """
-            Converts a Pint Quantity to base units (removing prefixes),
-            and returns a LaTeX-formatted string with adjusted numeric value.
-            """
+            """Converts a pint.Quantity to base units (removing prefixes),
+            and derives a LaTeX-formatted string and returns an adjusted numeric
+            value along with unit and QuantityValue type."""
             # Convert to base units to remove prefixes
             base_quantity = quantity_.to_base_units()
 
@@ -389,21 +441,13 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
                 unit_symbol_2 = "dimensionless"
             # Selecting the first entry for the key in the registry:
             unit_class = unit_registry[unit_symbol_2][0]
-            # To be able to initiate the generic QuantityValue class directly,
-            #  this is required:
-            if unit_class == Unit:
-                quantity_class = QuantityValue
-            else:
-                quantity_class = quantity_registry[unit_class]
-            if quantity_type is not None:
-                # if a specific quantity type is provided, use it instead of the
-                # default one
-                quantity_class = quantity_type
+            quantity_class = class_logic(unit_class)
             if return_dict:
                 return {
                     "value": numeric_value,
                     "unit": unit_class[unit_symbol_2],
                     "quantity_type": quantity_class,
+                    "type": quantity_class.__fields__["type"].default,
                 }
             return quantity_class(value=numeric_value, unit=unit_class[unit_symbol_2])
 

@@ -24,7 +24,6 @@ from opensemantic.characteristics.quantitative import (
     Thickness,
     Unit,
     Width,
-    unit,
 )
 
 # Do we have to adapt VSCode settings to include the package index?
@@ -42,6 +41,23 @@ def test_pint():
     # transform back to QuantityValue
     q_ = QuantityValue.from_pint(q_pint)
     assert q == q_
+
+    # Test transformation options
+    q_from_pint_dict = QuantityValue.from_pint(q_pint, return_dict=True)
+    assert isinstance(q_from_pint_dict, dict)
+    assert q_from_pint_dict["value"] == 1.0
+    assert q_from_pint_dict["unit"] == LengthUnit.milli_meter
+    assert q_from_pint_dict["quantity_type"] == Length
+    assert q_from_pint_dict["type"] == ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"]
+
+    q_diameter = Diameter.from_pint(q_pint)
+    assert isinstance(q_diameter, Diameter)
+    q_diameter1 = QuantityValue.from_pint(q_pint, quantity_type=Diameter)
+    assert isinstance(q_diameter1, Diameter)
+    q_length = QuantityValue.from_pint(q_pint, strict=True)
+    # Must be Length, not Diameter because wthin the unit registry, Length is more
+    #  generic than Diameter and thus listed first for the Unit.milli_meter
+    assert isinstance(q_length, Length)
 
     q2 = Length(value=1.0, unit=LengthUnit.meter)
     q3 = q + q2
@@ -337,11 +353,18 @@ def test_init():
     assert l2.value == 10.0
     assert l2.unit == LengthUnit.milli_meter
 
-    # Overload 3: __init__(self, quantity_value: "QuantityValue")
+    # Overload 3: __init__(self, quantity_value: "QuantityValue") with kwarg
     d3 = Diameter(quantity_value=l1)
     assert isinstance(d3, Diameter)
     assert d3.value == l1.value
     assert d3.unit == l1.unit
+
+    # Overload 3: __init__(self, quantity_value: "QuantityValue") but with positional
+    #  argument
+    d4 = Diameter(l1)
+    assert isinstance(d4, Diameter)
+    assert d4.value == l1.value
+    assert d4.unit == l1.unit
 
     # Overload 4: __init__(self, pint_quantity: pint.Quantity,
     #                      quantity_type: Type[QuantityValue])
@@ -362,20 +385,17 @@ def test_init():
 
 
 def test_generic_unit_enum():
-    l1 = Length(v=10.0, u=unit("meter"))
+    l1 = Length(value=10, unit=Unit.meter)
 
-    l2 = Length(value=10, unit=Unit.meter)
+    l2 = Length(QuantityValue(value=10, unit=Unit.meter))
 
-    l3 = Length(QuantityValue(value=10, unit=Unit.meter))
-
-    l4 = Length(QuantityValue(v=10, u=Unit.meter))
+    l3 = Length(QuantityValue(v=10, u=Unit.meter))
 
     q = Length(value=10.0, unit=LengthUnit.milli_meter)
     q2 = Length(value=10.0, unit=Unit.milli_meter)
 
     assert l1 == l2
     assert l1 == l3
-    assert l1 == l4
     assert not l1 == q
     assert not l1 == q2
     assert q == q2
