@@ -1,3 +1,5 @@
+"""This is an integration test for the QuantityValue functionality"""
+
 import json
 from typing import List, Optional
 
@@ -7,6 +9,8 @@ from opensemantic import OswBaseModel
 from opensemantic.characteristics.quantitative import (
     Area,
     AreaUnit,
+    Diameter,
+    DimensionlessUnit,
     Force,
     ForcePerAreaUnit,
     ForceUnit,
@@ -18,10 +22,11 @@ from opensemantic.characteristics.quantitative import (
     Stress,
     TabularData,
     Thickness,
+    Unit,
     Width,
 )
 
-# to we have to adapt VSCode settings to include the package index?
+# Do we have to adapt VSCode settings to include the package index?
 # "python.analysis.packageIndexDepths": [
 #       {"name": "opensemantic.characteristics.quantitative",
 #       "depth": 4, "includeAllSymbols": true}
@@ -37,6 +42,23 @@ def test_pint():
     q_ = QuantityValue.from_pint(q_pint)
     assert q == q_
 
+    # Test transformation options
+    q_from_pint_dict = QuantityValue.from_pint(q_pint, return_dict=True)
+    assert isinstance(q_from_pint_dict, dict)
+    assert q_from_pint_dict["value"] == 1.0
+    assert q_from_pint_dict["unit"] == LengthUnit.milli_meter
+    assert q_from_pint_dict["quantity_type"] == Length
+    assert q_from_pint_dict["type"] == ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"]
+
+    q_diameter = Diameter.from_pint(q_pint)
+    assert isinstance(q_diameter, Diameter)
+    q_diameter1 = QuantityValue.from_pint(q_pint, quantity_type=Diameter)
+    assert isinstance(q_diameter1, Diameter)
+    q_length = QuantityValue.from_pint(q_pint, strict=True)
+    # Must be Length, not Diameter because wthin the unit registry, Length is more
+    #  generic than Diameter and thus listed first for the Unit.milli_meter
+    assert isinstance(q_length, Length)
+
     q2 = Length(value=1.0, unit=LengthUnit.meter)
     q3 = q + q2
     assert q3 == Length(value=1.001, unit=LengthUnit.meter)
@@ -51,7 +73,80 @@ def test_pint():
     assert q43 == Area(value=1.000001, unit=AreaUnit.meter_squared)
 
 
+def test_quantityvalue_magic_methods():
+
+    l1 = Length(value=10, unit=LengthUnit.meter)
+    l2 = Length(value=3, unit=LengthUnit.meter)
+    # __neg__
+    neg = -l1
+    assert isinstance(neg, Length)
+    assert neg.value == -10
+    # __pos__
+    pos = +l1
+    assert isinstance(pos, Length)
+    assert pos.value == 10
+    # __abs__
+    absval = abs(Length(value=-5, unit=LengthUnit.meter))
+    assert isinstance(absval, Length)
+    assert absval.value == 5
+    # __add__
+    add = l1 + l2
+    assert isinstance(add, Length)
+    assert add.value == 13
+    # __sub__
+    sub = l1 - l2
+    assert isinstance(sub, Length)
+    assert sub.value == 7
+    # __mul__
+    mul = l1 * l2
+    assert isinstance(mul, Area)
+    # __truediv__
+    truediv = l1 / l2
+    assert isinstance(truediv, QuantityValue)
+    assert truediv.unit == DimensionlessUnit.dimensionless
+    # __floordiv__
+    floordiv = l1 // l2
+    assert isinstance(floordiv, QuantityValue)
+    assert floordiv.value == 3.0
+    # __mod__
+    mod = l1 % l2
+    assert isinstance(mod, QuantityValue)
+    assert mod.value == 1.0
+    # __pow__
+    pow_result = l1**2
+    assert isinstance(pow_result, Area)
+    # __eq__
+    eq = l1 == Length(value=10, unit=LengthUnit.meter)
+    assert eq is True
+    # __ne__
+    ne = l1 != l2
+    assert ne is True
+    # __ge__
+    ge = l1 >= l2
+    assert ge is True
+    # __gt__
+    gt = l1 > l2
+    assert gt is True
+    # __le__
+    le = l1 <= Length(value=10, unit=LengthUnit.meter)
+    assert le is True
+    # __lt__
+    lt = l1 < Length(value=11, unit=LengthUnit.meter)
+    assert lt is True
+
+
 def test_export():
+    q2 = Length(value=1.0, unit=Unit.milli_meter)
+    q2_json = json.loads(q2.json(exclude_none=True))
+    print(q2_json)
+    assert q2_json == {
+        "type": ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"],
+        "value": 1.0,
+        "unit": str(
+            "Item:OSWf101d25e944856e3bd4b4c9863db7de2"
+            "#OSW322dec469be75aedb008b3ebff29db86"
+        ),
+    }
 
     q = Length(value=1.0, unit=LengthUnit.milli_meter)
 
@@ -112,6 +207,20 @@ def test_export():
     # a2 = QuantityValue.from_jsonld(jsonld_dict)
     # print(a2)
 
+    a3 = Area(value=4.0, unit=AreaUnit.meter_squared)
+    a4 = a3.to_unit(AreaUnit.centi_meter_squared)
+    assert a4.unit == AreaUnit.centi_meter_squared
+    assert a4.value == 100**2 * a3.value
+    assert a3 == a4
+
+    json_dict4 = a4.dict(exclude_none=True, exclude_defaults=True)
+    print(json_dict4)
+    assert json_dict4["value"] == 40000
+    assert json_dict4["unit"] == (
+        "Item:OSWd10e5841c68e5aad94b481b58ef9dfb9#OSWe36916dd7a34557b8a52c38d6dd7b832"
+    )
+    assert len(json_dict4.keys()) == 2
+
 
 def test_pandas():
 
@@ -123,21 +232,21 @@ def test_pandas():
     class MeasurementData(TabularData):
         rows: List[Measurement]
 
-    measurement = MeasurementData(
+    measurement_data = MeasurementData(
         rows=[
             Measurement(length=Length(value=1.0), width=Width(value=2.0)),
             Measurement(length=Length(value=3.0), width=Width(value=4.0)),
         ]
     )
-    df = measurement.to_df()
+    df = measurement_data.to_df()
     print(df)
     df["area"] = df["length"] * df["width"]
     print(df)
-    measurement2 = MeasurementData.from_df(df)
-    print(measurement2)
-    measurement3 = TabularData.from_df(df)
-    print(measurement3.json(exclude_none=True, exclude_defaults=True, indent=2))
-    # print(measurement3.__class__.schema_json(indent=2))
+    measurement_data2 = MeasurementData.from_df(df)
+    print(measurement_data2)
+    measurement_data3 = TabularData.from_df(df)
+    print(measurement_data3.json(exclude_none=True, exclude_defaults=True, indent=2))
+    # print(measurement_data3.__class__.schema_json(indent=2))
 
 
 def test_tensile_test():
@@ -231,8 +340,88 @@ def test_tensile_test():
     )
 
 
+def test_init():
+    # Overload 1: __init__(self, value: float, unit: Optional[UnitEnum])
+    l1 = Length(value=5.0, unit=LengthUnit.meter)
+    assert isinstance(l1, Length)
+    assert l1.value == 5.0
+    assert l1.unit == LengthUnit.meter
+
+    # Overload 2: __init__(self, v: float, u: Optional[UnitEnum])
+    l2 = Length(v=10.0, u=LengthUnit.milli_meter)
+    assert isinstance(l2, Length)
+    assert l2.value == 10.0
+    assert l2.unit == LengthUnit.milli_meter
+
+    # Overload 3: __init__(self, quantity_value: "QuantityValue") with kwarg
+    d3 = Diameter(quantity_value=l1)
+    assert isinstance(d3, Diameter)
+    assert d3.value == l1.value
+    assert d3.unit == l1.unit
+
+    # Overload 3: __init__(self, quantity_value: "QuantityValue") but with positional
+    #  argument
+    d4 = Diameter(l1)
+    assert isinstance(d4, Diameter)
+    assert d4.value == l1.value
+    assert d4.unit == l1.unit
+
+    # Overload 4: __init__(self, pint_quantity: pint.Quantity,
+    #                      quantity_type: Type[QuantityValue])
+    import pint
+
+    ureg = pint.get_application_registry()
+    pq = 2.5 * ureg.meter
+    l4 = Length(pint_quantity=pq, quantity_type=Length)
+    assert isinstance(l4, Length)
+    assert l4.value == 2.5
+    assert l4.unit == LengthUnit.meter
+
+    # Overload 5: __init__(self, **data: Any)
+    l5 = Length(**{"value": 7.0, "unit": LengthUnit.meter})
+    assert isinstance(l5, Length)
+    assert l5.value == 7.0
+    assert l5.unit == LengthUnit.meter
+
+
+def test_generic_unit_enum():
+    l1 = Length(value=10, unit=Unit.meter)
+
+    l2 = Length(QuantityValue(value=10, unit=Unit.meter))
+
+    l3 = Length(QuantityValue(v=10, u=Unit.meter))
+
+    q = Length(value=10.0, unit=LengthUnit.milli_meter)
+    q2 = Length(value=10.0, unit=Unit.milli_meter)
+
+    assert l1 == l2
+    assert l1 == l3
+    assert not l1 == q
+    assert not l1 == q2
+    assert q == q2
+
+
+def test_to_unit():
+    # Test conversion from meters to millimeters
+    length = Length(value=1.0, unit=LengthUnit.meter)
+    l_mm = length.to_unit(LengthUnit.milli_meter)
+    assert isinstance(l_mm, Length)
+    assert l_mm.unit == LengthUnit.milli_meter
+    assert l_mm.value == 1000.0
+
+    # Test conversion using string
+    l_cm = length.to_unit("centi_meter")
+    assert isinstance(l_cm, Length)
+    assert l_cm.unit.name == "centi_meter"
+    assert l_cm.value == 100.0
+
+
 if __name__ == "__main__":
     test_pint()
-    test_export()
-    test_pandas()
     test_tensile_test()
+    test_quantityvalue_magic_methods()
+    test_init()
+    test_generic_unit_enum()
+    test_to_unit()
+    test_pandas()
+    test_export()

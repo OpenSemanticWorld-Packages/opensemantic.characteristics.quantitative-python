@@ -1,5 +1,4 @@
 import sys
-from enum import Enum
 
 if sys.version_info >= (3, 11):
     # Python 3.11 or higher
@@ -8,7 +7,7 @@ else:
     # Python < 3.11
     from enum import EnumMeta as EnumType
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union, overload
 
 import pandas as pd
 
@@ -20,36 +19,14 @@ from pydantic.v1 import Field, create_model
 from pydantic.v1.fields import FieldInfo
 
 from opensemantic import OswBaseModel
+from opensemantic.characteristics.quantitative._collection import Unit
+from opensemantic.characteristics.quantitative._enum import UnitEnum, unit_registry
 
 # import pint_pandas
 
 # from osw.model.entity import Characteristic # pip install pint-pandas
 
-unit_registry: Dict[str, EnumType] = {}
-
-
-class UnitEnumMetaclass(EnumType):
-    def __new__(cls, clsname, bases, attrs):
-        # print(attrs["__qualname__"], attrs)
-        class_instance = EnumType.__new__(cls, clsname, bases, attrs)
-        for key, value in attrs.items():
-            if key not in ["__module__", "__qualname__", "_generate_next_value_"]:
-                # register all enum values in the unit_registry
-                if key in unit_registry:
-                    pass
-                    # warn(
-                    #     (
-                    #         f"Unit {key} already registered in "
-                    #         "unit_registry, skip registration."
-                    #     )
-                    # )
-                else:
-                    unit_registry[key] = class_instance
-        return class_instance
-
-
-class UnitEnum(str, Enum, metaclass=UnitEnumMetaclass):
-    pass
+QV = TypeVar("QV", bound="QuantityValue")
 
 
 class Characteristic(OswBaseModel):
@@ -142,15 +119,134 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         title="value",
         title_={"en": "Value", "de": "Wert"},
     )
-    unit: Optional[UnitEnum] = Field(
+    # unit: Optional[UnitEnum] = Field(
+    # unit: Optional[Union[UnitEnum, Unit]] = Field(
+    unit: Optional[Unit] = Field(
         None,
         options={"grid_columns": 4},
         title="unit",
         title_={"en": "Unit", "de": "Einheit"},
     )
 
-    def to_pint(self) -> pint.Quantity:
-        pint_unit_name = self.unit.name.replace("_", " ")
+    # @validator("unit", pre=True)
+    @classmethod
+    def accept_any_unit_enum(cls, v):
+        # Get the expected enum class for this QuantityValue
+        expected_enum = cls.__fields__["unit"].type_
+        # Not required anymore if QuantityValue.unit is typed Unit
+        if expected_enum == UnitEnum:
+            # If the generic QuantityValue is used, all Unit members are valid
+            expected_enum = Unit
+        if isinstance(v, expected_enum):
+            # Returns the enum as is - causes Error because the validator of unit
+            # won't find any Member in UnitEnum --> The unit field type must be changed
+            return v
+        # Also accept other UnitEnum types, map by name
+        if isinstance(v, UnitEnum):
+            try:
+                return getattr(expected_enum, v.name)
+            except KeyError:
+                raise ValueError(
+                    f"Unit '{v.name}' is not a valid member of {expected_enum}."
+                )
+        # # Optional: String to Enum
+        # if isinstance(v, str):
+        #     try:
+        #         return expected_enum[v]
+        #     except KeyError:
+        #         raise ValueError(f"Unit '{v}' ist not valid for {expected_enum}.")
+        return v
+
+    # fmt: off
+    @overload
+    def __init__(self, value: float, unit: Optional[UnitEnum]) -> None:
+        ...
+
+    @overload
+    def __init__(self, v: float, u: Optional[UnitEnum]) -> None:
+        ...
+
+    @overload
+    def __init__(self, quantity_value: "QuantityValue") -> None:
+        ...
+
+    @overload
+    def __init__(
+        self, pint_quantity: pint.Quantity, quantity_type: Type["QuantityValue"]
+    ) -> None:
+        ...
+
+    # @overload
+    # def __init__(self, **data: Any) -> None:
+    #     ...
+    # fmt: on
+
+    def __init__(self, *args, **kwargs) -> None:
+        if "v" in kwargs and "u" in kwargs:
+            # support for v, u as keyword arguments
+            kwargs["value"] = kwargs.pop("v")
+            kwargs["unit"] = kwargs.pop("u")
+            # will raise error if alias and original names are mixed
+        elif "v" in kwargs and "u" not in kwargs and "unit" not in kwargs:
+            kwargs["value"] = kwargs.pop("v")
+        elif (
+            len(args) == 2
+            and isinstance(args[0], float)
+            and isinstance(args[1], UnitEnum)
+        ):
+            # support for float, UnitEnum as positional arguments
+            raise AttributeError(
+                "QuantityValue.__init__() takes either a pint.Quantity and "
+                "QuantityValue subclass as positional arguments, or a QuantityValue "
+                "as positional arguments, but not a float and UnitEnum. These are "
+                "keyword arguments only!"
+            )
+        elif (
+            len(args) == 2
+            and isinstance(args[0], pint.Quantity)
+            and issubclass(args[1], QuantityValue)
+        ):
+            # support for pint.Quantity and Type[QuantityValue] as positional arguments
+            qv_dict = QuantityValue.from_pint(
+                quantity=args[0], simplify=True, quantity_type=args[1], return_dict=True
+            )
+            kwargs["value"] = qv_dict["value"]
+            kwargs["unit"] = qv_dict["unit"]
+
+        elif "pint_quantity" in kwargs and "quantity_type" in kwargs:
+            # support for pint.Quantity and Type[QuantityValue] as keyword arguments
+            qv_dict = QuantityValue.from_pint(
+                quantity=kwargs.pop("pint_quantity"),
+                simplify=True,
+                quantity_type=kwargs.pop("quantity_type"),
+                return_dict=True,
+            )
+            kwargs["value"] = qv_dict["value"]
+            kwargs["unit"] = qv_dict["unit"]
+        elif "pint_quantity" in kwargs and "quantity_type" not in kwargs:
+            raise ValueError(
+                "If 'pint_quantity' is provided, a 'quantity_type' to cast to must "
+                "also be provided."
+            )
+        elif len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], QuantityValue):
+            # support for QuantityValue as positional argument
+            kwargs = args[0].dict()
+        elif "quantity_value" in kwargs:
+            # support for QuantityValue as keyword argument
+            quantity_value = kwargs.pop("quantity_value")
+            kwargs["value"] = quantity_value.value
+            kwargs["unit"] = quantity_value.unit
+
+        # Validate unit here manually, since we allow alias "u" for "unit" we cant
+        #  use the @validator(unit, pre=True) alone ("v" is not registered as field)
+        if "unit" in kwargs.keys():
+            kwargs["unit"] = self.accept_any_unit_enum(kwargs["unit"])
+        # Finally call the init
+        super().__init__(**kwargs)
+
+    @classmethod
+    def get_pint_ureg_compatible_str(cls, string: str) -> str:
+        pint_unit_name = string.replace("_", " ")
         # SI prefixes, see https://en.wikipedia.org/wiki/Metric_prefix
         prefixes = [
             "quetta",
@@ -181,69 +277,284 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
 
         for prefix in prefixes:
             pint_unit_name = pint_unit_name.replace(prefix + " ", prefix)
+        pint_unit_name = pint_unit_name.strip(" ")
         if pint_unit_name.split(" ")[0] == "per":
             pint_unit_name = pint_unit_name.replace("per", "1 /")
+        # Make sure unit names like Celsius and Ohm don't break the ureg access
+        pint_unit_name = pint_unit_name.lower()
+        return pint_unit_name
+
+    def to_pint(self) -> pint.Quantity:
+        pint_unit_name = QuantityValue.get_pint_ureg_compatible_str(self.unit.name)
+
         return self.value * ureg[pint_unit_name]
+
+    # fmt: on
+    @classmethod
+    @overload
+    def from_pint(
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = ...,
+        quantity_type: Optional[Type[QV]] = ...,
+        strict: bool = ...,
+        return_dict: bool = False,
+    ) -> QV: ...
+
+    @classmethod
+    @overload
+    def from_pint(
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = ...,
+        quantity_type: Optional[Type[QV]] = ...,
+        strict: bool = ...,
+        return_dict: bool = True,
+    ) -> Dict[str, Any]: ...
+
+    # fmt: off
 
     @classmethod
     def from_pint(
-        self, quantity: pint.Quantity, simplify: bool = True
-    ) -> "QuantityValue":
+        cls: Type[QV],
+        quantity: pint.Quantity,
+        simplify: bool = True,
+        quantity_type: Optional[Type[QV]] = None,
+        strict: bool = False,
+        return_dict: bool = False,
+    ) -> Union[QV, Dict[str, Any]]:
+        """Constructs a QuantityValue from a pint.Quantity. If no specific
+        QuantityValue child class is provided via quantity_type, the generic type
+        'QuantityValue' will be used instead. If strict mode is active, a more specific
+        type must be derivable from the unit or must be provided.
+
+        Parameters
+        ----------
+        quantity
+            The pint.Quantity to process
+        simplify
+            If the units should be simplified before trying to derive the
+            QuantityValue type based on the unit
+        quantity_type
+            QuantityValue type that should be cast to. Provide if you don't want to
+            rely on deriving the type based on the unit
+        strict
+            Whether deriving the QuantityValue type based on the unit may fall back
+            to the non-specific type.
+        return_dict
+            Returns a dictionary instead of an instance of QuantityValue
+
+        Returns
+        -------
+        result
+            Instance of QuantityValue or a corresponding dictionary, containing the
+            attributes of the instance as keys.
+        """
+
         # see also
         # https://pint.readthedocs.io/en/stable/getting/tutorial.html#simplifying-units
         # unit_symbol = "{:~P}".format(quantity.units)
-        if simplify:
-            value = (
-                f"{quantity:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify the unit
+        if quantity_type and not issubclass(quantity_type, QuantityValue):
+            raise ValueError(
+                f"Provided quantity_type '{quantity_type}' is not a subclass of "
+                f"QuantityValue."
             )
-        else:
-            value = f"{quantity:9fLx}"
-        # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
-        # select the last curly brace
-        unit_symbol = value.split("{")[-1].replace("}", "")
-        # replace backslashes with underscores
-        unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-        # nummeric_value = quantity.magnitude # simplify the unit may change the scale
-        nummeric_value = float(value.split("{")[1].split("}")[0])
-        unit_class = unit_registry[unit_symbol]
-        quantity_class = quantity_registry[unit_class]
-        return quantity_class(value=nummeric_value, unit=unit_class[unit_symbol])
+
+        def class_logic(unit_class_):
+            if cls != QuantityValue:
+                # If the class is not the generic QuantityValue, it must be a subclass
+                #  of QuantityValue, so we can use it directly.
+                quantity_class_ = cls
+            elif unit_class_ == Unit:
+                # If the unit_class is the generic Unit, we can use the generic
+                #  QuantityValue class directly.
+                quantity_class_ = QuantityValue
+            else:
+                # In any other case, we need to look up the quantity class in the
+                #  quantity_registry based on the unit_class.
+                quantity_class_ = quantity_registry.get(unit_class_, None)
+            if quantity_type is not None:
+                # If a specific quantity type is provided, use it instead of the
+                #  (derived) default one
+                quantity_class_ = quantity_type
+            if quantity_class_ is None and strict is False:
+                raise ValueError(
+                    "quantity_class could not be determined and was not provided via "
+                    "quantity_type parameter. With strict mode enabled, no fallback is "
+                    "available. Consider to run with strict=False or providing a "
+                    "target quantity_type."
+                )
+            if quantity_class_ is None:
+                # Fallback to the generic QuantityValue class if no specific
+                # quantity_class could be determined
+                quantity_class_ = QuantityValue
+            return quantity_class_
+
+        def original(quantity_: pint.Quantity):
+            """Derives a LaTeX-formatted string from  a pint.Quantity and returns a
+            numeric value along with unit and QuantityValue type."""
+            if simplify:
+                value = (
+                    f"{quantity_:9f#Lx}"  # 9f => round to 8 digits, '#' => simplify
+                    # the unit
+                )
+            else:
+                value = f"{quantity_:9fLx}"
+            # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
+            # select the last curly brace
+            unit_symbol = value.split("{")[-1].replace("}", "")
+            # replace backslashes with underscores
+            unit_symbol = unit_symbol.replace("\\", "_").strip("_")
+            # numeric_value = quantity.magnitude
+            # simplifying the unit may change the scale
+            numeric_value = float(value.split("{")[1].split("}")[0])
+            if len(unit_symbol) == 0:
+                unit_symbol = "dimensionless"
+            # Selecting the first entry for the key in the registry:
+            unit_class = unit_registry[unit_symbol][0]
+            quantity_class = class_logic(unit_class)
+            if return_dict:
+                return {
+                    "value": numeric_value,
+                    "unit": unit_class[unit_symbol],
+                    "quantity_type": quantity_class,
+                    "type": quantity_class.__fields__["type"].default,
+                }
+            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol])
+
+        def altered(quantity_: pint.Quantity):
+            """Converts a pint.Quantity to base units (removing prefixes),
+            and derives a LaTeX-formatted string and returns an adjusted numeric
+            value along with unit and QuantityValue type."""
+            # Convert to base units to remove prefixes
+            base_quantity = quantity_.to_base_units()
+
+            # Format the numeric value and unit separately
+            numeric_value = base_quantity.magnitude
+            unit_latex = f"{base_quantity.units:Lx}"
+            if simplify:
+                unit_latex = f"{base_quantity.units:#Lx}"
+
+            unit_symbol_1 = unit_latex.split("{")[-1].replace("}", "")
+            unit_symbol_2 = unit_symbol_1.replace("\\", "_").strip("_")
+            if len(unit_symbol_2) == 0:
+                unit_symbol_2 = "dimensionless"
+            # Selecting the first entry for the key in the registry:
+            unit_class = unit_registry[unit_symbol_2][0]
+            quantity_class = class_logic(unit_class)
+            if return_dict:
+                return {
+                    "value": numeric_value,
+                    "unit": unit_class[unit_symbol_2],
+                    "quantity_type": quantity_class,
+                    "type": quantity_class.__fields__["type"].default,
+                }
+            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol_2])
+
+        try:
+            return original(quantity)
+        except KeyError:
+            return altered(quantity)
 
     def to_base(self) -> "QuantityValue":
         """Converts the QuantityValue to its base unit."""
         pint_quantity = self.to_pint().to_base_units()
-        return self.from_pint(pint_quantity, simplify=False)
+        return QuantityValue.from_pint(
+            pint_quantity, simplify=False, quantity_type=self.__class__)
 
-    def __eq__(self, other: "QuantityValue") -> bool:
-        if isinstance(other, QuantityValue):
-            other = other.to_pint()
-        return self.to_pint() == other
+    def to_unit(self, unit: Union[UnitEnum, str]) -> "QuantityValue":
+        """Converts the QuantityValue to the specified unit."""
+
+        if isinstance(unit, UnitEnum):
+            unit_str = QuantityValue.get_pint_ureg_compatible_str(unit.name)
+        elif isinstance(unit, str):
+            # Assuming the string is a valid unit from the pint unit registry
+            unit_str = QuantityValue.get_pint_ureg_compatible_str(unit)
+        else:
+            raise ValueError(
+                f"Invalid unit type: {type(unit)}. Must be UnitEnum or str.")
+
+        pint_quantity = self.to_pint().to(unit_str)
+        return QuantityValue.from_pint(
+            quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
+
+    def __neg__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(-self.to_pint(), quantity_type=self.__class__)
+
+    def __pos__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(
+            +self.to_pint(), quantity_type=self.__class__)
+
+    def __abs__(self) -> "QuantityValue":
+        return QuantityValue.from_pint(
+            abs(self.to_pint()), quantity_type=self.__class__)
 
     def __add__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() + other.to_pint()
-        return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint, quantity_type=self.__class__)
 
     def __sub__(self, other: "QuantityValue") -> "QuantityValue":
         res_pint = self.to_pint() - other.to_pint()
-        return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint, quantity_type=self.__class__)
 
     # * operator
     def __mul__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
         if not isinstance(other, (float, int)):
             other = other.to_pint()
         res_pint = self.to_pint() * other
-        return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
 
     # / operator
     def __truediv__(self, other: Union["QuantityValue", float, int]) -> "QuantityValue":
         if not isinstance(other, (float, int)):
             other = other.to_pint()
         res_pint = self.to_pint() / other
-        return self.from_pint(res_pint)
+        return QuantityValue.from_pint(res_pint)
+
+    def __floordiv__(self, other: "QuantityValue") -> "QuantityValue":
+        """Floor division is supported by pint only for dimensionless quantities and
+        quantities with the same dimension"""
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() // other)
+
+    def __mod__(self, other: "QuantityValue") -> "QuantityValue":
+        """Modulo is supported by pint only for dimensionless quantities and
+        quantities with the same dimension"""
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() % other)
+
+    def __pow__(self, other: Union[int, float, "QuantityValue"]) -> "QuantityValue":
+        # todo: test if supported with dimensionless unit / quantity as exponent
+        if isinstance(other, QuantityValue):
+            other = other.to_pint()
+        return QuantityValue.from_pint(self.to_pint() ** other)
+
+    def __eq__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() == other.to_pint()
+
+    def __ne__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() != other.to_pint()
+
+    def __ge__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() >= other.to_pint()
+
+    def __gt__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() > other.to_pint()
+
+    def __le__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() <= other.to_pint()
+
+    def __lt__(self, other: "QuantityValue") -> bool:
+        return self.to_pint() < other.to_pint()
+
+
+QuantityValue.update_forward_refs()
 
 
 class TabularData(OswBaseModel):
-    # rows: List[Any] # convention for tabular data is a list of rows
+    rows: List[Characteristic]  # convention for tabular data is a list of rows
 
     # consider https://stackoverflow.com/questions/51505504/pandas-nesting-dataframes # noqa: E501
     # consider https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.attrs.html # noqa: E501
@@ -252,6 +563,8 @@ class TabularData(OswBaseModel):
         series = []
         row_class = self.__class__.__fields__["rows"].type_
         for attr in row_class.__fields__.keys():
+            if attr == "type":
+                continue
             q_name = (
                 row_class.__fields__[attr]
                 .type_.__fields__["unit"]
@@ -289,6 +602,7 @@ class TabularData(OswBaseModel):
                 quantity = QuantityValue.from_pint(
                     1 * getattr(df.dtypes, key).units
                 ).__class__
+                # todo: preserve quantity_type
                 additional_fields[key] = (quantity, ...)
 
         if len(additional_fields) > 0:
@@ -303,6 +617,8 @@ class TabularData(OswBaseModel):
 
         # convert all columns to the default unit
         for attr in row_class.__fields__.keys():
+            if attr == "type":
+                continue
             q_name = (
                 row_class.__fields__[attr]
                 .type_.__fields__["unit"]
