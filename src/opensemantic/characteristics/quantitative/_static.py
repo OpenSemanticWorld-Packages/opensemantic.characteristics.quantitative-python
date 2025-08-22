@@ -287,7 +287,7 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     def to_pint(self) -> pint.Quantity:
         pint_unit_name = QuantityValue.get_pint_ureg_compatible_str(self.unit.name)
 
-        return self.value * ureg[pint_unit_name]
+        return self.value * ureg(pint_unit_name)
 
     # fmt: on
     @classmethod
@@ -624,7 +624,7 @@ class TabularData(OswBaseModel):
                 .type_.__fields__["unit"]
                 .default.name.replace("_", " ")
             )
-            q_pint = ureg[q_name]
+            q_pint = ureg(q_name)
             df[attr] = df[attr].pint.to(q_pint)
 
         for i, row in df.iterrows():
