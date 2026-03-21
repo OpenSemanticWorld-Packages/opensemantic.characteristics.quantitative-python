@@ -7,6 +7,7 @@ else:
     # Python < 3.11
     from enum import EnumMeta as EnumType
 
+import re
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, overload
 
 import pandas as pd
@@ -27,6 +28,41 @@ from opensemantic.v1 import OswBaseModel
 # from osw.model.entity import Characteristic # pip install pint-pandas
 
 QV = TypeVar("QV", bound="QuantityValue")
+
+_EXPONENT_WORDS = {
+    "2": "squared",
+    "3": "cubed",
+    "4": "to_the_fourth",
+    "5": "to_the_fifth",
+    "6": "to_the_sixth",
+    "7": "to_the_seventh",
+    "8": "to_the_eighth",
+    "9": "to_the_ninth",
+}
+
+
+def _normalize_pint_unit_symbol(raw: str) -> str:
+    """Normalize a pint LaTeX-formatted unit symbol to match x-enum-varnames.
+
+    Extracts the unit part from pint's LaTeX output, replaces backslashes with
+    underscores, and converts exponent digits to words (e.g. ``2`` -> ``squared``).
+    """
+    # Handle pint's \tothe{N} pattern before extracting the unit block
+    raw = re.sub(
+        r"\\tothe\{(\d+)\}",
+        lambda m: "\\" + _EXPONENT_WORDS.get(m.group(1), "to_the_" + m.group(1)),
+        raw,
+    )
+    unit_symbol = raw.split("{")[-1].replace("}", "")
+    unit_symbol = unit_symbol.replace("\\", "_").strip("_")
+    if not unit_symbol:
+        return "dimensionless"
+    unit_symbol = re.sub(
+        r"(\d+)",
+        lambda m: _EXPONENT_WORDS.get(m.group(1), "to_the_" + m.group(1)),
+        unit_symbol,
+    )
+    return unit_symbol
 
 
 class Characteristic(OswBaseModel):
@@ -55,6 +91,9 @@ class Characteristic(OswBaseModel):
         title="Types/Categories",
         title_={"de": "Typen/Kategorien"},
     )
+    # @classmethod
+    # def get_cls_iri(cls) -> str:
+    #    # return default
     # should be optional:
     # uuid: UUID = Field(default_factory=uuid4, options={"hidden": True}, title="UUID")
 
@@ -401,15 +440,9 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             else:
                 value = f"{quantity_:9fLx}"
             # e.g. \SI[]{1.0}{\kilo\gram\meter\per\ampere\squared\per\second\squared}
-            # select the last curly brace
-            unit_symbol = value.split("{")[-1].replace("}", "")
-            # replace backslashes with underscores
-            unit_symbol = unit_symbol.replace("\\", "_").strip("_")
-            # numeric_value = quantity.magnitude
+            unit_symbol = _normalize_pint_unit_symbol(value)
             # simplifying the unit may change the scale
             numeric_value = float(value.split("{")[1].split("}")[0])
-            if len(unit_symbol) == 0:
-                unit_symbol = "dimensionless"
             # Selecting the first entry for the key in the registry:
             unit_class = unit_registry[unit_symbol][0]
             quantity_class = class_logic(unit_class)
@@ -435,21 +468,18 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             if simplify:
                 unit_latex = f"{base_quantity.units:#Lx}"
 
-            unit_symbol_1 = unit_latex.split("{")[-1].replace("}", "")
-            unit_symbol_2 = unit_symbol_1.replace("\\", "_").strip("_")
-            if len(unit_symbol_2) == 0:
-                unit_symbol_2 = "dimensionless"
+            unit_symbol = _normalize_pint_unit_symbol(unit_latex)
             # Selecting the first entry for the key in the registry:
-            unit_class = unit_registry[unit_symbol_2][0]
+            unit_class = unit_registry[unit_symbol][0]
             quantity_class = class_logic(unit_class)
             if return_dict:
                 return {
                     "value": numeric_value,
-                    "unit": unit_class[unit_symbol_2],
+                    "unit": unit_class[unit_symbol],
                     "quantity_type": quantity_class,
                     "type": quantity_class.__fields__["type"].default,
                 }
-            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol_2])
+            return quantity_class(value=numeric_value, unit=unit_class[unit_symbol])
 
         try:
             return original(quantity)
