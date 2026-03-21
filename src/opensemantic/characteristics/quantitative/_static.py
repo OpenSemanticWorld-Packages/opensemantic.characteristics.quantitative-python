@@ -18,9 +18,9 @@ from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
 from pydantic.v1 import Field, create_model
 from pydantic.v1.fields import FieldInfo
 
-from opensemantic import OswBaseModel
 from opensemantic.characteristics.quantitative._collection import Unit
 from opensemantic.characteristics.quantitative._enum import UnitEnum, unit_registry
+from opensemantic.v1 import OswBaseModel
 
 # import pint_pandas
 

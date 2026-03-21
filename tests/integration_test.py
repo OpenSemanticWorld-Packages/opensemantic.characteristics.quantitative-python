@@ -5,7 +5,6 @@ from typing import List, Optional
 
 from scipy.stats import linregress
 
-from opensemantic import OswBaseModel
 from opensemantic.characteristics.quantitative import (
     Area,
     AreaUnit,
@@ -25,6 +24,7 @@ from opensemantic.characteristics.quantitative import (
     Unit,
     Width,
 )
+from opensemantic.v1 import OswBaseModel
 
 # Do we have to adapt VSCode settings to include the package index?
 # "python.analysis.packageIndexDepths": [
