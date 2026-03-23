@@ -2,8 +2,8 @@ import json
 
 import pint
 
-import opensemantic.characteristics.quantitative._model as q
-from opensemantic.characteristics.quantitative._static import quantity_registry
+import opensemantic.characteristics.quantitative.v1._model as q
+from opensemantic.characteristics.quantitative.v1._static import quantity_registry
 
 
 def test_addition():
@@ -100,6 +100,12 @@ def test_full_inventory_test():
         # interate of the ue Enum members
 
         for ue in qu_reg[qv]:
+            if isinstance(ue, str):
+                # resolve type from string if it is a forward ref
+                try:
+                    ue = getattr(q, ue)
+                except AttributeError:
+                    continue
             for u in ue:
                 # create a QuantityValue object
                 q1 = qv(value=1.0, unit=u)

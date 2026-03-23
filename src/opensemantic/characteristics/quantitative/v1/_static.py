@@ -19,8 +19,8 @@ from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
 from pydantic.v1 import Field, create_model
 from pydantic.v1.fields import FieldInfo
 
-from opensemantic.characteristics.quantitative._collection import Unit
-from opensemantic.characteristics.quantitative._enum import UnitEnum, unit_registry
+from opensemantic.characteristics.quantitative.v1._collection import Unit
+from opensemantic.characteristics.quantitative.v1._enum import UnitEnum, unit_registry
 from opensemantic.v1 import OswBaseModel
 
 # import pint_pandas
@@ -116,10 +116,16 @@ class QuantityValueMetaclass(ModelMetaclass):
             unit_field_type = None
             # check if FieldInfo was used for annotation
             if type(attrs["unit"]) is FieldInfo:
-                _types = attrs["__annotations__"]["unit"].__args__
+                # handle type annotation str value "<classname> | None"
+                if isinstance(attrs["__annotations__"]["unit"], str):
+                    _types = [
+                        t.strip() for t in attrs["__annotations__"]["unit"].split("|")
+                    ]
+                else:
+                    _types = attrs["__annotations__"]["unit"].__args__
                 # select the first type != None
                 for _type in _types:
-                    if _type is not None:
+                    if _type is not None and _type != "None":
                         unit_field_type = _type
                         break
             else:
@@ -411,7 +417,10 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             else:
                 # In any other case, we need to look up the quantity class in the
                 #  quantity_registry based on the unit_class.
-                quantity_class_ = quantity_registry.get(unit_class_, None)
+                quantity_class_ = quantity_registry.get(
+                    unit_class_,
+                    quantity_registry.get(unit_class_.__qualname__, None),
+                )
             if quantity_type is not None:
                 # If a specific quantity type is provided, use it instead of the
                 #  (derived) default one
