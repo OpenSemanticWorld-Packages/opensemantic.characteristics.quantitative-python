@@ -327,6 +327,8 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             pint_unit_name = pint_unit_name.replace("per", "1 /")
         # Make sure unit names like Celsius and Ohm don't break the ureg access
         pint_unit_name = pint_unit_name.lower()
+        if pint_unit_name == "number":
+            pint_unit_name = "dimensionless"
         return pint_unit_name
 
     def to_pint(self) -> pint.Quantity:
@@ -604,10 +606,8 @@ class TabularData(OswBaseModel):
         for attr in row_class.__fields__.keys():
             if attr == "type":
                 continue
-            q_name = (
-                row_class.__fields__[attr]
-                .type_.__fields__["unit"]
-                .default.name.replace("_", " ")
+            q_name = QuantityValue.get_pint_ureg_compatible_str(
+                row_class.__fields__[attr].type_.__fields__["unit"].default.name
             )
             # q_pint = ureg[q_name]
             s = pd.Series(
@@ -658,10 +658,8 @@ class TabularData(OswBaseModel):
         for attr in row_class.__fields__.keys():
             if attr == "type":
                 continue
-            q_name = (
-                row_class.__fields__[attr]
-                .type_.__fields__["unit"]
-                .default.name.replace("_", " ")
+            q_name = QuantityValue.get_pint_ureg_compatible_str(
+                row_class.__fields__[attr].type_.__fields__["unit"].default.name
             )
             q_pint = ureg(q_name)
             df[attr] = df[attr].pint.to(q_pint)

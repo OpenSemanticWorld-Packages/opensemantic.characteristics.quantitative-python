@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from scipy.stats import linregress
 
-from opensemantic.characteristics.quantitative import (
+from opensemantic.characteristics.quantitative.v1 import (
     Area,
     AreaUnit,
     Diameter,
@@ -180,14 +180,11 @@ def test_export():
     a = ln * w
     print(a)
 
-    json_dict = a.dict()
+    json_dict = json.loads(a.json(exclude_none=True))
     print(json_dict)
     assert json_dict["type"] == ["Category:OSW1fcf1694712e5684885071efdf775bd9"]
     assert json_dict["value"] == 20000.0
-    assert json_dict["unit"] == (
-        "Item:OSWd10e5841c68e5aad94b481b58ef9dfb9"
-        "#OSWeca22bf4270853038ef3395bd6dd797b"
-    )
+    assert json_dict["unit"] == AreaUnit.milli_meter_squared.value
 
     # _a = QuantityValue(**json_dict)
 
@@ -213,12 +210,10 @@ def test_export():
     assert a4.value == 100**2 * a3.value
     assert a3 == a4
 
-    json_dict4 = a4.dict(exclude_none=True, exclude_defaults=True)
+    json_dict4 = json.loads(a4.json(exclude_none=True, exclude_defaults=True))
     print(json_dict4)
     assert json_dict4["value"] == 40000
-    assert json_dict4["unit"] == (
-        "Item:OSWd10e5841c68e5aad94b481b58ef9dfb9#OSWe36916dd7a34557b8a52c38d6dd7b832"
-    )
+    assert json_dict4["unit"] == AreaUnit.centi_meter_squared.value
     assert len(json_dict4.keys()) == 2
 
 
