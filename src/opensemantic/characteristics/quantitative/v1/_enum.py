@@ -16,10 +16,8 @@ unit_registry: Dict[str, list[EnumType]] = {}
 
 
 def class_in_list(cls: Union[str, type], lst: list[type]) -> bool:
-    cls_name = cls
-    if isinstance(cls, UnitEnum):
-        cls_name = cls.__name__
-    names = [cls.__name__ for cls in lst]
+    cls_name = cls if isinstance(cls, str) else cls.__name__
+    names = [c.__name__ for c in lst]
     return cls_name in names
 
 
