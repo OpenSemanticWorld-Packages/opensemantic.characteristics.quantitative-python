@@ -5,35 +5,15 @@ from typing import List, Optional
 
 from scipy.stats import linregress
 
-from opensemantic.characteristics.quantitative.v1 import (
-    Area,
-    AreaUnit,
-    Diameter,
-    DimensionlessUnit,
-    Force,
-    ForcePerAreaUnit,
-    ForceUnit,
-    Length,
-    LengthUnit,
-    LinearStrain,
-    ModulusOfElasticity,
-    QuantityValue,
-    Stress,
-    TabularData,
-    Thickness,
-    Unit,
-    Width,
-)
-from opensemantic.v1 import OswBaseModel
 
-# Do we have to adapt VSCode settings to include the package index?
-# "python.analysis.packageIndexDepths": [
-#       {"name": "opensemantic.characteristics.quantitative",
-#       "depth": 4, "includeAllSymbols": true}
-# ]
-
-
-def test_pint():
+def test_pint(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    QuantityValue = pkg.QuantityValue
+    Area = pkg.Area
+    AreaUnit = pkg.AreaUnit
+    Diameter = pkg.Diameter
 
     q = Length(value=1.0, unit=LengthUnit.milli_meter)
     # transform to pint
@@ -55,7 +35,7 @@ def test_pint():
     q_diameter1 = QuantityValue.from_pint(q_pint, quantity_type=Diameter)
     assert isinstance(q_diameter1, Diameter)
     q_length = QuantityValue.from_pint(q_pint, strict=True)
-    # Must be Length, not Diameter because wthin the unit registry, Length is more
+    # Must be Length, not Diameter because within the unit registry, Length is more
     #  generic than Diameter and thus listed first for the Unit.milli_meter
     assert isinstance(q_length, Length)
 
@@ -73,7 +53,13 @@ def test_pint():
     assert q43 == Area(value=1.000001, unit=AreaUnit.meter_squared)
 
 
-def test_quantityvalue_magic_methods():
+def test_quantityvalue_magic_methods(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    QuantityValue = pkg.QuantityValue
+    DimensionlessUnit = pkg.DimensionlessUnit
+    Area = pkg.Area
 
     l1 = Length(value=10, unit=LengthUnit.meter)
     l2 = Length(value=3, unit=LengthUnit.meter)
@@ -135,7 +121,15 @@ def test_quantityvalue_magic_methods():
     assert lt is True
 
 
-def test_export():
+def test_export(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    Unit = pkg.Unit
+    Area = pkg.Area
+    AreaUnit = pkg.AreaUnit
+    Width = pkg.Width
+
     q2 = Length(value=1.0, unit=Unit.milli_meter)
     q2_json = json.loads(q2.json(exclude_none=True))
     print(q2_json)
@@ -186,8 +180,6 @@ def test_export():
     assert json_dict["value"] == 20000.0
     assert json_dict["unit"] == AreaUnit.milli_meter_squared.value
 
-    # _a = QuantityValue(**json_dict)
-
     _a = a.to_base()
     json_dict = _a.dict(exclude_none=True, exclude_defaults=True)
     print(json_dict)
@@ -196,13 +188,6 @@ def test_export():
 
     __a = Area(**json_dict)
     assert __a == _a
-
-    # not supported yet
-    # jsonld_dict = a.to_jsonld()
-    # print(json.dumps(jsonld_dict, indent=2))
-
-    # a2 = QuantityValue.from_jsonld(jsonld_dict)
-    # print(a2)
 
     a3 = Area(value=4.0, unit=AreaUnit.meter_squared)
     a4 = a3.to_unit(AreaUnit.centi_meter_squared)
@@ -217,7 +202,13 @@ def test_export():
     assert len(json_dict4.keys()) == 2
 
 
-def test_pandas():
+def test_pandas(package_module, osw_base_model):
+    pkg = package_module
+    OswBaseModel = osw_base_model
+    Length = pkg.Length
+    Width = pkg.Width
+    Area = pkg.Area
+    TabularData = pkg.TabularData
 
     class Measurement(OswBaseModel):
         length: Length
@@ -240,11 +231,33 @@ def test_pandas():
     measurement_data2 = MeasurementData.from_df(df)
     print(measurement_data2)
     measurement_data3 = TabularData.from_df(df)
-    print(measurement_data3.json(exclude_none=True, exclude_defaults=True, indent=2))
-    # print(measurement_data3.__class__.schema_json(indent=2))
+    if hasattr(measurement_data3, "model_dump_json"):
+        print(
+            measurement_data3.model_dump_json(
+                exclude_none=True, exclude_defaults=True, indent=2
+            )
+        )
+    else:
+        print(
+            measurement_data3.json(exclude_none=True, exclude_defaults=True, indent=2)
+        )
 
 
-def test_tensile_test():
+def test_tensile_test(package_module, osw_base_model):
+    pkg = package_module
+    OswBaseModel = osw_base_model
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    Width = pkg.Width
+    Thickness = pkg.Thickness
+    Area = pkg.Area
+    Force = pkg.Force
+    ForceUnit = pkg.ForceUnit
+    ForcePerAreaUnit = pkg.ForcePerAreaUnit
+    LinearStrain = pkg.LinearStrain
+    Stress = pkg.Stress
+    ModulusOfElasticity = pkg.ModulusOfElasticity
+    TabularData = pkg.TabularData
 
     class TensileTestSpecimen(OswBaseModel):
         length: Length
@@ -274,12 +287,6 @@ def test_tensile_test():
                 dataset.specimen.width * dataset.specimen.thickness
             )
 
-        # Calculate stress and strain - slow iteration
-        # for row in dataset.result.rows:
-        #     #row.stress = Stress(value=row.force.value / dataset.specimen.cross_section_area.value, unit=row.force.unit)   # noqa: E501
-        #     #row.strain = LinearStrain(value=row.force.value / (dataset.specimen.e_mod.value * dataset.specimen.cross_section_area.value), unit=row.force.unit)   # noqa: E501
-        #     row.stress = row.force / dataset.specimen.cross_section_area   # noqa: E501
-
         # Calculate stress and strain - fast as pandas DataFrame operation
         df = dataset.result.to_df()
         df["strain"] = df["elongation"] / dataset.specimen.length.to_pint()
@@ -298,7 +305,7 @@ def test_tensile_test():
             slope
             * linear_region["stress"].pint.to_base_units().pint.units
             / linear_region["strain"].pint.to_base_units().pint.units
-        )  # noqa: E501
+        )
         dataset.specimen.e_mod = ModulusOfElasticity.from_pint(slope.to("Pa"))
 
         dataset.result = TensileTestResult.from_df(df)
@@ -316,26 +323,31 @@ def test_tensile_test():
             TensileTestResultRow(
                 force=Force(value=1.0000, unit=ForceUnit.kilo_newton),
                 elongation=Length(value=0.10, unit=LengthUnit.milli_meter),
-            ),  # noqa: E501
+            ),
             TensileTestResultRow(
                 force=Force(value=1.5050, unit=ForceUnit.kilo_newton),
                 elongation=Length(value=0.15, unit=LengthUnit.milli_meter),
-            ),  # noqa: E501
+            ),
             TensileTestResultRow(
                 force=Force(value=2.0000, unit=ForceUnit.kilo_newton),
                 elongation=Length(value=0.20, unit=LengthUnit.milli_meter),
-            ),  # noqa: E501
+            ),
         ]
     )
     dataset = TensileTestDataset(specimen=specimen, result=result)
     analyzed_dataset = tensile_test_analysis(dataset)
-    # print(analyzed_dataset.json(exclude_none=True, indent=2))
     assert analyzed_dataset.specimen.e_mod == ModulusOfElasticity(
         value=10.0, unit=ForcePerAreaUnit.giga_pascal
     )
 
 
-def test_init():
+def test_init(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    Diameter = pkg.Diameter
+    QuantityValue = pkg.QuantityValue  # noqa: F841 — used in overload tests below
+
     # Overload 1: __init__(self, value: float, unit: Optional[UnitEnum])
     l1 = Length(value=5.0, unit=LengthUnit.meter)
     assert isinstance(l1, Length)
@@ -379,7 +391,13 @@ def test_init():
     assert l5.unit == LengthUnit.meter
 
 
-def test_generic_unit_enum():
+def test_generic_unit_enum(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    Unit = pkg.Unit
+    QuantityValue = pkg.QuantityValue  # noqa: F841 — used below
+
     l1 = Length(value=10, unit=Unit.meter)
 
     l2 = Length(QuantityValue(value=10, unit=Unit.meter))
@@ -396,7 +414,11 @@ def test_generic_unit_enum():
     assert q == q2
 
 
-def test_to_unit():
+def test_to_unit(package_module):
+    pkg = package_module
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+
     # Test conversion from meters to millimeters
     length = Length(value=1.0, unit=LengthUnit.meter)
     l_mm = length.to_unit(LengthUnit.milli_meter)
@@ -412,11 +434,16 @@ def test_to_unit():
 
 
 if __name__ == "__main__":
-    test_pint()
-    test_tensile_test()
-    test_quantityvalue_magic_methods()
-    test_init()
-    test_generic_unit_enum()
-    test_to_unit()
-    test_pandas()
-    test_export()
+    import importlib
+
+    pkg = importlib.import_module("opensemantic.characteristics.quantitative.v1")
+    OswBaseModel = importlib.import_module("opensemantic.v1").OswBaseModel
+
+    test_pint(pkg)
+    test_tensile_test(pkg, OswBaseModel)
+    test_quantityvalue_magic_methods(pkg)
+    test_init(pkg)
+    test_generic_unit_enum(pkg)
+    test_to_unit(pkg)
+    test_pandas(pkg, OswBaseModel)
+    test_export(pkg)

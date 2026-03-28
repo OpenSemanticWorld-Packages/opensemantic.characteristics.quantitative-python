@@ -1,4 +1,4 @@
-from opensemantic.characteristics.quantitative.v1._enum import UnitEnum
+from opensemantic.characteristics.quantitative._enum import UnitEnum
 
 
 class Unit(UnitEnum):

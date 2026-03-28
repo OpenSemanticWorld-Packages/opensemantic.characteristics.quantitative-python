@@ -12,7 +12,7 @@ finally:
 from opensemantic.characteristics.quantitative._model import *  # noqa
 
 # Delete names from the namespace that are imported by wildcard but are unwanted
-del Any, Optional, Field  # noqa
+del Any, Field  # noqa
 from opensemantic.characteristics.quantitative._collection import Unit  # noqa
 from opensemantic.characteristics.quantitative._static import (  # noqa
     QuantityValue,

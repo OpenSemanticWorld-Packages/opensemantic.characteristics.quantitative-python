@@ -619,6 +619,33 @@ Warning: LinearAbsorptionCoefficientUnit.per_centi_meter was normalized to Linea
 </details>
 
 
+## TODO: Unit Name Conflicts in `_collection.py`
+
+18 unit member names appear in multiple `*Unit` enum classes with different OSW IDs.
+The first occurrence goes into `_collection.py`; conflicting entries remain hardcoded in `_model.py`.
+These likely stem from upstream QUDT modeling where the same unit name maps to different physical quantities.
+
+| Name | Classes (conflicting OSW IDs) |
+|---|---|
+| `day` | TimeUnit vs HydraulicPermeabilityUnit |
+| `kilo_newton` | ForceUnit vs TorquePerLengthUnit |
+| `kilo_newton_per_meter` | EnergyPerAreaUnit vs ForcePerLengthUnit |
+| `liter_per_meter_squared_per_second` | VolumetricFluxUnit vs VentilationRatePerFloorAreaUnit |
+| `meter` | LengthUnit vs AreaPerLengthUnit vs VolumePerUnitAreaUnit |
+| `meter_pascal` | StressIntensityFactorUnit vs UnknownUnit |
+| `milli_newton_per_meter` | EnergyPerAreaUnit vs ForcePerLengthUnit |
+| `minute` | TimeUnit vs PlaneAngleUnit |
+| `newton` | ForceUnit vs TorquePerLengthUnit |
+| `newton_per_meter` | EnergyPerAreaUnit vs ForcePerLengthUnit |
+| `pH_value` | InductanceUnit vs BasicityUnit |
+| `per_centi_meter` | InverseLengthUnit vs UnknownUnit |
+| `per_day` | FrequencyUnit vs UnknownUnit vs MassSpecificBiogeochemicalRateUnit |
+| `per_hour` | FrequencyUnit vs MassSpecificBiogeochemicalRateUnit |
+| `per_meter` | InverseLengthUnit vs UnknownUnit |
+| `per_meter_1` | InverseLengthUnit vs UnknownUnit |
+| `per_minute` | FrequencyUnit vs RotationalFrequencyUnit |
+| `year` | AreaUnit vs TimeUnit |
+
 <!-- pyscaffold-notes -->
 
 ## Note

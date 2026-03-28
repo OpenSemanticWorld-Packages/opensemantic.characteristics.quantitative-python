@@ -2,11 +2,9 @@ import json
 
 import pint
 
-import opensemantic.characteristics.quantitative.v1._model as q
-from opensemantic.characteristics.quantitative.v1._static import quantity_registry
 
-
-def test_addition():
+def test_addition(q_module):
+    q = q_module
     q1 = q.Mobility(
         value=1.0,
         unit=q.MobilityUnit.meter_squared_per_second_per_volt,
@@ -24,11 +22,11 @@ def test_addition():
     )
 
 
-def test_quantity_value():
+def test_quantity_value(q_module):
+    q = q_module
     q1 = q.Length(value=1.0, unit=q.LengthUnit.milli_meter)
 
     q_json = json.loads(q1.json(exclude_none=True))
-    # print(q_json)
     assert q_json == {
         "type": ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"],
         "value": 1.0,
@@ -41,7 +39,6 @@ def test_quantity_value():
     q1 = q.Length(value=1.0, unit=q.LengthUnit.meter)
 
     q_json = json.loads(q1.json(exclude_none=True))
-    # print(q_json)
     assert q_json == {
         "type": ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"],
         "value": 1.0,
@@ -49,11 +46,11 @@ def test_quantity_value():
     }
 
     q_json = json.loads(q1.json(exclude_none=True, exclude_defaults=True))
-    # print(q_json)
     assert q_json == {"value": 1.0}
 
 
-def test_pint():
+def test_pint(q_module):
+    q = q_module
     q1 = q.Length(value=1.0, unit=q.LengthUnit.milli_meter)
     # transform to pint
     q_pint = q1.to_pint()
@@ -80,7 +77,9 @@ def test_pint():
     _ = q.VoltageRatio(value=q25.value)
 
 
-def test_full_inventory_test():
+def test_full_inventory_test(q_module, static_module):
+    q = q_module
+    quantity_registry = static_module.quantity_registry
     # test all QuantityValue classes
     warning_count = 0
     critical_warning_count = 0
@@ -93,39 +92,21 @@ def test_full_inventory_test():
             qu_reg[qv] = []
         qu_reg[qv].append(ue)
 
-    # build a list of all entr
-
     for qv in qu_reg.keys():
-        # round-trip to and from pint
-        # interate of the ue Enum members
-
         for ue in qu_reg[qv]:
             if isinstance(ue, str):
-                # resolve type from string if it is a forward ref
                 try:
                     ue = getattr(q, ue)
                 except AttributeError:
                     continue
             for u in ue:
-                # create a QuantityValue object
                 q1 = qv(value=1.0, unit=u)
 
                 try:
-                    # transform to pint
                     q_pint = q1.to_pint()
-                    # transform back to QuantityValue
                     q_ = q.QuantityValue.from_pint(q_pint)
-                    # assert q1 == q_
                     if q1 != q_:
-                        # print(
-                        # (
-                        # f"Warning: {q1.value} {q1.unit} ",
-                        # f"!= {q_.value} {q_.unit}",
-                        # )
-                        # )
                         warning_count += 1
-                        # print(q1.to_pint())
-                        # print(q_.to_pint())
                         if type(q1) is not type(q_):
                             print(
                                 (
@@ -135,28 +116,21 @@ def test_full_inventory_test():
                                 )
                             )
                             critical_warning_count += 1
-                            pass
                         elif q1.unit != q_.unit:
                             print(f"Warning: {q1.unit} was normalized to {q_.unit}")
-                            pass
                         elif q1.value != q_.value:
                             print(f"Warning: Rounding error: {q1.value} vs {q_.value}")
-                            pass
                         else:
                             print(f"Warning: Unknown error: {q1} vs {q_}")
-                            pass
-
                     else:
                         success_count += 1
                 except Exception as e:
-                    # check if e is of type pint.errors.UndefinedUnitError
                     if isinstance(e, pint.errors.UndefinedUnitError):
                         print(f"Error: Missing unit {u} in pint")
                     elif isinstance(e, KeyError):
                         print(f"Error: Missing unit {u} in unit_registry")
                     else:
-                        print(f"Error {e.__class__}: {q1} -> {q_pint} -> {q_}")
-                        # print(re
+                        print(f"Error {e.__class__}: {q1}")
                     error_count += 1
     print(
         (
@@ -165,26 +139,26 @@ def test_full_inventory_test():
             f"({critical_warning_count} critical)"
         )
     )
-    # 283 successful, 366 errors and 300 warnings # baseline
-    # 295 successful, 292 errors and 362 warnings # fix inverse units
-    # 346 successful, 122 errors and 481 warnings # fix SI prefixes
-    # 359 successful, 105 errors and 485 warnings (444 critical) # fix all inverse
 
 
 if __name__ == "__main__":
-    test_addition()
-    test_pint()
-    test_full_inventory_test()
-    test_quantity_value()
+    import opensemantic.characteristics.quantitative.v1._model as q
+    from opensemantic.characteristics.quantitative.v1._static import quantity_registry
 
-# pint_reg = pint.UnitRegistry()
-# pint_q = pint_reg.Quantity(1.0, "petajoule")
-# # not defined, try alias
-# pint_q = pint_reg.Quantity(1.0, "joule 1 / kelvin 1 / kilogram squared 1 / pascal")
-# print(pint_q)
-# print(f"{pint_q:9f#Lx}")
+    class _FakeModule:
+        pass
 
-# naming collisions?
-# VaporPermeability
-# NEONUnit
-# CombinedNonEvaporativeHeatTransferCoefficient
+    _q = _FakeModule()
+    _q.__dict__.update(vars(q))
+    _q.QuantityValue = q.QuantityValue
+
+    class _FakeStatic:
+        pass
+
+    _s = _FakeStatic()
+    _s.quantity_registry = quantity_registry
+
+    test_addition(_q)
+    test_pint(_q)
+    test_full_inventory_test(_q, _s)
+    test_quantity_value(_q)
