@@ -29,6 +29,33 @@ from opensemantic.v1 import OswBaseModel
 
 QV = TypeVar("QV", bound="QuantityValue")
 
+_SI_PREFIX_FACTORS = {
+    "quetta": 1e30,
+    "ronna": 1e27,
+    "yotta": 1e24,
+    "zetta": 1e21,
+    "exa": 1e18,
+    "peta": 1e15,
+    "tera": 1e12,
+    "giga": 1e9,
+    "mega": 1e6,
+    "kilo": 1e3,
+    "hecto": 1e2,
+    "deca": 1e1,
+    "deci": 1e-1,
+    "centi": 1e-2,
+    "milli": 1e-3,
+    "micro": 1e-6,
+    "nano": 1e-9,
+    "pico": 1e-12,
+    "femto": 1e-15,
+    "atto": 1e-18,
+    "zepto": 1e-21,
+    "yocto": 1e-24,
+    "ronto": 1e-27,
+    "quecto": 1e-30,
+}
+
 _EXPONENT_WORDS = {
     "2": "squared",
     "3": "cubed",
@@ -55,6 +82,16 @@ def _normalize_pint_unit_symbol(raw: str) -> str:
     )
     unit_symbol = raw.split("{")[-1].replace("}", "")
     unit_symbol = unit_symbol.replace("\\", "_").strip("_")
+    # Pint formats offset/delta units with degree_ and delta_degree_ prefixes
+    # (e.g. \degree\Celsius -> degree_Celsius, \delta\degree\Celsius ->
+    # delta_degree_Celsius). Strip them to match the registry key
+    # (just "Celsius", "Fahrenheit", etc.).
+    if unit_symbol.startswith("delta_degree_"):
+        unit_symbol = unit_symbol[len("delta_degree_") :]
+    elif unit_symbol.startswith("degree_"):
+        unit_symbol = unit_symbol[len("degree_") :]
+    elif unit_symbol.startswith("delta_"):
+        unit_symbol = unit_symbol[len("delta_") :]
     if not unit_symbol:
         return "dimensionless"
     unit_symbol = re.sub(
@@ -334,7 +371,23 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
     def to_pint(self) -> pint.Quantity:
         pint_unit_name = QuantityValue.get_pint_ureg_compatible_str(self.unit.name)
 
-        return self.value * ureg(pint_unit_name)
+        # Use Quantity() constructor instead of multiplication to support
+        # offset units (e.g. degree_Celsius) where value * ureg(unit) fails
+        # with OffsetUnitCalculusError.
+        try:
+            return ureg.Quantity(self.value, ureg(pint_unit_name).units)
+        except pint.errors.OffsetUnitCalculusError:
+            # Prefixed offset unit (e.g. millicelsius). Pint cannot apply
+            # SI prefixes to offset units, so we scale to the base offset
+            # unit manually.
+            for prefix, factor in _SI_PREFIX_FACTORS.items():
+                if pint_unit_name.startswith(prefix):
+                    base_unit = pint_unit_name[len(prefix) :]
+                    try:
+                        return ureg.Quantity(self.value * factor, ureg(base_unit).units)
+                    except Exception:
+                        continue
+            raise
 
     # fmt: on
     @classmethod
@@ -401,11 +454,19 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         # see also
         # https://pint.readthedocs.io/en/stable/getting/tutorial.html#simplifying-units
         # unit_symbol = "{:~P}".format(quantity.units)
-        if quantity_type and not issubclass(quantity_type, QuantityValue):
-            raise ValueError(
-                f"Provided quantity_type '{quantity_type}' is not a subclass of "
-                f"QuantityValue."
-            )
+        if quantity_type:
+            if not issubclass(quantity_type, QuantityValue):
+                if any(c.__name__ == "QuantityValue" for c in quantity_type.__mro__):
+                    raise TypeError(
+                        f"Provided quantity_type '{quantity_type}' from module "
+                        f"'{quantity_type.__module__}' is not compatible with "
+                        f"QuantityValue from '{QuantityValue.__module__}'. "
+                        f"Do not mix v1 and v2 classes."
+                    )
+                raise ValueError(
+                    f"Provided quantity_type '{quantity_type}' is not a "
+                    f"subclass of QuantityValue."
+                )
 
         def class_logic(unit_class_):
             if cls != QuantityValue:
@@ -515,7 +576,24 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
             raise ValueError(
                 f"Invalid unit type: {type(unit)}. Must be UnitEnum or str.")
 
-        pint_quantity = self.to_pint().to(unit_str)
+        pint_quantity = self.to_pint()
+        try:
+            pint_quantity = pint_quantity.to(unit_str)
+        except pint.errors.OffsetUnitCalculusError:
+            # Target is a prefixed offset unit (e.g. millicelsius). Pint
+            # cannot convert to prefixed offset units, so we convert to the
+            # base offset unit and scale manually.
+            for prefix, factor in _SI_PREFIX_FACTORS.items():
+                if unit_str.startswith(prefix):
+                    base_unit = unit_str[len(prefix):]
+                    try:
+                        base_result = pint_quantity.to(base_unit)
+                        return self.__class__(
+                            value=base_result.magnitude / factor, unit=unit
+                        )
+                    except Exception:
+                        continue
+            raise
         return QuantityValue.from_pint(
             quantity=pint_quantity, simplify=False, quantity_type=self.__class__)
 
