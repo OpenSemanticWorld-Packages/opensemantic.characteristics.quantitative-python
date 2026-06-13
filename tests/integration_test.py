@@ -433,6 +433,88 @@ def test_to_unit(package_module):
     assert l_cm.value == 100.0
 
 
+def test_json_roundtrip(package_module, osw_base_model):
+    pkg = package_module
+    OswBaseModel = osw_base_model
+    Length = pkg.Length
+    LengthUnit = pkg.LengthUnit
+    Width = pkg.Width
+    Area = pkg.Area
+    TabularData = pkg.TabularData
+
+    class Measurement(OswBaseModel):
+        length: Length
+        width: Width
+        area: Optional[Area] = None
+
+    class MeasurementData(TabularData):
+        rows: List[Measurement]
+
+    # Build from JSON (as it would arrive from an OSW wiki)
+    json_data = {
+        "rows": [
+            {"length": {"value": 1.0}, "width": {"value": 2.0}},
+            {
+                "length": {
+                    "value": 3.0,
+                    "unit": str(LengthUnit.milli_meter.value),
+                },
+                "width": {"value": 4.0},
+            },
+        ]
+    }
+    data = MeasurementData.from_json(json_data)
+    assert len(data.rows) == 2
+    assert data.rows[0].length.value == 1.0
+    assert data.rows[0].length.unit == LengthUnit.meter  # default
+    assert data.rows[1].length.unit == LengthUnit.milli_meter
+
+    # Round-trip: to_json -> from_json
+    exported = data.to_json()
+    restored = MeasurementData.from_json(exported)
+    assert len(restored.rows) == 2
+    for orig, rest in zip(data.rows, restored.rows):
+        assert orig.length == rest.length
+        assert orig.width == rest.width
+
+
+def test_bar_pressure(package_module):
+    """Test that bar (CGS unit) is available for Pressure and converts correctly."""
+    pkg = package_module
+    Pressure = pkg.Pressure
+    ForcePerAreaUnit = pkg.ForcePerAreaUnit
+    Unit = pkg.Unit
+    QuantityValue = pkg.QuantityValue
+
+    # bar should be available as a unit
+    p_bar = Pressure(value=1.0, unit=ForcePerAreaUnit.bar)
+    assert p_bar.value == 1.0
+    assert p_bar.unit == ForcePerAreaUnit.bar
+
+    # also via generic Unit enum
+    p_bar2 = Pressure(value=1.0, unit=Unit.bar)
+    assert p_bar == p_bar2
+
+    # convert to pint and back
+    p_pint = p_bar.to_pint()
+    assert abs(p_pint.magnitude - 1.0) < 1e-9
+    assert str(p_pint.units) == "bar"
+
+    # convert bar to pascal (1 bar = 100000 Pa)
+    p_pa = p_bar.to_unit(ForcePerAreaUnit.pascal)
+    assert abs(p_pa.value - 100000.0) < 1e-3
+    assert p_pa.unit == ForcePerAreaUnit.pascal
+
+    # millibar
+    p_mbar = Pressure(value=1013.25, unit=ForcePerAreaUnit.milli_bar)
+    p_mbar_pa = p_mbar.to_unit(ForcePerAreaUnit.pascal)
+    assert abs(p_mbar_pa.value - 101325.0) < 1.0
+
+    # roundtrip via from_pint
+    p_back = QuantityValue.from_pint(p_pint)
+    assert abs(p_back.value - 1.0) < 1e-9
+
+
 if __name__ == "__main__":
     import importlib
 
