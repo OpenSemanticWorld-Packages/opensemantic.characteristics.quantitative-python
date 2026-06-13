@@ -94,7 +94,7 @@ class QuantityValueType(CharacteristicType):
             "description*": {
                 "en": "Generates schema for value and unit (with autocomplete) based on the quantity of the most fundamental parent characteristic (e.g. Diameter will apply units of Length)"
             },
-            "defaultProperties": ["quantity"],
+            "defaultProperties": ["default_unit"],
         },
     )
     type: list[str] | None = ["Category:OSWac07a46c2cf14f3daec503136861f5ab"]
@@ -105,9 +105,11 @@ class QuantityValueType(CharacteristicType):
             "description*": {
                 "de": "Für diese Größe präferierte Anzeigeeinheit, kann von der SI Einheit abweichen"
             },
+            "watch": {"parent_w": "root.subclass_of.0"},
+            "$comment": "Finds units for the parent characteristic by querying HasQuantity directly on the parent, then traversing its SubClassOf chain (inverse) up to 3 levels. Limited by SMW query depth restrictions.",
             "options": {
                 "autocomplete": {
-                    "query": "[[-HasUnit.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                    "query": "[[-HasUnit.-HasQuantity::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf.-SubClassOf.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
                 }
             },
         },
@@ -119,9 +121,10 @@ class QuantityValueType(CharacteristicType):
     quantity: QuantityKind | None = Field(
         None,
         json_schema_extra={
+            "$comment": "Deprecated: quantity is set on FundamentalQuantityValueType, not here. Hidden to avoid confusion.",
             "title*": {"de": "Physikalische Größe"},
-            "$comment": "range: QuanityKind",
             "range": "Category:OSW00fbd6feecb5408997ca18d4e681a131",
+            "options": {"hidden": True},
         },
         title="Quantity",
     )
@@ -159,7 +162,7 @@ class UnitEnumerationElement(OswBaseModel):
             "watch": {"quantity": "root.quantity"},
             "options": {
                 "autocomplete": {
-                    "query": "[[-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                    "query": "[[-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
                 }
             },
         },
@@ -202,7 +205,7 @@ class FundamentalQuantityValueType(CharacteristicType):
         },
     )
     type: list[str] | None = ["Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7"]
-    metaclass: Any | None = Field(
+    metaclass: list[str] | None = Field(
         ["Category:OSWac07a46c2cf14f3daec503136861f5ab"],
         json_schema_extra={
             "$comment": "MetaQuantityValue",
@@ -229,7 +232,7 @@ class FundamentalQuantityValueType(CharacteristicType):
             "watch": {"quantity": "root.quantity"},
             "options": {
                 "autocomplete": {
-                    "query": "[[-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                    "query": "[[-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
                 }
             },
         },
@@ -660,17 +663,69 @@ class DimensionlessUnit(Enum):
     """
     Np
     """
+    PSU = Unit.PSU.value
+    """
+    PSU
+    """
     dec = Unit.dec.value
     """
     dec
+    """
+    grain = Unit.grain.value
+    """
+    gr
     """
     octave = Unit.octave.value
     """
     octave
     """
+    ppq = Unit.ppq.value
+    """
+    ppq
+    """
+    parts_per_trillion = Unit.parts_per_trillion.value
+    """
+    ppt
+    """
+    vacuum_permittivity = Unit.vacuum_permittivity.value
+    """
+    εᵣ
+    """
+    ppb = Unit.ppb.value
+    """
+    PPB
+    """
+    PPTM = Unit.PPTM.value
+    """
+    PPTM
+    """
+    ppm = Unit.ppm.value
+    """
+    PPM
+    """
+    permille = Unit.permille.value
+    """
+    ‰
+    """
+    percent = Unit.percent.value
+    """
+    %
+    """
+    Sh = Unit.Sh.value
+    """
+    Sh
+    """
+    barn = Unit.barn.value
+    """
+    b
+    """
     COUNT = Unit.COUNT.value
     """
     COUNT
+    """
+    E = Unit.E.value
+    """
+    E
     """
     point = Unit.point.value
     """
@@ -684,7 +739,19 @@ class DimensionlessUnit(Enum):
     """
     heartbeat
     """
-    unknown = Unit.unknown.value
+    nano_technical_atmosphere = Unit.nano_technical_atmosphere.value
+    """
+    nat
+    """
+    one = Unit.one.value
+    """
+    one
+    """
+    unknown = "Item:OSWb3b241033ef351c1a86898a1f5e77217"
+    """
+    ÷
+    """
+    unknown_1 = Unit.unknown.value
     """
     χ
     """
@@ -692,9 +759,141 @@ class DimensionlessUnit(Enum):
     """
     一
     """
+    ban = Unit.ban.value
+    """
+    ban
+    """
+    Hart = Unit.Hart.value
+    """
+    Hart
+    """
+    bel = "Item:OSWfef0c07075cc531c9b4a3938821e5079"
+    """
+    B
+    """
+    to_the_10 = Unit.to_the_10.value
+    """
+    10
+    """
+    to_the_100 = Unit.to_the_100.value
+    """
+    100
+    """
+    kilo_barn = Unit.kilo_barn.value
+    """
+    kb
+    """
+    kibi_barn = Unit.kibi_barn.value
+    """
+    Kib
+    """
+    to_the_1000 = Unit.to_the_1000.value
+    """
+    1000
+    """
+    kilo_byte = Unit.kilo_byte.value
+    """
+    kB
+    """
+    kibi_byte = Unit.kibi_byte.value
+    """
+    KiB
+    """
+    mega_barn = Unit.mega_barn.value
+    """
+    Mb
+    """
+    mebi_barn = Unit.mebi_barn.value
+    """
+    Mib
+    """
+    to_the_1000000 = Unit.to_the_1000000.value
+    """
+    1000000
+    """
+    mega_byte = Unit.mega_byte.value
+    """
+    MB
+    """
+    mebi_byte = Unit.mebi_byte.value
+    """
+    MiB
+    """
+    gigabit = Unit.gigabit.value
+    """
+    Gb
+    """
+    gibi_barn = Unit.gibi_barn.value
+    """
+    Gib
+    """
+    to_the_1000000000 = Unit.to_the_1000000000.value
+    """
+    1000000000
+    """
     giga_point = Unit.giga_point.value
     """
     Gbp
+    """
+    giga_byte = Unit.giga_byte.value
+    """
+    GB
+    """
+    gibi_byte = Unit.gibi_byte.value
+    """
+    GiB
+    """
+    tera_barn = Unit.tera_barn.value
+    """
+    Tb
+    """
+    tebi_barn = Unit.tebi_barn.value
+    """
+    Tib
+    """
+    to_the_1000000000000 = Unit.to_the_1000000000000.value
+    """
+    1000000000000
+    """
+    tera_byte = Unit.tera_byte.value
+    """
+    TB
+    """
+    tebi_byte = Unit.tebi_byte.value
+    """
+    TiB
+    """
+    pebi_barn = Unit.pebi_barn.value
+    """
+    Pib
+    """
+    peta_barn = Unit.peta_barn.value
+    """
+    Pb
+    """
+    pebi_byte = Unit.pebi_byte.value
+    """
+    PiB
+    """
+    peta_byte = Unit.peta_byte.value
+    """
+    PB
+    """
+    exbi_barn = Unit.exbi_barn.value
+    """
+    Eib
+    """
+    exa_barn = Unit.exa_barn.value
+    """
+    Eb
+    """
+    exbi_byte = Unit.exbi_byte.value
+    """
+    EiB
+    """
+    exa_byte = Unit.exa_byte.value
+    """
+    EB
     """
 
 
@@ -729,29 +928,127 @@ class Dimensionless(QuantityValue):
             "x-enum-varnames": [
                 "dimensionless",
                 "neper",
+                "PSU",
                 "dec",
+                "grain",
                 "octave",
+                "ppq",
+                "parts_per_trillion",
+                "vacuum_permittivity",
+                "ppb",
+                "PPTM",
+                "ppm",
+                "permille",
+                "percent",
+                "Sh",
+                "barn",
                 "COUNT",
+                "E",
                 "point",
                 "flight",
                 "heartbeat",
+                "nano_technical_atmosphere",
+                "one",
+                "unknown",
                 "unknown",
                 "unitless",
+                "ban",
+                "Hart",
+                "bel",
+                "to_the_10",
+                "to_the_100",
+                "kilo_barn",
+                "kibi_barn",
+                "to_the_1000",
+                "kilo_byte",
+                "kibi_byte",
+                "mega_barn",
+                "mebi_barn",
+                "to_the_1000000",
+                "mega_byte",
+                "mebi_byte",
+                "gigabit",
+                "gibi_barn",
+                "to_the_1000000000",
                 "giga_point",
+                "giga_byte",
+                "gibi_byte",
+                "tera_barn",
+                "tebi_barn",
+                "to_the_1000000000000",
+                "tera_byte",
+                "tebi_byte",
+                "pebi_barn",
+                "peta_barn",
+                "pebi_byte",
+                "peta_byte",
+                "exbi_barn",
+                "exa_barn",
+                "exbi_byte",
+                "exa_byte",
             ],
             "options": {
                 "enum_titles": [
                     "#",
                     "Np",
+                    "PSU",
                     "dec",
+                    "gr",
                     "octave",
+                    "ppq",
+                    "ppt",
+                    "εᵣ",
+                    "PPB",
+                    "PPTM",
+                    "PPM",
+                    "‰",
+                    "%",
+                    "Sh",
+                    "b",
                     "COUNT",
+                    "E",
                     "bp",
                     "flight",
                     "heartbeat",
+                    "nat",
+                    "one",
+                    "÷",
                     "χ",
                     "一",
+                    "ban",
+                    "Hart",
+                    "B",
+                    "10",
+                    "100",
+                    "kb",
+                    "Kib",
+                    "1000",
+                    "kB",
+                    "KiB",
+                    "Mb",
+                    "Mib",
+                    "1000000",
+                    "MB",
+                    "MiB",
+                    "Gb",
+                    "Gib",
+                    "1000000000",
                     "Gbp",
+                    "GB",
+                    "GiB",
+                    "Tb",
+                    "Tib",
+                    "1000000000000",
+                    "TB",
+                    "TiB",
+                    "Pib",
+                    "Pb",
+                    "PiB",
+                    "PB",
+                    "Eib",
+                    "Eb",
+                    "EiB",
+                    "EB",
                 ]
             },
         },
@@ -993,6 +1290,22 @@ class EnergyUnit(Enum):
     """
     W·s
     """
+    calorie = Unit.calorie.value
+    """
+    cal
+    """
+    cal_to_the_15_degree_celsius = Unit.cal_to_the_15_degree_celsius.value
+    """
+    cal{15 °C}
+    """
+    international_calorie = Unit.international_calorie.value
+    """
+    cal{IT}
+    """
+    mean_calorie = Unit.mean_calorie.value
+    """
+    cal{mean}
+    """
     kilo_joule = Unit.kilo_joule.value
     """
     kJ
@@ -1004,6 +1317,14 @@ class EnergyUnit(Enum):
     hour_watt = Unit.hour_watt.value
     """
     W·h
+    """
+    kilo_calorie = Unit.kilo_calorie.value
+    """
+    kcal
+    """
+    kilo_international_calorie = Unit.kilo_international_calorie.value
+    """
+    kcal{IT}
     """
     mega_joule = Unit.mega_joule.value
     """
@@ -1029,6 +1350,10 @@ class EnergyUnit(Enum):
     """
     MW·h
     """
+    metric_ton_per_force_pound = Unit.metric_ton_per_force_pound.value
+    """
+    t/lbf
+    """
     tera_joule = Unit.tera_joule.value
     """
     TJ
@@ -1048,6 +1373,10 @@ class EnergyUnit(Enum):
     exa_joule = Unit.exa_joule.value
     """
     EJ
+    """
+    quad = Unit.quad.value
+    """
+    quad
     """
 
 
@@ -1093,20 +1422,28 @@ class Energy(QuantityValue):
                 "micro_joule",
                 "milli_joule",
                 "second_watt",
+                "calorie",
+                "cal_to_the_15_degree_celsius",
+                "international_calorie",
+                "mean_calorie",
                 "kilo_joule",
                 "hour_volt_ampere",
                 "hour_watt",
+                "kilo_calorie",
+                "kilo_international_calorie",
                 "mega_joule",
                 "hour_kilo_volt_ampere",
                 "hour_kilo_watt",
                 "giga_joule",
                 "hour_mega_volt_ampere",
                 "hour_mega_watt",
+                "metric_ton_per_force_pound",
                 "tera_joule",
                 "giga_watt_hour",
                 "peta_joule",
                 "hour_tera_watt",
                 "exa_joule",
+                "quad",
             ],
             "options": {
                 "enum_titles": [
@@ -1123,20 +1460,28 @@ class Energy(QuantityValue):
                     "μJ",
                     "mJ",
                     "W·s",
+                    "cal",
+                    "cal{15 °C}",
+                    "cal{IT}",
+                    "cal{mean}",
                     "kJ",
                     "VA·h",
                     "W·h",
+                    "kcal",
+                    "kcal{IT}",
                     "MJ",
                     "kVA·h",
                     "kW·h",
                     "GJ",
                     "MVA·h",
                     "MW·h",
+                    "t/lbf",
                     "TJ",
                     "GW·h",
                     "PJ",
                     "TW·h",
                     "EJ",
+                    "quad",
                 ]
             },
         },
@@ -1859,9 +2204,29 @@ class TimeUnit(Enum):
     """
     ns
     """
+    micro_henry_per_kilo_ohm = Unit.micro_henry_per_kilo_ohm.value
+    """
+    μH/kΩ
+    """
+    milli_henry_per_kilo_ohm = Unit.milli_henry_per_kilo_ohm.value
+    """
+    mH/kΩ
+    """
+    micro_henry_per_ohm = Unit.micro_henry_per_ohm.value
+    """
+    μH/Ω
+    """
     micro_second = Unit.micro_second.value
     """
     μs
+    """
+    henry_per_kilo_ohm = Unit.henry_per_kilo_ohm.value
+    """
+    H/kΩ
+    """
+    milli_henry_per_ohm = Unit.milli_henry_per_ohm.value
+    """
+    mH/Ω
     """
     milli_second = Unit.milli_second.value
     """
@@ -1870,6 +2235,10 @@ class TimeUnit(Enum):
     deci_second = Unit.deci_second.value
     """
     ds
+    """
+    henry_per_ohm = Unit.henry_per_ohm.value
+    """
+    H/Ω
     """
     min_sidereal = Unit.min_sidereal.value
     """
@@ -1915,7 +2284,7 @@ class TimeUnit(Enum):
     """
     a{tropical}
     """
-    year = Unit.year.value
+    year = "Item:OSW46d071e2e2b45635abd2ec5b83cac7f7"
     """
     a
     """
@@ -1967,9 +2336,15 @@ class Time(QuantityValue):
                 "femto_second",
                 "pico_second",
                 "nano_second",
+                "micro_henry_per_kilo_ohm",
+                "milli_henry_per_kilo_ohm",
+                "micro_henry_per_ohm",
                 "micro_second",
+                "henry_per_kilo_ohm",
+                "milli_henry_per_ohm",
                 "milli_second",
                 "deci_second",
+                "henry_per_ohm",
                 "min_sidereal",
                 "minute",
                 "kilo_second",
@@ -1993,9 +2368,15 @@ class Time(QuantityValue):
                     "fs",
                     "ps",
                     "ns",
+                    "μH/kΩ",
+                    "mH/kΩ",
+                    "μH/Ω",
                     "μs",
+                    "H/kΩ",
+                    "mH/Ω",
                     "ms",
                     "ds",
+                    "H/Ω",
                     "min{sidereal}",
                     "min",
                     "ks",
@@ -2064,6 +2445,14 @@ class ForcePerAreaUnit(Enum):
     """
     mPa
     """
+    micro_bar = Unit.micro_bar.value
+    """
+    μbar
+    """
+    micro_standard_atmosphere = Unit.micro_standard_atmosphere.value
+    """
+    μatm
+    """
     newton_per_meter_squared = Unit.newton_per_meter_squared.value
     """
     N/m²
@@ -2082,6 +2471,18 @@ class ForcePerAreaUnit(Enum):
     """
     hPa
     """
+    milli_bar = Unit.milli_bar.value
+    """
+    mbar
+    """
+    mbar_abs = Unit.mbar_abs.value
+    """
+    mbar abs
+    """
+    centi_bar = Unit.centi_bar.value
+    """
+    cbar
+    """
     gram_per_meter_per_second_squared = Unit.gram_per_meter_per_second_squared.value
     """
     g/(m·s²)
@@ -2098,6 +2499,22 @@ class ForcePerAreaUnit(Enum):
     """
     N/cm²
     """
+    technical_atmosphere = Unit.technical_atmosphere.value
+    """
+    at
+    """
+    bar = Unit.bar.value
+    """
+    bar
+    """
+    bar_absolute = Unit.bar_absolute.value
+    """
+    bar abs
+    """
+    standard_atmosphere = Unit.standard_atmosphere.value
+    """
+    atm
+    """
     mega_pascal = Unit.mega_pascal.value
     """
     MPa
@@ -2106,9 +2523,21 @@ class ForcePerAreaUnit(Enum):
     """
     N/mm²
     """
+    dirac_constant = Unit.dirac_constant.value
+    """
+    hbar
+    """
+    kilo_bar = Unit.kilo_bar.value
+    """
+    kbar
+    """
     giga_pascal = Unit.giga_pascal.value
     """
     GPa
+    """
+    mega_bar = Unit.mega_bar.value
+    """
+    Mbar
     """
 
 
@@ -2145,17 +2574,29 @@ class ForcePerArea(QuantityValue):
                 "pico_pascal",
                 "micro_pascal",
                 "milli_pascal",
+                "micro_bar",
+                "micro_standard_atmosphere",
                 "newton_per_meter_squared",
                 "kilo_gram_per_meter_per_second_squared",
                 "deca_pascal",
                 "hecto_pascal",
+                "milli_bar",
+                "mbar_abs",
+                "centi_bar",
                 "gram_per_meter_per_second_squared",
                 "kilo_newton_per_meter_squared",
                 "kilo_pascal",
                 "newton_per_centi_meter_squared",
+                "technical_atmosphere",
+                "bar",
+                "bar_absolute",
+                "standard_atmosphere",
                 "mega_pascal",
                 "newton_per_milli_meter_squared",
+                "dirac_constant",
+                "kilo_bar",
                 "giga_pascal",
+                "mega_bar",
             ],
             "options": {
                 "enum_titles": [
@@ -2163,17 +2604,29 @@ class ForcePerArea(QuantityValue):
                     "pPa",
                     "μPa",
                     "mPa",
+                    "μbar",
+                    "μatm",
                     "N/m²",
                     "kg/(m·s²)",
                     "daPa",
                     "hPa",
+                    "mbar",
+                    "mbar abs",
+                    "cbar",
                     "g/(m·s²)",
                     "kN/m²",
                     "kPa",
                     "N/cm²",
+                    "at",
+                    "bar",
+                    "bar abs",
+                    "atm",
                     "MPa",
                     "N/mm²",
+                    "hbar",
+                    "kbar",
                     "GPa",
+                    "Mbar",
                 ]
             },
         },
@@ -2329,6 +2782,10 @@ class ElectricCurrentUnit(Enum):
     """
     pA
     """
+    statampere = Unit.statampere.value
+    """
+    statA
+    """
     nano_ampere = Unit.nano_ampere.value
     """
     nA
@@ -2340,6 +2797,14 @@ class ElectricCurrentUnit(Enum):
     milli_ampere = Unit.milli_ampere.value
     """
     mA
+    """
+    biot = Unit.biot.value
+    """
+    Bi
+    """
+    abampere = Unit.abampere.value
+    """
+    abA
     """
     kilo_ampere = Unit.kilo_ampere.value
     """
@@ -2396,9 +2861,12 @@ class ElectricCurrent(QuantityValue):
                 "atto_ampere",
                 "femto_ampere",
                 "pico_ampere",
+                "statampere",
                 "nano_ampere",
                 "micro_ampere",
                 "milli_ampere",
+                "biot",
+                "abampere",
                 "kilo_ampere",
                 "mega_ampere",
                 "giga_ampere",
@@ -2411,9 +2879,12 @@ class ElectricCurrent(QuantityValue):
                     "aA",
                     "fA",
                     "pA",
+                    "statA",
                     "nA",
                     "μA",
                     "mA",
+                    "Bi",
+                    "abA",
                     "kA",
                     "MA",
                     "GA",
@@ -2504,13 +2975,35 @@ class Absorptance(QuantityValue):
 
 
 class ForcePerLengthUnit(Enum):
-    newton_per_meter = Unit.newton_per_meter.value
+    newton_per_meter = "Item:OSW9137313140045506900306df5eadafcc"
     """
     N/m
     """
-    milli_newton_per_meter = Unit.milli_newton_per_meter.value
+    nano_newton_per_meter = Unit.nano_newton_per_meter.value
+    """
+    nN·m/m²
+    """
+    micro_newton_per_meter = Unit.micro_newton_per_meter.value
+    """
+    μN·m/m²
+    """
+    milli_newton_per_meter = (
+        "Item:OSW9137313140045506900306df5eadafcc#OSW2787316ac73a5365b863fb379f6a800c"
+    )
     """
     mN/m
+    """
+    milli_newton_per_meter_1 = Unit.milli_newton_per_meter.value
+    """
+    mN·m/m²
+    """
+    centi_newton_per_meter = Unit.centi_newton_per_meter.value
+    """
+    cN·m/m²
+    """
+    newton_per_meter_1 = Unit.newton_per_meter.value
+    """
+    N·m/m²
     """
     newton_per_centi_meter = Unit.newton_per_centi_meter.value
     """
@@ -2520,9 +3013,23 @@ class ForcePerLengthUnit(Enum):
     """
     N/mm
     """
-    kilo_newton_per_meter = Unit.kilo_newton_per_meter.value
+    kilo_newton_per_meter = (
+        "Item:OSW9137313140045506900306df5eadafcc#OSW19ad378272375e53b1ce5a4a6c220387"
+    )
     """
     kN/m
+    """
+    kilo_newton_per_meter_1 = Unit.kilo_newton_per_meter.value
+    """
+    kN·m/m²
+    """
+    mega_newton_per_meter = Unit.mega_newton_per_meter.value
+    """
+    MN·m/m²
+    """
+    giga_newton_per_meter = Unit.giga_newton_per_meter.value
+    """
+    GN·m/m²
     """
 
 
@@ -2554,12 +3061,36 @@ class ForcePerLength(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "newton_per_meter",
+                "nano_newton_per_meter",
+                "micro_newton_per_meter",
                 "milli_newton_per_meter",
+                "milli_newton_per_meter",
+                "centi_newton_per_meter",
+                "newton_per_meter",
                 "newton_per_centi_meter",
                 "newton_per_milli_meter",
                 "kilo_newton_per_meter",
+                "kilo_newton_per_meter",
+                "mega_newton_per_meter",
+                "giga_newton_per_meter",
             ],
-            "options": {"enum_titles": ["N/m", "mN/m", "N/cm", "N/mm", "kN/m"]},
+            "options": {
+                "enum_titles": [
+                    "N/m",
+                    "nN·m/m²",
+                    "μN·m/m²",
+                    "mN/m",
+                    "mN·m/m²",
+                    "cN·m/m²",
+                    "N·m/m²",
+                    "N/cm",
+                    "N/mm",
+                    "kN/m",
+                    "kN·m/m²",
+                    "MN·m/m²",
+                    "GN·m/m²",
+                ]
+            },
         },
         title="ForcePerLengthUnit",
     )
@@ -3381,6 +3912,14 @@ class PermittivityRatio(DimensionlessRatio):
         },
     )
     type: list[str] | None = ["Category:OSW075c809d33475b8084bcac7070f240ec"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW07c57bfb44bc521d978ee17c347b3eb4.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW083bc85446db574690adc35135516c66.json
 
 
 class LinearElectricCurrentDensityUnit(Enum):
@@ -4227,6 +4766,10 @@ class TemperatureUnit(Enum):
     """
     m°C
     """
+    degree_Rankine = Unit.degree_Rankine.value
+    """
+    °R
+    """
     Celsius = Unit.Celsius.value
     """
     °C
@@ -4273,11 +4816,12 @@ class Temperature(QuantityValue):
                 "kelvin",
                 "milli_kelvin",
                 "milli_Celsius",
+                "degree_Rankine",
                 "Celsius",
                 "deca_kelvin",
                 "mega_kelvin",
             ],
-            "options": {"enum_titles": ["K", "mK", "m°C", "°C", "daK", "MK"]},
+            "options": {"enum_titles": ["K", "mK", "m°C", "°R", "°C", "daK", "MK"]},
         },
         title="TemperatureUnit",
     )
@@ -4391,9 +4935,17 @@ class InverseLengthUnit(Enum):
     """
     mm/m²
     """
+    debye = Unit.debye.value
+    """
+    D
+    """
     per_meter_1 = Unit.per_meter_1.value
     """
     m/m²
+    """
+    radian_per_meter = Unit.radian_per_meter.value
+    """
+    rad/m
     """
     per_centi_meter = Unit.per_centi_meter.value
     """
@@ -4450,7 +5002,9 @@ class InverseLength(QuantityValue):
                 "meter_per_hectare",
                 "per_kilo_meter",
                 "milli_meter_per_meter_squared",
+                "debye",
                 "per_meter",
+                "radian_per_meter",
                 "per_centi_meter",
                 "per_milli_meter",
                 "per_micro_meter",
@@ -4463,7 +5017,9 @@ class InverseLength(QuantityValue):
                     "m/ha",
                     "/km",
                     "mm/m²",
+                    "D",
                     "m/m²",
+                    "rad/m",
                     "/cm",
                     "/mm",
                     "/μm",
@@ -4840,6 +5396,10 @@ class ConductanceUnit(Enum):
     """
     μS
     """
+    micro_n = Unit.micro_n.value
+    """
+    μ℧
+    """
     milli_siemens = Unit.milli_siemens.value
     """
     mS
@@ -4847,6 +5407,10 @@ class ConductanceUnit(Enum):
     deci_siemens = Unit.deci_siemens.value
     """
     dS
+    """
+    siemens_1 = Unit.siemens_1.value
+    """
+    ℧
     """
     kilo_siemens = Unit.kilo_siemens.value
     """
@@ -4891,12 +5455,27 @@ class Conductance(QuantityValue):
                 "pico_siemens",
                 "nano_siemens",
                 "micro_siemens",
+                "micro_n",
                 "milli_siemens",
                 "deci_siemens",
+                "siemens",
                 "kilo_siemens",
                 "mega_siemens",
             ],
-            "options": {"enum_titles": ["S", "pS", "nS", "μS", "mS", "dS", "kS", "MS"]},
+            "options": {
+                "enum_titles": [
+                    "S",
+                    "pS",
+                    "nS",
+                    "μS",
+                    "μ℧",
+                    "mS",
+                    "dS",
+                    "℧",
+                    "kS",
+                    "MS",
+                ]
+            },
         },
         title="ConductanceUnit",
     )
@@ -5009,6 +5588,10 @@ class LuminousFluxPerAreaUnit(Enum):
     """
     cd/m²
     """
+    phot = Unit.phot.value
+    """
+    ph
+    """
 
 
 class LuminousFluxPerArea(QuantityValue):
@@ -5039,8 +5622,8 @@ class LuminousFluxPerArea(QuantityValue):
     unit: LuminousFluxPerAreaUnit | None = Field(
         LuminousFluxPerAreaUnit.lux,
         json_schema_extra={
-            "x-enum-varnames": ["lux", "candela_per_meter_squared"],
-            "options": {"enum_titles": ["lx", "cd/m²"]},
+            "x-enum-varnames": ["lux", "candela_per_meter_squared", "phot"],
+            "options": {"enum_titles": ["lx", "cd/m²", "ph"]},
         },
         title="LuminousFluxPerAreaUnit",
     )
@@ -5081,6 +5664,10 @@ class InverseVolumeUnit(Enum):
     per_meter_cubed = Unit.per_meter_cubed.value
     """
     /m³
+    """
+    becquerel_second_per_meter_cubed = Unit.becquerel_second_per_meter_cubed.value
+    """
+    Bq·s/m³
     """
     per_liter = Unit.per_liter.value
     """
@@ -5128,12 +5715,13 @@ class InverseVolume(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "per_meter_cubed",
+                "becquerel_second_per_meter_cubed",
                 "per_liter",
                 "per_centi_meter_cubed",
                 "per_milli_liter",
                 "per_milli_meter_cubed",
             ],
-            "options": {"enum_titles": ["/m³", "/L", "/cm³", "/mL", "/mm³"]},
+            "options": {"enum_titles": ["/m³", "Bq·s/m³", "/L", "/cm³", "/mL", "/mm³"]},
         },
         title="InverseVolumeUnit",
     )
@@ -5428,6 +6016,10 @@ class ForceUnit(Enum):
     """
     μN
     """
+    dyne = Unit.dyne.value
+    """
+    dyn
+    """
     milli_newton = Unit.milli_newton.value
     """
     mN
@@ -5486,6 +6078,7 @@ class Force(QuantityValue):
                 "newton",
                 "nano_newton",
                 "micro_newton",
+                "dyne",
                 "milli_newton",
                 "centi_newton",
                 "deci_newton",
@@ -5494,7 +6087,18 @@ class Force(QuantityValue):
                 "giga_newton",
             ],
             "options": {
-                "enum_titles": ["N", "nN", "μN", "mN", "cN", "dN", "kN", "MN", "GN"]
+                "enum_titles": [
+                    "N",
+                    "nN",
+                    "μN",
+                    "dyn",
+                    "mN",
+                    "cN",
+                    "dN",
+                    "kN",
+                    "MN",
+                    "GN",
+                ]
             },
         },
         title="ForceUnit",
@@ -5889,11 +6493,9 @@ class HeatCapacityRatio(DimensionlessRatio):
 
 
 class MassPerAreaTimeUnit(Enum):
-    kilo_gram_per_meter_squared_per_second = (
-        Unit.kilo_gram_per_meter_squared_per_second.value
-    )
+    pascal_second_per_meter = Unit.pascal_second_per_meter.value
     """
-    kg/(m²·s)
+    Pa·s/m
     """
     gram_per_hectare_per_year = Unit.gram_per_hectare_per_year.value
     """
@@ -5975,6 +6577,12 @@ class MassPerAreaTimeUnit(Enum):
     """
     g/(m²·s)
     """
+    kilo_gram_per_meter_squared_per_second = (
+        Unit.kilo_gram_per_meter_squared_per_second.value
+    )
+    """
+    kg/(m²·s)
+    """
     kilo_gram_per_meter_squared_per_second_1 = (
         Unit.kilo_gram_per_meter_squared_per_second_1.value
     )
@@ -6013,10 +6621,10 @@ class MassPerAreaTime(QuantityValue):
     )
     type: list[str] | None = ["Category:OSW9e775ee5d35455faaa88953b35b2d911"]
     unit: MassPerAreaTimeUnit | None = Field(
-        MassPerAreaTimeUnit.kilo_gram_per_meter_squared_per_second,
+        MassPerAreaTimeUnit.pascal_second_per_meter,
         json_schema_extra={
             "x-enum-varnames": [
-                "kilo_gram_per_meter_squared_per_second",
+                "pascal_second_per_meter",
                 "gram_per_hectare_per_year",
                 "micro_gram_per_day_per_meter_squared",
                 "nano_gram_per_centi_meter_squared_per_day",
@@ -6035,11 +6643,12 @@ class MassPerAreaTime(QuantityValue):
                 "kilo_gram_per_day_per_meter_squared",
                 "gram_per_meter_squared_per_second",
                 "kilo_gram_per_meter_squared_per_second",
+                "kilo_gram_per_meter_squared_per_second",
                 "gram_per_meter_squared_per_second",
             ],
             "options": {
                 "enum_titles": [
-                    "kg/(m²·s)",
+                    "Pa·s/m",
                     "g/(ha·a)",
                     "μg/(m²·d)",
                     "ng/(cm²·d)",
@@ -6057,6 +6666,7 @@ class MassPerAreaTime(QuantityValue):
                     "mg/(m²·s)",
                     "kg/(m²·d)",
                     "g/(m²·s)",
+                    "kg/(m²·s)",
                     "kg/(s·m²)",
                     "g/(s·m²)",
                 ]
@@ -6098,7 +6708,7 @@ class AcousticImpediance(MassPerAreaTime):
 
 
 class PlaneAngleUnit(Enum):
-    radian = Unit.radian.value
+    radiation_absorbed_dose = Unit.radian.value
     """
     rad
     """
@@ -6106,7 +6716,7 @@ class PlaneAngleUnit(Enum):
     """
     μrad
     """
-    minute = Unit.minute.value
+    minute = "Item:OSW078721f38fa85e39ad6922059a25b826"
     """
     '
     """
@@ -6162,10 +6772,10 @@ class PlaneAngle(QuantityValue):
     )
     type: list[str] | None = ["Category:OSWcfa8c1748f3b586e9a0304ab1e2dbc41"]
     unit: PlaneAngleUnit | None = Field(
-        PlaneAngleUnit.radian,
+        PlaneAngleUnit.radiation_absorbed_dose,
         json_schema_extra={
             "x-enum-varnames": [
-                "radian",
+                "radiation_absorbed_dose",
                 "micro_radian",
                 "minute",
                 "mil_NATO",
@@ -6754,6 +7364,14 @@ class ConductivityVariance(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW129f1aed78505813a671e17140ddd9e3.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW12b88b32ed2f58c5aa633841b687b985.json
+
+
 class SpecificHeatCapacityAtConstantPressureUnit(Enum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
@@ -7210,6 +7828,10 @@ class MassUnit(Enum):
     """
     kg
     """
+    dalton = Unit.dalton.value
+    """
+    Da
+    """
     femto_gram = Unit.femto_gram.value
     """
     fg
@@ -7238,6 +7860,10 @@ class MassUnit(Enum):
     """
     dg
     """
+    carat = Unit.carat.value
+    """
+    ct
+    """
     gram = Unit.gram.value
     """
     g
@@ -7246,13 +7872,41 @@ class MassUnit(Enum):
     """
     dag
     """
+    ampere_turn = "Item:OSW54afa4358b8655338e8e82e2ea7fac65"
+    """
+    AT
+    """
+    troy_ounce = Unit.troy_ounce.value
+    """
+    oz{Troy}
+    """
     hecto_gram = Unit.hecto_gram.value
     """
     hg
     """
+    troy_pound = Unit.troy_pound.value
+    """
+    lbt
+    """
+    pound = Unit.pound.value
+    """
+    lbm
+    """
     deci_metric_ton = Unit.deci_metric_ton.value
     """
     dt
+    """
+    klbm = Unit.klbm.value
+    """
+    klbm
+    """
+    tn = Unit.tn.value
+    """
+    tn
+    """
+    ton = Unit.ton.value
+    """
+    ton{short}
     """
     mega_gram = Unit.mega_gram.value
     """
@@ -7265,6 +7919,10 @@ class MassUnit(Enum):
     knot = Unit.knot.value
     """
     kt
+    """
+    Mtn = Unit.Mtn.value
+    """
+    Mtn
     """
     mega_metric_ton = Unit.mega_metric_ton.value
     """
@@ -7302,6 +7960,7 @@ class Mass(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "kilo_gram",
+                "dalton",
                 "femto_gram",
                 "pico_gram",
                 "nano_gram",
@@ -7309,18 +7968,28 @@ class Mass(QuantityValue):
                 "milli_gram",
                 "centi_gram",
                 "deci_gram",
+                "carat",
                 "gram",
                 "deca_gram",
+                "ampere_turn",
+                "troy_ounce",
                 "hecto_gram",
+                "troy_pound",
+                "pound",
                 "deci_metric_ton",
+                "klbm",
+                "tn",
+                "ton",
                 "mega_gram",
                 "metric_ton",
                 "knot",
+                "Mtn",
                 "mega_metric_ton",
             ],
             "options": {
                 "enum_titles": [
                     "kg",
+                    "Da",
                     "fg",
                     "pg",
                     "ng",
@@ -7328,13 +7997,22 @@ class Mass(QuantityValue):
                     "mg",
                     "cg",
                     "dg",
+                    "ct",
                     "g",
                     "dag",
+                    "AT",
+                    "oz{Troy}",
                     "hg",
+                    "lbt",
+                    "lbm",
                     "dt",
+                    "klbm",
+                    "tn",
+                    "ton{short}",
                     "Mg",
                     "t",
                     "kt",
+                    "Mtn",
                     "Mt",
                 ]
             },
@@ -7410,6 +8088,18 @@ class ForcePerAngleUnit(Enum):
     """
     N/rad
     """
+    newton_per_radian_1 = Unit.newton_per_radian_1.value
+    """
+    N·m/(m·rad)
+    """
+    newton_per_degree = Unit.newton_per_degree.value
+    """
+    N·m/(°·m)
+    """
+    kilo_newton_per_degree = Unit.kilo_newton_per_degree.value
+    """
+    kN·m/(°·m)
+    """
 
 
 class ForcePerAngle(QuantityValue):
@@ -7438,8 +8128,15 @@ class ForcePerAngle(QuantityValue):
     unit: ForcePerAngleUnit | None = Field(
         ForcePerAngleUnit.newton_per_radian,
         json_schema_extra={
-            "x-enum-varnames": ["newton_per_radian"],
-            "options": {"enum_titles": ["N/rad"]},
+            "x-enum-varnames": [
+                "newton_per_radian",
+                "newton_per_radian",
+                "newton_per_degree",
+                "kilo_newton_per_degree",
+            ],
+            "options": {
+                "enum_titles": ["N/rad", "N·m/(m·rad)", "N·m/(°·m)", "kN·m/(°·m)"]
+            },
         },
         title="ForcePerAngleUnit",
     )
@@ -7867,11 +8564,13 @@ class OctanolAirPartitionCoefficient(DimensionlessRatio):
 
 
 class TorquePerLengthUnit(Enum):
-    newton = Unit.newton.value
+    newton = "Item:OSW9ed7c23bcd215a00b2da55e18e9d1238"
     """
     N·m/m
     """
-    kilo_newton = Unit.kilo_newton.value
+    kilo_newton = (
+        "Item:OSW9ed7c23bcd215a00b2da55e18e9d1238#OSWd300f757ad1657c091ae9664d0e6d51f"
+    )
     """
     kN·m/m
     """
@@ -7985,7 +8684,7 @@ class HydraulicPermeabilityUnit(Enum):
     """
     md
     """
-    day = Unit.day.value
+    day = "Item:OSWf421e8bbdfc555c8ac38fe3eb5875eeb"
     """
     d
     """
@@ -8089,6 +8788,10 @@ class VoltageUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -8096,6 +8799,10 @@ class VoltageUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -8157,8 +8864,10 @@ class Voltage(QuantityValue):
                 "femto_volt",
                 "pico_volt",
                 "nano_volt",
+                "abvolt",
                 "micro_volt",
                 "milli_volt",
+                "statvolt",
                 "kilo_volt",
                 "mega_volt",
                 "giga_volt",
@@ -8172,8 +8881,10 @@ class Voltage(QuantityValue):
                     "fV",
                     "pV",
                     "nV",
+                    "abV",
                     "μV",
                     "mV",
+                    "statV",
                     "kV",
                     "MV",
                     "GV",
@@ -8561,6 +9272,14 @@ class NeutronDiffusionLength(Length):
         },
     )
     type: list[str] | None = ["Category:OSW1b09e4248a1252468c8213a883656ffa"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW1b832c1a42c055eb9669bb0cdda18d7f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW1be0e0616fe45f6e9acb6395577080b5.json
 
 
 class Work(Energy):
@@ -9065,6 +9784,14 @@ class NozzleWallsThrustReaction(Force):
     type: list[str] | None = ["Category:OSW1d953cfeca67574dadd6a6f0c42d7483"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW1e2d83c5660e50828bd14194ea5d5717.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW1e5c0baddb355cd591ec727ff16e88d9.json
+
+
 class RelativeAtomicMass(DimensionlessRatio):
     """
     "Relative Atomic Mass " is a dimensionless physical quantity, the ratio of the average mass of atoms of an element (from a given source) to 1/12 of the mass of an atom of carbon-12 (known as the unified atomic mass unit)
@@ -9183,9 +9910,17 @@ class MagneticFluxDensityUnit(Enum):
     """
     nT
     """
+    gamma = Unit.gamma.value
+    """
+    γ
+    """
     micro_tesla = Unit.micro_tesla.value
     """
     μT
+    """
+    abT = Unit.abT.value
+    """
+    abT
     """
     milli_tesla = Unit.milli_tesla.value
     """
@@ -9228,11 +9963,13 @@ class MagneticFluxDensity(QuantityValue):
             "x-enum-varnames": [
                 "tesla",
                 "nano_tesla",
+                "gamma",
                 "micro_tesla",
+                "abT",
                 "milli_tesla",
                 "kilo_tesla",
             ],
-            "options": {"enum_titles": ["T", "nT", "μT", "mT", "kT"]},
+            "options": {"enum_titles": ["T", "nT", "γ", "μT", "abT", "mT", "kT"]},
         },
         title="MagneticFluxDensityUnit",
     )
@@ -9370,6 +10107,18 @@ class MigrationArea(Area):
         },
     )
     type: list[str] | None = ["Category:OSW1f5c6d48545a563989566d8b589612c2"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW1fcf1694712e5684885071efdf775bd9.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW20927e4900e95e93985698c92995f964.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2105d9d70ddc5d3597dae2c14da9e3e2.json
 
 
 class SoundParticleVelocity(Velocity):
@@ -9865,6 +10614,14 @@ class BurstFactor(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW2339256af71e5635a541ac7f5a437141.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2341adcf1a54557f886137e4180398d9.json
+
+
 class PowerPerElectricChargeUnit(Enum):
     volt_per_second = Unit.volt_per_second.value
     """
@@ -9955,6 +10712,14 @@ class MacroscopicTotalCrossSection(CrossSection):
     type: list[str] | None = ["Category:OSW2360d68f008257478577b2fa9b8facba"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW23837e2c50f05ba884682b08465bf173.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2389ed8639535a34968939f5fa9559b2.json
+
+
 class GravitationalAttraction(Force):
     """
     The force of attraction between all masses in the universe; especially the attraction of the earth's mass for bodies near its surface; the more remote the body the less the gravity; the gravitation between two bodies is proportional to the product of their masses and inversely proportional to the square of the distance between them.
@@ -10011,6 +10776,10 @@ class PositiveLength1(Length):
         },
     )
     type: list[str] | None = ["Category:OSW04772b7915d6597fadf5b7d44f4e90a5"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2423ce4a8e5c5a2782492fd72d06ee04.json
 
 
 class Altitude(Length):
@@ -10871,9 +11640,21 @@ class ElectricChargePerMassUnit(Enum):
     """
     /(T·s)
     """
+    milli_molar_gas_constant = Unit.milli_molar_gas_constant.value
+    """
+    mR
+    """
+    molar_gas_constant = Unit.molar_gas_constant.value
+    """
+    R
+    """
     milli_coulomb_per_kilo_gram = Unit.milli_coulomb_per_kilo_gram.value
     """
     mC/kg
+    """
+    kilo_molar_gas_constant = Unit.kilo_molar_gas_constant.value
+    """
+    kR
     """
     ampere_meter_squared_per_joule_per_second = (
         Unit.ampere_meter_squared_per_joule_per_second.value
@@ -10929,7 +11710,10 @@ class ElectricChargePerMass(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "per_second_per_tesla",
+                "milli_molar_gas_constant",
+                "molar_gas_constant",
                 "milli_coulomb_per_kilo_gram",
+                "kilo_molar_gas_constant",
                 "ampere_meter_squared_per_joule_per_second",
                 "coulomb_per_kilo_gram",
                 "hertz_per_tesla",
@@ -10939,7 +11723,10 @@ class ElectricChargePerMass(QuantityValue):
             "options": {
                 "enum_titles": [
                     "/(T·s)",
+                    "mR",
+                    "R",
                     "mC/kg",
+                    "kR",
                     "A·m²/(J·s)",
                     "C/kg",
                     "Hz/T",
@@ -11564,6 +12351,14 @@ class SpecificModulus(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW2b4e65f26005511487ca6d47b859e932.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2ba24c911c375c43a823fe91a4fc825a.json
+
+
 class PressureBurningRateIndex(Dimensionless):
     """
     This is an autogenerated partial class definition of 'PressureBurningRateIndex'
@@ -11828,6 +12623,14 @@ class Radiosity(PowerPerArea):
     type: list[str] | None = ["Category:OSW2c869e5a09fa5fdfb818543b40bacb08"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW2cae7f47264e5a25abee5713c593bc56.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2d0da104d005586998d511764fbb2517.json
+
+
 class QuarticElectricDipoleMomentPerCubicEnergyUnit(Enum):
     coulomb_to_the_fourth_meter_to_the_fourth_per_joule_cubed = (
         Unit.coulomb_to_the_fourth_meter_to_the_fourth_per_joule_cubed.value
@@ -11926,6 +12729,52 @@ class Population(Count):
         },
     )
     type: list[str] | None = ["Category:OSW2d1d1f04bf8d579180ad371211ea8969"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2d29c3f218f75d669b67f8008851f82e.json
+
+
+class PowerPerAreaAngleUnit(Enum):
+    watt_per_meter_squared_per_steradian = (
+        Unit.watt_per_meter_squared_per_steradian.value
+    )
+    """
+    W/(m²·sr)
+    """
+
+
+class PowerPerAreaAngle(QuantityValue):
+    """
+    This is an autogenerated partial class definition of 'PowerPerAreaAngle'
+    """
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "2d29c3f2-18f7-5d66-9b67-f8008851f82e",
+            "title": "PowerPerAreaAngle",
+            "title*": {"en": "Power per Area Angle"},
+            "description": "This is an autogenerated partial class definition of 'PowerPerAreaAngle'",
+            "description*": {},
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasPowerPerAreaAngleValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        },
+    )
+    type: list[str] | None = ["Category:OSW2d29c3f218f75d669b67f8008851f82e"]
+    unit: PowerPerAreaAngleUnit | None = Field(
+        PowerPerAreaAngleUnit.watt_per_meter_squared_per_steradian,
+        json_schema_extra={
+            "x-enum-varnames": ["watt_per_meter_squared_per_steradian"],
+            "options": {"enum_titles": ["W/(m²·sr)"]},
+        },
+        title="PowerPerAreaAngleUnit",
+    )
 
 
 # generated by datamodel-codegen:
@@ -12305,6 +13154,10 @@ class EnergyPerElectricChargeUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -12312,6 +13165,10 @@ class EnergyPerElectricChargeUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -12372,8 +13229,10 @@ class EnergyPerElectricCharge(QuantityValue):
                 "femto_volt",
                 "pico_volt",
                 "nano_volt",
+                "abvolt",
                 "micro_volt",
                 "milli_volt",
+                "statvolt",
                 "kilo_volt",
                 "mega_volt",
                 "giga_volt",
@@ -12387,8 +13246,10 @@ class EnergyPerElectricCharge(QuantityValue):
                     "fV",
                     "pV",
                     "nV",
+                    "abV",
                     "μV",
                     "mV",
+                    "statV",
                     "kV",
                     "MV",
                     "GV",
@@ -12852,6 +13713,14 @@ class InverseSquareEnergy(QuantityValue):
         },
         title="InverseSquareEnergyUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2ff3a26daf13563481acc8b0ebc5b37f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW3045ff9460da5f55bdfb935f7996e4b3.json
 
 
 class LossAngle(Angle):
@@ -13362,9 +14231,13 @@ class RadianceFactor(QuantityValue):
 
 
 class AccelerationUnit(Enum):
-    meter_per_second_squared = Unit.meter_per_second_squared.value
+    newton_per_kilo_gram = Unit.newton_per_kilo_gram.value
     """
-    m/s²
+    N/kg
+    """
+    newton_per_gram = Unit.newton_per_gram.value
+    """
+    N/g
     """
     milli_meter_per_second_squared = Unit.milli_meter_per_second_squared.value
     """
@@ -13374,9 +14247,25 @@ class AccelerationUnit(Enum):
     """
     cm/s²
     """
+    meter_squared_pascal_per_kilo_gram = Unit.meter_squared_pascal_per_kilo_gram.value
+    """
+    Pa·m²/kg
+    """
+    meter_per_second_squared = Unit.meter_per_second_squared.value
+    """
+    m/s²
+    """
+    meter_squared_pascal_per_gram = Unit.meter_squared_pascal_per_gram.value
+    """
+    Pa·m²/g
+    """
     kilo_meter_per_second_squared = Unit.kilo_meter_per_second_squared.value
     """
     km/s²
+    """
+    kilo_pascal_meter_squared_per_gram = Unit.kilo_pascal_meter_squared_per_gram.value
+    """
+    kPa·m²/g
     """
 
 
@@ -13415,15 +14304,32 @@ class Acceleration(QuantityValue):
     )
     type: list[str] | None = ["Category:OSW347462e67d905995af16f97dc7c9ef48"]
     unit: AccelerationUnit | None = Field(
-        AccelerationUnit.meter_per_second_squared,
+        AccelerationUnit.newton_per_kilo_gram,
         json_schema_extra={
             "x-enum-varnames": [
-                "meter_per_second_squared",
+                "newton_per_kilo_gram",
+                "newton_per_gram",
                 "milli_meter_per_second_squared",
                 "centi_meter_per_second_squared",
+                "meter_squared_pascal_per_kilo_gram",
+                "meter_per_second_squared",
+                "meter_squared_pascal_per_gram",
                 "kilo_meter_per_second_squared",
+                "kilo_pascal_meter_squared_per_gram",
             ],
-            "options": {"enum_titles": ["m/s²", "mm/s²", "cm/s²", "km/s²"]},
+            "options": {
+                "enum_titles": [
+                    "N/kg",
+                    "N/g",
+                    "mm/s²",
+                    "cm/s²",
+                    "Pa·m²/kg",
+                    "m/s²",
+                    "Pa·m²/g",
+                    "km/s²",
+                    "kPa·m²/g",
+                ]
+            },
         },
         title="AccelerationUnit",
     )
@@ -13467,6 +14373,10 @@ class EnergyPerTemperatureUnit(Enum):
     """
     J/K
     """
+    electron_volt_per_kelvin = Unit.electron_volt_per_kelvin.value
+    """
+    eV/K
+    """
     kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin.value
     """
     kJ/K
@@ -13505,10 +14415,11 @@ class EnergyPerTemperature(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "joule_per_kelvin",
+                "electron_volt_per_kelvin",
                 "kilo_joule_per_kelvin",
                 "mega_joule_per_kelvin",
             ],
-            "options": {"enum_titles": ["J/K", "kJ/K", "MJ/K"]},
+            "options": {"enum_titles": ["J/K", "eV/K", "kJ/K", "MJ/K"]},
         },
         title="EnergyPerTemperatureUnit",
     )
@@ -13849,6 +14760,14 @@ class LorenzCoefficient(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW389cb87d31be515aa5d2f12e2b66e938.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW3914f80e373d5d1f9a6df3a8643ce608.json
+
+
 class GapEnergy(Energy):
     """
     "Gap Energy" is the difference in energy between the lowest level of conduction band and the highest level of valence band. It is an energy range in a solid where no electron states can exist.
@@ -14014,6 +14933,14 @@ class FissionMultiplicationFactor(Dimensionless):
         },
     )
     type: list[str] | None = ["Category:OSW394653a1d5f6545f8ea7babe10182f37"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW397c67ece63a5a5c96bad9349f49f3d7.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW3a06c181a5375b68b002f7a28ff862d0.json
 
 
 class MassPropertyUncertainty(Mass):
@@ -15013,6 +15940,14 @@ class BucklingFactor(Dimensionless):
     type: list[str] | None = ["Category:OSW3e723f9b78635333a501ab96ea78c49f"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW3f643ed2dc235d8ab1c823dfa357c16b.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW3f7f94e0ebca5ff2a0e5467635d13433.json
+
+
 class MassConcentrationOfWaterToDryMatterUnit(Enum):
     unitless = Unit.unitless.value
     """
@@ -15326,6 +16261,56 @@ class MolalityOfSolute(AmountOfSubstancePerMass):
 
 
 class SpecificEnergyUnit(Enum):
+    sievert = Unit.sievert.value
+    """
+    Sv
+    """
+    nano_gray = Unit.nano_gray.value
+    """
+    nGy
+    """
+    nano_sievert = Unit.nano_sievert.value
+    """
+    nSv
+    """
+    micro_gray = Unit.micro_gray.value
+    """
+    μGy
+    """
+    micro_sievert = Unit.micro_sievert.value
+    """
+    μSv
+    """
+    milli_radian = (
+        "Item:OSW4b2b623272425e3782acfc8f764b0363#OSWc040588e32a95f5b9f3ba431304620d2"
+    )
+    """
+    mrad
+    """
+    milli_gray = Unit.milli_gray.value
+    """
+    mGy
+    """
+    milli_sievert = Unit.milli_sievert.value
+    """
+    mSv
+    """
+    centi_gray = Unit.centi_gray.value
+    """
+    cGy
+    """
+    radiation_absorbed_dose = "Item:OSW4b2b623272425e3782acfc8f764b0363"
+    """
+    rad
+    """
+    rem = Unit.rem.value
+    """
+    rem
+    """
+    gray = Unit.gray.value
+    """
+    Gy
+    """
     joule_per_kilo_gram = Unit.joule_per_kilo_gram.value
     """
     J/kg
@@ -15338,6 +16323,10 @@ class SpecificEnergyUnit(Enum):
     """
     mJ/g
     """
+    meter_squared_per_second_squared = Unit.meter_squared_per_second_squared.value
+    """
+    m²/s²
+    """
     joule_per_gram = Unit.joule_per_gram.value
     """
     J/g
@@ -15346,13 +16335,27 @@ class SpecificEnergyUnit(Enum):
     """
     N·m/g
     """
+    kilo_gray = Unit.kilo_gray.value
+    """
+    kGy
+    """
     kilo_joule_per_kilo_gram = Unit.kilo_joule_per_kilo_gram.value
     """
     kJ/kg
     """
+    mega_gray = Unit.mega_gray.value
+    """
+    MGy
+    """
     mega_joule_per_kilo_gram = Unit.mega_joule_per_kilo_gram.value
     """
     MJ/kg
+    """
+    kilo_meter_squared_per_second_squared = (
+        Unit.kilo_meter_squared_per_second_squared.value
+    )
+    """
+    km²/s²
     """
 
 
@@ -15392,26 +16395,58 @@ class SpecificEnergy(QuantityValue):
     )
     type: list[str] | None = ["Category:OSW9a32b5a84f235a0cb0a9e9fba9bd252e"]
     unit: SpecificEnergyUnit | None = Field(
-        SpecificEnergyUnit.joule_per_kilo_gram,
+        SpecificEnergyUnit.sievert,
         json_schema_extra={
             "x-enum-varnames": [
+                "sievert",
+                "nano_gray",
+                "nano_sievert",
+                "micro_gray",
+                "micro_sievert",
+                "milli_radian",
+                "milli_gray",
+                "milli_sievert",
+                "centi_gray",
+                "radiation_absorbed_dose",
+                "rem",
+                "gray",
                 "joule_per_kilo_gram",
                 "meter_newton_per_kilo_gram",
                 "milli_joule_per_gram",
+                "meter_squared_per_second_squared",
                 "joule_per_gram",
                 "meter_newton_per_gram",
+                "kilo_gray",
                 "kilo_joule_per_kilo_gram",
+                "mega_gray",
                 "mega_joule_per_kilo_gram",
+                "kilo_meter_squared_per_second_squared",
             ],
             "options": {
                 "enum_titles": [
+                    "Sv",
+                    "nGy",
+                    "nSv",
+                    "μGy",
+                    "μSv",
+                    "mrad",
+                    "mGy",
+                    "mSv",
+                    "cGy",
+                    "rad",
+                    "rem",
+                    "Gy",
                     "J/kg",
                     "N·m/kg",
                     "mJ/g",
+                    "m²/s²",
                     "J/g",
                     "N·m/g",
+                    "kGy",
                     "kJ/kg",
+                    "MGy",
                     "MJ/kg",
+                    "km²/s²",
                 ]
             },
         },
@@ -15444,6 +16479,14 @@ class SpecificEnthalpy(SpecificEnergy):
         },
     )
     type: list[str] | None = ["Category:OSW405e3d0a77f550a7bf632bb907ae9c47"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW40c46aba16f45962a7330b7f8b88681e.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW40c535449288505cb9bd50a76307e6fb.json
 
 
 class DryMass(Mass):
@@ -15533,6 +16576,14 @@ class RelativeMolecularMass(DimensionlessRatio):
         },
     )
     type: list[str] | None = ["Category:OSW41a3138364035cff84c064b3ab52e6a4"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW42543b13af4c5af88462e7ac8ff8707d.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW425d111a8a3f560eb83829730f7ad8a5.json
 
 
 class ReflectanceFactorUnit(Enum):
@@ -16053,6 +17104,14 @@ class BloodGlucoseLevelByMass(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW4496d2b66d71545392a81e9e05297338.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW44eec22e65f759d99d9efa4c5dc5b54f.json
+
+
 class ConductivityUnit(Enum):
     siemens_per_meter = Unit.siemens_per_meter.value
     """
@@ -16566,6 +17625,14 @@ class CoefficientOfHeatTransfer(QuantityValue):
         },
         title="CoefficientOfHeatTransferUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW46d8ae433dda5e368d8e76800d85ee12.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW46e725aca93151bf828d906615b3ce50.json
 
 
 class MeanLinearRange(Length):
@@ -17162,7 +18229,7 @@ class SpecificImpulseByWeightUnit(Enum):
     """
     a{tropical}
     """
-    year = Unit.year.value
+    year = "Item:OSW46d071e2e2b45635abd2ec5b83cac7f7"
     """
     a
     """
@@ -18096,6 +19163,14 @@ class ThrustToWeightRatio(DimensionlessRatio):
     type: list[str] | None = ["Category:OSW4ca14f3ca53f54189c9a11f750f429e7"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW4ce5add385d2545ab8ab50e4b222dab4.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW4d26c25abed1595ebf6faebbb937aa29.json
+
+
 class AreaPerHeatingLoadUnit(Enum):
     meter_squared_per_watt = Unit.meter_squared_per_watt.value
     """
@@ -18371,6 +19446,18 @@ class MagneticVectorPotential(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW4f0b36aedcac5f4dafcc0eaec8eb86dd.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW4f0b3f4a40ad5ffbb492a000abe2b30d.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW4f181df1bf2d5e88a36fe5585cb10b8b.json
+
+
 class Irradiance(PowerPerArea):
     """
     Irradiance and Radiant Emittance are radiometry terms for the power per unit area of electromagnetic radiation at a surface. "Irradiance" is used when the electromagnetic radiation is incident on the surface. "Radiant emmitance" (or "radiant exitance") is used when the radiation is emerging from the surface.
@@ -18396,6 +19483,14 @@ class Irradiance(PowerPerArea):
         },
     )
     type: list[str] | None = ["Category:OSW4f181df1bf2d5e88a36fe5585cb10b8b"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW4f80d4743b2f5971bdcffe28391fa016.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW4fabd9fa8f0554b296dd0bfb1ee808f2.json
 
 
 class ConductiveHeatTransferRate(HeatFlowRate):
@@ -18543,6 +19638,18 @@ class MigrationLength(Length):
         },
     )
     type: list[str] | None = ["Category:OSW4fe6cc8e0eb65db889f4b790342383cb"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW5066212adfda5519af307363bd1c5c79.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW5074a29ba5505fc98e379b0a9df0bd69.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW5079df5bd9085725aebd171ce0f1bc1b.json
 
 
 class StressOpticCoefficientUnit(Enum):
@@ -19009,6 +20116,10 @@ class InductanceUnit(Enum):
     """
     pH
     """
+    abhenry = Unit.abhenry.value
+    """
+    abH
+    """
     nano_henry = Unit.nano_henry.value
     """
     nH
@@ -19024,6 +20135,10 @@ class InductanceUnit(Enum):
     kilo_henry = Unit.kilo_henry.value
     """
     kH
+    """
+    stathenry = Unit.stathenry.value
+    """
+    statH
     """
 
 
@@ -19058,12 +20173,16 @@ class Inductance(QuantityValue):
             "x-enum-varnames": [
                 "henry",
                 "pH_value",
+                "abhenry",
                 "nano_henry",
                 "micro_henry",
                 "milli_henry",
                 "kilo_henry",
+                "stathenry",
             ],
-            "options": {"enum_titles": ["H", "pH", "nH", "μH", "mH", "kH"]},
+            "options": {
+                "enum_titles": ["H", "pH", "abH", "nH", "μH", "mH", "kH", "statH"]
+            },
         },
         title="InductanceUnit",
     )
@@ -19305,6 +20424,14 @@ class LogarithmOfOctanolWaterPartitionCoefficient(DimensionlessRatio):
         },
     )
     type: list[str] | None = ["Category:OSW539b082e69525df880a43a1eccdd094b"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW54513644901155ce82c3161b8ce76cf1.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW554c1d1b94535a179366575d25dc4c6b.json
 
 
 class ElectricFluxDensity(ElectricChargePerArea):
@@ -19735,6 +20862,14 @@ class MolarAttenuationCoefficient(QuantityValue):
         },
         title="MolarAttenuationCoefficientUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW571f68d4b4715284b2dc5020ad51cf72.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW577e79a6dcff5f1ea297ca5c75e2a4a6.json
 
 
 class EccentricityOfOrbit(DimensionlessRatio):
@@ -22087,6 +23222,14 @@ class Flux(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW67faac860ed758758aa4484387e5d5c9.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW6837c50be0b85f76835e5fdd56bf054f.json
+
+
 class DensityInCombustionChamber(MassDensity):
     """
     This is an autogenerated partial class definition of 'DensityInCombustionChamber'
@@ -22443,6 +23586,14 @@ class MaximumBetaParticleEnergy(Energy):
     type: list[str] | None = ["Category:OSW69b54fc65f1d506eb15053de18dc035e"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW69b648b4fe1a5607b167a699f899be87.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW6a2c83eb813354edace5e2d9ead479b9.json
+
+
 class ActionUnit(Enum):
     joule_second = Unit.joule_second.value
     """
@@ -22673,6 +23824,10 @@ class CapacitanceUnit(Enum):
     """
     aF
     """
+    statfarad = Unit.statfarad.value
+    """
+    statF
+    """
     femto_farad = Unit.femto_farad.value
     """
     fF
@@ -22696,6 +23851,10 @@ class CapacitanceUnit(Enum):
     kilo_farad = Unit.kilo_farad.value
     """
     kF
+    """
+    abfarad = Unit.abfarad.value
+    """
+    abF
     """
 
 
@@ -22730,14 +23889,29 @@ class Capacitance(QuantityValue):
             "x-enum-varnames": [
                 "farad",
                 "atto_farad",
+                "statfarad",
                 "femto_farad",
                 "pico_farad",
                 "nano_farad",
                 "micro_farad",
                 "milli_farad",
                 "kilo_farad",
+                "abfarad",
             ],
-            "options": {"enum_titles": ["F", "aF", "fF", "pF", "nF", "μF", "mF", "kF"]},
+            "options": {
+                "enum_titles": [
+                    "F",
+                    "aF",
+                    "statF",
+                    "fF",
+                    "pF",
+                    "nF",
+                    "μF",
+                    "mF",
+                    "kF",
+                    "abF",
+                ]
+            },
         },
         title="CapacitanceUnit",
     )
@@ -22882,6 +24056,14 @@ class ReactorTimeConstant(Time):
         },
     )
     type: list[str] | None = ["Category:OSW6bf46ca1fcca5886971f9f2c9119a4a7"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW6ce762ef103d5b15976dcfa13914bef4.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW6d3afdeb72075dae90dbb01171c2d1db.json
 
 
 class CatalyticActivityConcentrationUnit(Enum):
@@ -23121,6 +24303,10 @@ class ElectricPotentialDifferenceUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -23128,6 +24314,10 @@ class ElectricPotentialDifferenceUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -23191,8 +24381,10 @@ class ElectricPotentialDifference(QuantityValue):
                 "femto_volt",
                 "pico_volt",
                 "nano_volt",
+                "abvolt",
                 "micro_volt",
                 "milli_volt",
+                "statvolt",
                 "kilo_volt",
                 "mega_volt",
                 "giga_volt",
@@ -23206,8 +24398,10 @@ class ElectricPotentialDifference(QuantityValue):
                     "fV",
                     "pV",
                     "nV",
+                    "abV",
                     "μV",
                     "mV",
+                    "statV",
                     "kV",
                     "MV",
                     "GV",
@@ -23329,6 +24523,10 @@ class AdmittanceUnit(Enum):
     """
     μS
     """
+    micro_n = Unit.micro_n.value
+    """
+    μ℧
+    """
     milli_siemens = Unit.milli_siemens.value
     """
     mS
@@ -23336,6 +24534,10 @@ class AdmittanceUnit(Enum):
     deci_siemens = Unit.deci_siemens.value
     """
     dS
+    """
+    siemens_1 = Unit.siemens_1.value
+    """
+    ℧
     """
     kilo_siemens = Unit.kilo_siemens.value
     """
@@ -23380,12 +24582,27 @@ class Admittance(QuantityValue):
                 "pico_siemens",
                 "nano_siemens",
                 "micro_siemens",
+                "micro_n",
                 "milli_siemens",
                 "deci_siemens",
+                "siemens",
                 "kilo_siemens",
                 "mega_siemens",
             ],
-            "options": {"enum_titles": ["S", "pS", "nS", "μS", "mS", "dS", "kS", "MS"]},
+            "options": {
+                "enum_titles": [
+                    "S",
+                    "pS",
+                    "nS",
+                    "μS",
+                    "μ℧",
+                    "mS",
+                    "dS",
+                    "℧",
+                    "kS",
+                    "MS",
+                ]
+            },
         },
         title="AdmittanceUnit",
     )
@@ -23676,6 +24893,14 @@ class LatticePlaneSpacing(Length):
     type: list[str] | None = ["Category:OSW7037954044755f1ebb66ec49748bc781"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW704290344ec45e1bb91d2b2736233473.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW7119e1d761815d4facb1dbee71829517.json
+
+
 class ChemicalPotential(MolarEnergy):
     """
     "Chemical Potential", also known as partial molar free energy, is a form of potential energy that can be absorbed or released during a chemical reaction.
@@ -23739,6 +24964,245 @@ class OpeningRatio(DimensionlessRatio):
 
 
 # generated by datamodel-codegen:
+#   filename:  OSW71632403ff765a32b2e51f57d38fd64d.json
+
+
+class InverseTimeUnit(Enum):
+    per_second = Unit.per_second.value
+    """
+    /s
+    """
+    nano_becquerel = Unit.nano_becquerel.value
+    """
+    nBq
+    """
+    per_year = Unit.per_year.value
+    """
+    /a
+    """
+    per_month = Unit.per_month.value
+    """
+    /mo
+    """
+    micro_becquerel = Unit.micro_becquerel.value
+    """
+    μBq
+    """
+    per_week = Unit.per_week.value
+    """
+    /wk
+    """
+    per_day = Unit.per_day.value
+    """
+    /d
+    """
+    per_hour = Unit.per_hour.value
+    """
+    /h
+    """
+    milli_becquerel = Unit.milli_becquerel.value
+    """
+    mBq
+    """
+    milli_hertz = Unit.milli_hertz.value
+    """
+    mHz
+    """
+    per_minute = Unit.per_minute.value
+    """
+    /min
+    """
+    becquerel = Unit.becquerel.value
+    """
+    Bq
+    """
+    hertz = Unit.hertz.value
+    """
+    Hz
+    """
+    per_milli_second = Unit.per_milli_second.value
+    """
+    /ms
+    """
+    kilo_becquerel = Unit.kilo_becquerel.value
+    """
+    kBq
+    """
+    kilo_hertz = Unit.kilo_hertz.value
+    """
+    kHz
+    """
+    micro_curie = Unit.micro_curie.value
+    """
+    μCi
+    """
+    mega_becquerel = Unit.mega_becquerel.value
+    """
+    MBq
+    """
+    mega_hertz = Unit.mega_hertz.value
+    """
+    MHz
+    """
+    milli_curie = Unit.milli_curie.value
+    """
+    mCi
+    """
+    giga_becquerel = Unit.giga_becquerel.value
+    """
+    GBq
+    """
+    giga_hertz = Unit.giga_hertz.value
+    """
+    GHz
+    """
+    curie = Unit.curie.value
+    """
+    Ci
+    """
+    tera_becquerel = Unit.tera_becquerel.value
+    """
+    TBq
+    """
+    tera_hertz = Unit.tera_hertz.value
+    """
+    THz
+    """
+    kilo_curie = Unit.kilo_curie.value
+    """
+    kCi
+    """
+    peta_becquerel = Unit.peta_becquerel.value
+    """
+    PBq
+    """
+    peta_hertz = Unit.peta_hertz.value
+    """
+    PHz
+    """
+
+
+class InverseTime(QuantityValue):
+    """
+    This is an autogenerated partial class definition of 'InverseTime'
+    """
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "7468741a-399c-5233-8e44-a8242cfed871",
+            "title": "InverseTime",
+            "title*": {"en": "Inverse Time"},
+            "description": "This is an autogenerated partial class definition of 'InverseTime'",
+            "description*": {},
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasInverseTimeValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        },
+    )
+    type: list[str] | None = ["Category:OSW7468741a399c52338e44a8242cfed871"]
+    unit: InverseTimeUnit | None = Field(
+        InverseTimeUnit.per_second,
+        json_schema_extra={
+            "x-enum-varnames": [
+                "per_second",
+                "nano_becquerel",
+                "per_year",
+                "per_month",
+                "micro_becquerel",
+                "per_week",
+                "per_day",
+                "per_hour",
+                "milli_becquerel",
+                "milli_hertz",
+                "per_minute",
+                "becquerel",
+                "hertz",
+                "per_milli_second",
+                "kilo_becquerel",
+                "kilo_hertz",
+                "micro_curie",
+                "mega_becquerel",
+                "mega_hertz",
+                "milli_curie",
+                "giga_becquerel",
+                "giga_hertz",
+                "curie",
+                "tera_becquerel",
+                "tera_hertz",
+                "kilo_curie",
+                "peta_becquerel",
+                "peta_hertz",
+            ],
+            "options": {
+                "enum_titles": [
+                    "/s",
+                    "nBq",
+                    "/a",
+                    "/mo",
+                    "μBq",
+                    "/wk",
+                    "/d",
+                    "/h",
+                    "mBq",
+                    "mHz",
+                    "/min",
+                    "Bq",
+                    "Hz",
+                    "/ms",
+                    "kBq",
+                    "kHz",
+                    "μCi",
+                    "MBq",
+                    "MHz",
+                    "mCi",
+                    "GBq",
+                    "GHz",
+                    "Ci",
+                    "TBq",
+                    "THz",
+                    "kCi",
+                    "PBq",
+                    "PHz",
+                ]
+            },
+        },
+        title="InverseTimeUnit",
+    )
+
+
+class DecayConstant(InverseTime):
+    """
+    The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.
+    """
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
+            "uuid": "71632403-ff76-5a32-b2e5-1f57d38fd64d",
+            "title": "DecayConstant",
+            "title*": {"en": "Decay Constant"},
+            "description": 'The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.',
+            "description*": {
+                "en": 'The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.'
+            },
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasDecayConstantValue",
+            "@context": [
+                "/wiki/Category:OSW7468741a399c52338e44a8242cfed871?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        },
+    )
+    type: list[str] | None = ["Category:OSW71632403ff765a32b2e51f57d38fd64d"]
+
+
+# generated by datamodel-codegen:
 #   filename:  OSW71dc7977cd3a539889a4af664c2e02da.json
 
 
@@ -23751,9 +25215,17 @@ class MagneticFieldUnit(Enum):
     """
     nT
     """
+    gamma = Unit.gamma.value
+    """
+    γ
+    """
     micro_tesla = Unit.micro_tesla.value
     """
     μT
+    """
+    abT = Unit.abT.value
+    """
+    abT
     """
     milli_tesla = Unit.milli_tesla.value
     """
@@ -23796,11 +25268,13 @@ class MagneticField(QuantityValue):
             "x-enum-varnames": [
                 "tesla",
                 "nano_tesla",
+                "gamma",
                 "micro_tesla",
+                "abT",
                 "milli_tesla",
                 "kilo_tesla",
             ],
-            "options": {"enum_titles": ["T", "nT", "μT", "mT", "kT"]},
+            "options": {"enum_titles": ["T", "nT", "γ", "μT", "abT", "mT", "kT"]},
         },
         title="MagneticFieldUnit",
     )
@@ -24265,6 +25739,10 @@ class CubicExpansionCoefficient(ExpansionRatio):
 
 
 # generated by datamodel-codegen:
+#   filename:  OSW7468741a399c52338e44a8242cfed871.json
+
+
+# generated by datamodel-codegen:
 #   filename:  OSW74ae1de66beb525ea52eedabf09ab228.json
 
 
@@ -24408,6 +25886,190 @@ class EquilibriumPositionVectorOfIon(Length):
         },
     )
     type: list[str] | None = ["Category:OSW75f2f083a2e856f3bd3757d099851530"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW76131090bf885b3b93394f5f4574e1a1.json
+
+
+class SpecificImpulseUnit(Enum):
+    second = Unit.second.value
+    """
+    s
+    """
+    atto_second = Unit.atto_second.value
+    """
+    as
+    """
+    femto_second = Unit.femto_second.value
+    """
+    fs
+    """
+    pico_second = Unit.pico_second.value
+    """
+    ps
+    """
+    nano_second = Unit.nano_second.value
+    """
+    ns
+    """
+    micro_second = Unit.micro_second.value
+    """
+    μs
+    """
+    milli_second = Unit.milli_second.value
+    """
+    ms
+    """
+    deci_second = Unit.deci_second.value
+    """
+    ds
+    """
+    min_sidereal = Unit.min_sidereal.value
+    """
+    min{sidereal}
+    """
+    minute = Unit.minute.value
+    """
+    min
+    """
+    kilo_second = Unit.kilo_second.value
+    """
+    ks
+    """
+    h_sidereal = Unit.h_sidereal.value
+    """
+    h{sidereal}
+    """
+    hour = Unit.hour.value
+    """
+    h
+    """
+    day_sidereal = Unit.day_sidereal.value
+    """
+    day{sidereal}
+    """
+    day = Unit.day.value
+    """
+    d
+    """
+    week = Unit.week.value
+    """
+    wk
+    """
+    mega_second = Unit.mega_second.value
+    """
+    Ms
+    """
+    month = Unit.month.value
+    """
+    mo
+    """
+    tropical_year = Unit.tropical_year.value
+    """
+    a{tropical}
+    """
+    year = "Item:OSW46d071e2e2b45635abd2ec5b83cac7f7"
+    """
+    a
+    """
+    a_sidereal = Unit.a_sidereal.value
+    """
+    a{sidereal}
+    """
+    kilo_year = Unit.kilo_year.value
+    """
+    ka
+    """
+    mega_year = Unit.mega_year.value
+    """
+    Ma
+    """
+
+
+class SpecificImpulse(QuantityValue):
+    """
+    The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$.
+    """
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "76131090-bf88-5b3b-9339-4f5f4574e1a1",
+            "title": "SpecificImpulse",
+            "title*": {"en": "Specific Impulse"},
+            "description": "The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$.",
+            "description*": {
+                "en": "The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$."
+            },
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasSpecificImpulseValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        },
+    )
+    type: list[str] | None = ["Category:OSW76131090bf885b3b93394f5f4574e1a1"]
+    unit: SpecificImpulseUnit | None = Field(
+        SpecificImpulseUnit.second,
+        json_schema_extra={
+            "x-enum-varnames": [
+                "second",
+                "atto_second",
+                "femto_second",
+                "pico_second",
+                "nano_second",
+                "micro_second",
+                "milli_second",
+                "deci_second",
+                "min_sidereal",
+                "minute",
+                "kilo_second",
+                "h_sidereal",
+                "hour",
+                "day_sidereal",
+                "day",
+                "week",
+                "mega_second",
+                "month",
+                "tropical_year",
+                "year",
+                "a_sidereal",
+                "kilo_year",
+                "mega_year",
+            ],
+            "options": {
+                "enum_titles": [
+                    "s",
+                    "as",
+                    "fs",
+                    "ps",
+                    "ns",
+                    "μs",
+                    "ms",
+                    "ds",
+                    "min{sidereal}",
+                    "min",
+                    "ks",
+                    "h{sidereal}",
+                    "h",
+                    "day{sidereal}",
+                    "d",
+                    "wk",
+                    "Ms",
+                    "mo",
+                    "a{tropical}",
+                    "a",
+                    "a{sidereal}",
+                    "ka",
+                    "Ma",
+                ]
+            },
+        },
+        title="SpecificImpulseUnit",
+    )
 
 
 # generated by datamodel-codegen:
@@ -24883,6 +26545,14 @@ class SpecificOpticalRotatoryPower(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW77f25284632d50b0ae2be064592412ce.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW7825b2bbb4c258348224e4e6d4f364e8.json
+
+
 class MacroscopicCrossSection(CrossSection):
     """
     "Macroscopic Cross-section" is the sum of the cross-sections for a reaction or process of a specified type over all atoms or other entities in a given 3D domain, divided by the volume of that domain.
@@ -24908,6 +26578,14 @@ class MacroscopicCrossSection(CrossSection):
         },
     )
     type: list[str] | None = ["Category:OSW7825b2bbb4c258348224e4e6d4f364e8"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW78b09fe474c85bf09529d7eb3db0fe78.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW78bb22c171075ca781ec3c9fff9991ea.json
 
 
 class MolarEntropyUnit(Enum):
@@ -24950,6 +26628,14 @@ class MolarEntropy(QuantityValue):
         },
         title="MolarEntropyUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW79225fde5f8059d1802f8181c06b4cfa.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW79e488804697561c90bd9fe6081b7747.json
 
 
 class MeanFreePath(Length):
@@ -25108,6 +26794,10 @@ class DynamicViscosityUnit(Enum):
     """
     Pa·s
     """
+    micro_poise = Unit.micro_poise.value
+    """
+    μP
+    """
     gram_per_hour_per_meter = Unit.gram_per_hour_per_meter.value
     """
     g/(m·h)
@@ -25115,6 +26805,10 @@ class DynamicViscosityUnit(Enum):
     kilo_gram_per_hour_per_meter = Unit.kilo_gram_per_hour_per_meter.value
     """
     kg/(m·h)
+    """
+    centi_poise = Unit.centi_poise.value
+    """
+    cP
     """
     gram_per_meter_per_second = Unit.gram_per_meter_per_second.value
     """
@@ -25124,13 +26818,25 @@ class DynamicViscosityUnit(Enum):
     """
     mPa·s
     """
+    poise = Unit.poise.value
+    """
+    P
+    """
     gram_per_centi_meter_per_second = Unit.gram_per_centi_meter_per_second.value
     """
     g/(cm·s)
     """
+    deca_poise = Unit.deca_poise.value
+    """
+    daP
+    """
     kilo_gram_per_meter_per_second = Unit.kilo_gram_per_meter_per_second.value
     """
     kg/(m·s)
+    """
+    kilo_poise = Unit.kilo_poise.value
+    """
+    kP
     """
 
 
@@ -25164,22 +26870,32 @@ class DynamicViscosity(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "pascal_second",
+                "micro_poise",
                 "gram_per_hour_per_meter",
                 "kilo_gram_per_hour_per_meter",
+                "centi_poise",
                 "gram_per_meter_per_second",
                 "milli_pascal_second",
+                "poise",
                 "gram_per_centi_meter_per_second",
+                "deca_poise",
                 "kilo_gram_per_meter_per_second",
+                "kilo_poise",
             ],
             "options": {
                 "enum_titles": [
                     "Pa·s",
+                    "μP",
                     "g/(m·h)",
                     "kg/(m·h)",
+                    "cP",
                     "g/(m·s)",
                     "mPa·s",
+                    "P",
                     "g/(cm·s)",
+                    "daP",
                     "kg/(m·s)",
+                    "kP",
                 ]
             },
         },
@@ -25216,6 +26932,18 @@ class InfiniteMultiplicationFactor(MultiplicationFactor):
         },
     )
     type: list[str] | None = ["Category:OSW7ba2537d9ce454bfa0bdd7551a14ebaf"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW7bf742d673495bb8bd77d1ea5295b2cd.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW7c210ed3aad85519ae7330073a9d6f9f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW7ceec259ea9e577087a670ecd631ab27.json
 
 
 class SoundParticleDisplacement(Length):
@@ -26271,6 +27999,10 @@ class Illuminance1(LuminousFluxPerArea):
     type: list[str] | None = ["Category:OSW0e767858fc7a5df0a3be780057b78446"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW80e9cf7556915b54b8326b588abc2531.json
+
+
 class PermeanceUnit(Enum):
     henry = Unit.henry.value
     """
@@ -26349,6 +28081,10 @@ class ThermalInsulanceUnit(Enum):
     """
     m²·K/W
     """
+    clo_unit = Unit.clo_unit.value
+    """
+    clo
+    """
 
 
 class ThermalInsulance(QuantityValue):
@@ -26379,8 +28115,8 @@ class ThermalInsulance(QuantityValue):
     unit: ThermalInsulanceUnit | None = Field(
         ThermalInsulanceUnit.kelvin_meter_squared_per_watt,
         json_schema_extra={
-            "x-enum-varnames": ["kelvin_meter_squared_per_watt"],
-            "options": {"enum_titles": ["m²·K/W"]},
+            "x-enum-varnames": ["kelvin_meter_squared_per_watt", "clo_unit"],
+            "options": {"enum_titles": ["m²·K/W", "clo"]},
         },
         title="ThermalInsulanceUnit",
     )
@@ -26519,7 +28255,7 @@ class CompressibilityFactor(DimensionlessRatio):
 
 
 class BasicityUnit(Enum):
-    pH_value = Unit.pH_value.value
+    pH_value = "Item:OSW50e9172c55045cb3b1460b1345303ed2"
     """
     pH
     """
@@ -27136,6 +28872,14 @@ class MagneticFluxUnit(Enum):
     """
     Wb
     """
+    maxwell = Unit.maxwell.value
+    """
+    Mx
+    """
+    unit_pole = Unit.unit_pole.value
+    """
+    pole
+    """
     milli_weber = Unit.milli_weber.value
     """
     mWb
@@ -27180,11 +28924,13 @@ class MagneticFlux(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "weber",
+                "maxwell",
+                "unit_pole",
                 "milli_weber",
                 "meter_newton_per_ampere",
                 "kilo_weber",
             ],
-            "options": {"enum_titles": ["Wb", "mWb", "N·m/A", "kWb"]},
+            "options": {"enum_titles": ["Wb", "Mx", "pole", "mWb", "N·m/A", "kWb"]},
         },
         title="MagneticFluxUnit",
     )
@@ -27236,6 +28982,14 @@ class AtomScatteringFactor(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW836be461e71a51709b062f462f697f2c.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8383080425d3579eade2a3ffc9db4d21.json
+
+
 class PressureBurningRateConstant(Dimensionless):
     """
     This is an autogenerated partial class definition of 'PressureBurningRateConstant'
@@ -27270,6 +29024,10 @@ class PermeabilityRatioUnit(Enum):
     """
     #
     """
+    k = Unit.k.value
+    """
+    kᵣ
+    """
 
 
 class PermeabilityRatio(QuantityValue):
@@ -27300,8 +29058,8 @@ class PermeabilityRatio(QuantityValue):
     unit: PermeabilityRatioUnit | None = Field(
         PermeabilityRatioUnit.dimensionless,
         json_schema_extra={
-            "x-enum-varnames": ["dimensionless"],
-            "options": {"enum_titles": ["#"]},
+            "x-enum-varnames": ["dimensionless", "k"],
+            "options": {"enum_titles": ["#", "kᵣ"]},
         },
         title="PermeabilityRatioUnit",
     )
@@ -27734,6 +29492,14 @@ class Enthalpy(Energy):
         },
     )
     type: list[str] | None = ["Category:OSW877daca6abe55171adc9c6f0ae1ac011"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW877f6c0b113452649d1a4ac5ea3a6710.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW878316f29355549a8eb66a25d812bd9e.json
 
 
 class CurvatureUnit(Enum):
@@ -28257,6 +30023,18 @@ class HamiltonFunction(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW89d1a9df9ae256df9c0fdf46b74cb96b.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8a36c97724bc5aa28c3049aeb0ef7d86.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8a3a8be1f11953c5bb43a0d6ae3efac2.json
+
+
 class SoilAdsorptionCoefficient(SpecificVolume):
     """
     A specific volume that is the ratio of the amount of substance adsorbed per unit weight of organic carbon in the soil or sediment to the concentration of the chemical in aqueous solution at equilibrium.
@@ -28397,7 +30175,7 @@ class RotationalFrequencyUnit(Enum):
     """
     mHz
     """
-    per_minute = Unit.per_minute.value
+    per_minute = "Item:OSWed94e8968e8855bb9130785f981b0549"
     """
     rev/min
     """
@@ -28519,6 +30297,14 @@ class Prevalence(DimensionlessRatio):
         },
     )
     type: list[str] | None = ["Category:OSW8ae4971bbbb15913a90c0f6a1075e2ae"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8ba7ac8b06c453e2885cc41c9d9ee0bb.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8bbfb552acb854199f8cef7cf24ce319.json
 
 
 class SecondPolarMomentOfAreaUnit(Enum):
@@ -28671,7 +30457,7 @@ class Efficiency(DimensionlessRatio):
 
 
 class VentilationRatePerFloorAreaUnit(Enum):
-    liter_per_meter_squared_per_second = Unit.liter_per_meter_squared_per_second.value
+    liter_per_meter_squared_per_second = "Item:OSW3248fcac4b1b514b81d2b9f7bf05e180"
     """
     L/(s·m²)
     """
@@ -28990,6 +30776,22 @@ class QualityFactor(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW8f13994fed1a5281985ec6c2532ad4a5.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8f66d565d52b52bab7fe2840caf54ffa.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8fa2469531415841b65412f705d138d6.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW8fab4f29a54f56db8cabbd1cb60b9501.json
+
+
 class CharacteristicAcousticImpedance(AcousticImpediance):
     """
     Characteristic impedance at a point in a non-dissipative medium and for a plane progressive wave, the quotient of the sound pressure $p$ by the component of the sound particle velocity $v$ in the direction of the wave propagation.
@@ -29149,6 +30951,18 @@ class RadiantFlux(Power):
         },
     )
     type: list[str] | None = ["Category:OSW91a9f32b98cb5dc39ad2c3b039d86ba7"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW91fc2f110c7f52628dce39bc0278562b.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW92473183e45854a8bd13de8f0aefff19.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW930db2af867152fab4e9728fb7f0ae51.json
 
 
 class PhotosyntheticPhotonFluxDensityUnit(Enum):
@@ -29336,6 +31150,14 @@ class PressureLossPerLength(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW9321ad05d637531b87fdaf5993788342.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW940166fa5c7053708125f0c10236d916.json
+
+
 class MagnetomotiveForceUnit(Enum):
     ampere_turn = Unit.ampere_turn.value
     """
@@ -29364,6 +31186,10 @@ class MagnetomotiveForceUnit(Enum):
     milli_ampere = Unit.milli_ampere.value
     """
     mA
+    """
+    gigabit = "Item:OSW9fb7b9e67a4753bdb7e0a2eeecb87f61"
+    """
+    Gb
     """
     ampere = Unit.ampere.value
     """
@@ -29432,6 +31258,7 @@ class MagnetomotiveForce(QuantityValue):
                 "nano_ampere",
                 "micro_ampere",
                 "milli_ampere",
+                "gigabit",
                 "ampere",
                 "kilo_ampere",
                 "mega_ampere",
@@ -29448,6 +31275,7 @@ class MagnetomotiveForce(QuantityValue):
                     "nA",
                     "μA",
                     "mA",
+                    "Gb",
                     "A",
                     "kA",
                     "MA",
@@ -29558,6 +31386,18 @@ class RadiantFluence(QuantityValue):
         },
         title="RadiantFluenceUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW952db9929d395609a9d90fd5dbcb6b69.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9534c898b7d45510adfa6673507a4e10.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW956f71432fec58ba8d84b3744876ad5d.json
 
 
 class LondonPenetrationDepth(Length):
@@ -29837,6 +31677,14 @@ class GaugePressure(Pressure):
     type: list[str] | None = ["Category:OSW9807945ef51e5e71af339c5b6984f693"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW98493d0d7b8b528fa42a2332c8cf502f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9882e31701b25fa18ff69a38f57debf5.json
+
+
 class IonConcentrationUnit(Enum):
     candela_per_lumen = Unit.candela_per_lumen.value
     """
@@ -29846,6 +31694,10 @@ class IonConcentrationUnit(Enum):
     """
     cd/klm
     """
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW98b06c550c595e78a13ff79969b21e2e.json
 
 
 class MassDefect(Mass):
@@ -30107,6 +31959,14 @@ class StandardGravitationalParameter(QuantityValue):
         },
         title="StandardGravitationalParameterUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9a32b5a84f235a0cb0a9e9fba9bd252e.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9a57ea5fa37f59cfa4eb6ad9d2427c4e.json
 
 
 class WarpingMomentUnit(Enum):
@@ -30579,7 +32439,7 @@ class UnknownUnit(Enum):
     """
     Pa²/s²
     """
-    meter_pascal = Unit.meter_pascal.value
+    meter_pascal = "Item:OSW9e8d9ee33c3754839379541dfd21f3fa"
     """
     Pa·m
     """
@@ -30661,7 +32521,7 @@ class UnknownUnit(Enum):
     """
     m²/Hz²
     """
-    per_meter_1 = Unit.per_meter_1.value
+    per_meter_1 = "Item:OSW966745a97bfe515d8ed62c0ad2d2bbe5"
     """
     m²/m³
     """
@@ -30701,7 +32561,9 @@ class UnknownUnit(Enum):
     """
     μm/mL
     """
-    per_centi_meter = Unit.per_centi_meter.value
+    per_centi_meter = (
+        "Item:OSW966745a97bfe515d8ed62c0ad2d2bbe5#OSW3176a3c168155d9e86bb89c231b52b55"
+    )
     """
     cm²/cm³
     """
@@ -31441,6 +33303,14 @@ class RotationalStiffness(TorquePerAngle):
     type: list[str] | None = ["Category:OSW9d1ede2d23795fb1b69df7704250740e"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSW9e775ee5d35455faaa88953b35b2d911.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9eb931426c785245bf64c1fe1dce25c8.json
+
+
 class VolumetricHeatCapacityUnit(Enum):
     joule_per_kelvin_per_meter_cubed = Unit.joule_per_kelvin_per_meter_cubed.value
     """
@@ -31625,6 +33495,18 @@ class ThermalDiffusivity(AreaPerTime):
         },
     )
     type: list[str] | None = ["Category:OSW9f658cc25f6b5121957bbcc537814b30"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW9f693a8e95ec59248b109c678328b872.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa002dbedf44c5a86a375783a4e7ba6e7.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa04307c2ccbf57d0b16281a3be595f60.json
 
 
 class TemperaturePerTimeUnit(Enum):
@@ -32078,6 +33960,14 @@ class SurfaceDensity(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWa1400ee0d19b55c09bfac6fad4965a58.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa142144f1fb3549191b50f624bdcbb94.json
+
+
 class InertMass(Mass):
     """
     The sum of the vehicle dry mass, residual fluids and gasses, personnel and personnel provisions, and cargo.
@@ -32103,6 +33993,14 @@ class InertMass(Mass):
         },
     )
     type: list[str] | None = ["Category:OSWa142144f1fb3549191b50f624bdcbb94"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa190a51f7ec150b2aea3c45ff0ac32d3.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa1a449c3adf35ee3aba8109c7667b890.json
 
 
 class AngularCrossSectionUnit(Enum):
@@ -32530,6 +34428,14 @@ class CouplingFactor(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWa35c06b30b7750c49dd53768ffd9e756.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa37f106768d4575abdb567b17d904d2d.json
+
+
 class DensityOfStatesUnit(Enum):
     second_per_meter_cubed_per_radian = Unit.second_per_meter_cubed_per_radian.value
     """
@@ -32570,6 +34476,14 @@ class DensityOfStates(QuantityValue):
         },
         title="DensityOfStatesUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa3a8179bb49f5fafa9ff680f4d7f9f34.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa3f14dbda73f5a4faa19595388c74d3e.json
 
 
 class MassDelivered(Mass):
@@ -32800,6 +34714,14 @@ class EarthClosestApproachVehicleVelocity(VehicleVelocity):
     type: list[str] | None = ["Category:OSWa4fc82b5131a5f5485b1cee34bb708ab"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWa572282dc5c4510399eeafa0ce8e8519.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa573ff74e1f15ca286ce442b065146dc.json
+
+
 class InitialVehicleMass(Mass):
     """
     This is an autogenerated partial class definition of 'InitialVehicleMass'
@@ -32823,6 +34745,14 @@ class InitialVehicleMass(Mass):
         },
     )
     type: list[str] | None = ["Category:OSWa573ff74e1f15ca286ce442b065146dc"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa57dc71706f75ba7995a8eebdcea18da.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa664a34fb54f5c3c8e0422fcdd85fb27.json
 
 
 class HeatFlowRatePerUnitArea(PowerPerArea):
@@ -32879,6 +34809,14 @@ class FinalOrCurrentVehicleMass(Mass):
         },
     )
     type: list[str] | None = ["Category:OSWa6c948d5809e504cab9fa3aae14ad79a"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa7079f30224250c9b5d10367541f3c54.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa74a41713cc154b88da68cd2d1399e71.json
 
 
 class ModulusOfSubgradeReactionUnit(Enum):
@@ -32959,6 +34897,14 @@ class OsmoticPressure(Pressure):
         },
     )
     type: list[str] | None = ["Category:OSWa76a1a2e60f952fd9b4bda2edfd4047a"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa76d21440d01543aaa63a7e8d97c0438.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa76d2f3b5b215031a315e3ab651e5c32.json
 
 
 class TargetBogieMass(Mass):
@@ -33063,6 +35009,14 @@ class RichardsonConstant(QuantityValue):
         },
         title="RichardsonConstantUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa819b53101b854ad923f9f13dfb41794.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWa8247c6152ee517485f1711f5e5f38b7.json
 
 
 class GibbsEnergy(Energy):
@@ -33847,6 +35801,14 @@ class SpecificInternalEnergy(SpecificEnergy):
     type: list[str] | None = ["Category:OSWaff5b15f9ff3598ea65071f64badcb81"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWb0250d3677f6592f9d4329c8b9d5f8d1.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb04b04b17e565e948eaa8d84e2d76678.json
+
+
 class GFactorOfNucleusUnit(Enum):
     unitless = Unit.unitless.value
     """
@@ -34051,6 +36013,18 @@ class HallCoefficient(QuantityValue):
         },
         title="HallCoefficientUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb11e150b382c5481b59c763f0d4794fb.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb124402a1c76538b81dd41babc0cd7e2.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb1a42fde02475c6db7d2b8121feed666.json
 
 
 class VacuumThrust(Thrust):
@@ -34548,6 +36522,10 @@ class ResistanceUnit(Enum):
     """
     Ω
     """
+    abohm = Unit.abohm.value
+    """
+    abΩ
+    """
     nano_ohm = Unit.nano_ohm.value
     """
     nΩ
@@ -34571,6 +36549,10 @@ class ResistanceUnit(Enum):
     giga_ohm = Unit.giga_ohm.value
     """
     GΩ
+    """
+    statohm = Unit.statohm.value
+    """
+    statΩ
     """
     tera_ohm = Unit.tera_ohm.value
     """
@@ -34608,15 +36590,30 @@ class Resistance(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "ohm",
+                "abohm",
                 "nano_ohm",
                 "micro_ohm",
                 "milli_ohm",
                 "kilo_ohm",
                 "mega_ohm",
                 "giga_ohm",
+                "statohm",
                 "tera_ohm",
             ],
-            "options": {"enum_titles": ["Ω", "nΩ", "μΩ", "mΩ", "kΩ", "MΩ", "GΩ", "TΩ"]},
+            "options": {
+                "enum_titles": [
+                    "Ω",
+                    "abΩ",
+                    "nΩ",
+                    "μΩ",
+                    "mΩ",
+                    "kΩ",
+                    "MΩ",
+                    "GΩ",
+                    "statΩ",
+                    "TΩ",
+                ]
+            },
         },
         title="ResistanceUnit",
     )
@@ -34655,6 +36652,10 @@ class ElectricChargeUnit(Enum):
     """
     pC
     """
+    statcoulomb = Unit.statcoulomb.value
+    """
+    statC
+    """
     nano_coulomb = Unit.nano_coulomb.value
     """
     nC
@@ -34686,6 +36687,10 @@ class ElectricChargeUnit(Enum):
     hour_milli_ampere = Unit.hour_milli_ampere.value
     """
     mA·h
+    """
+    abcoulomb = Unit.abcoulomb.value
+    """
+    abC
     """
     deca_coulomb = Unit.deca_coulomb.value
     """
@@ -34773,6 +36778,7 @@ class ElectricCharge(QuantityValue):
                 "atto_coulomb",
                 "femto_coulomb",
                 "pico_coulomb",
+                "statcoulomb",
                 "nano_coulomb",
                 "micro_coulomb",
                 "milli_ampere_second",
@@ -34781,6 +36787,7 @@ class ElectricCharge(QuantityValue):
                 "deci_coulomb",
                 "ampere_second",
                 "hour_milli_ampere",
+                "abcoulomb",
                 "deca_coulomb",
                 "hecto_coulomb",
                 "kilo_coulomb",
@@ -34803,6 +36810,7 @@ class ElectricCharge(QuantityValue):
                     "aC",
                     "fC",
                     "pC",
+                    "statC",
                     "nC",
                     "μC",
                     "mA·s",
@@ -34811,6 +36819,7 @@ class ElectricCharge(QuantityValue):
                     "dC",
                     "A·s",
                     "mA·h",
+                    "abC",
                     "daC",
                     "hC",
                     "kC",
@@ -35061,6 +37070,14 @@ class PressureInRelationToVolumeFlowRate(QuantityValue):
         },
         title="PressureInRelationToVolumeFlowRateUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb58cb5a4654f52e1804c74c035d21352.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb5fe51534e9a5618af6aabad45c2cb28.json
 
 
 class StaticFrictionCoefficient(FrictionCoefficient):
@@ -35425,6 +37442,18 @@ class IonicStrength(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWb6c6e6288bd15d2e8d5fd85ce5bf2ab1.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb7248b1f04455ec99e6ff6e6b472d8de.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb7c211092f5a57a2978f297e390675e1.json
+
+
 class UpperCriticalMagneticFluxDensity(MagneticFluxDensity):
     """
     "Upper Critical Magnetic Flux Density" for type II superconductors, is the threshold magnetic flux density for disappearance of bulk superconductivity.
@@ -35575,6 +37604,14 @@ class MobilityRatio(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWb9612bfb909c5eab9e57e8d8a6c86082.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb9a0d2848bdf58a0b25881447ff8513d.json
+
+
 class MaximumExpectedOperatingPressure(Pressure):
     """
     This is an autogenerated partial class definition of 'MaximumExpectedOperatingPressure'
@@ -35647,6 +37684,14 @@ class ElectricSusceptibility(QuantityValue):
         },
         title="ElectricSusceptibilityUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb9eb9b070fb3584cb6df0d0dda581fb6.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWb9fc44a868dd59369128bda6e511507d.json
 
 
 class RadiusOfCurvature(Length):
@@ -35844,6 +37889,14 @@ class AuditoryThresholds(SoundPowerLevel):
         },
     )
     type: list[str] | None = ["Category:OSWbb12910958f951daa14162c7078632f3"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWbb31e94e7ec453588382368a9a40c134.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWbb3d87d090f75ebd84ac6ee5537c3289.json
 
 
 class LongRangeOrderParameterUnit(Enum):
@@ -36112,6 +38165,14 @@ class ElectricChargePerAmountOfSubstance(QuantityValue):
         },
         title="ElectricChargePerAmountOfSubstanceUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWbcaa33bd770e53e09d5e6087d141648b.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWbd5f31fa763d5f4b9f8be79284269e47.json
 
 
 class SecondMomentOfAreaUnit(Enum):
@@ -36521,6 +38582,10 @@ class OrderOfReflection(QuantityValue):
 
 
 class SpecificAcousticImpedanceUnit(Enum):
+    rayl = Unit.rayl.value
+    """
+    rayl
+    """
     newton_second_per_meter_cubed = Unit.newton_second_per_meter_cubed.value
     """
     N·s/m³
@@ -36557,13 +38622,14 @@ class SpecificAcousticImpedance(QuantityValue):
     )
     type: list[str] | None = ["Category:OSWc00b3d7abb405127b2b492f5bda88d14"]
     unit: SpecificAcousticImpedanceUnit | None = Field(
-        SpecificAcousticImpedanceUnit.newton_second_per_meter_cubed,
+        SpecificAcousticImpedanceUnit.rayl,
         json_schema_extra={
             "x-enum-varnames": [
+                "rayl",
                 "newton_second_per_meter_cubed",
                 "kilo_gram_per_meter_squared_per_second",
             ],
-            "options": {"enum_titles": ["N·s/m³", "kg/(m²·s)"]},
+            "options": {"enum_titles": ["rayl", "N·s/m³", "kg/(m²·s)"]},
         },
         title="SpecificAcousticImpedanceUnit",
     )
@@ -36654,6 +38720,14 @@ class DragForce(Force):
     type: list[str] | None = ["Category:OSWc03790733d68543285b90a8affe46b72"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWc0856531473456db89ce4276f30ca062.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc0f0bce2b2765c13898ecb55bde6cd0f.json
+
+
 class AcceptorIonizationEnergy(IonizationEnergy):
     """
     "Acceptor Ionization Energy" is the ionization energy of an acceptor.
@@ -36681,6 +38755,14 @@ class AcceptorIonizationEnergy(IonizationEnergy):
     type: list[str] | None = ["Category:OSWc0f0bce2b2765c13898ecb55bde6cd0f"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWc0f9f761f30d5a1baf90b44ed6eef37d.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc11d565a6b4950c9be08c3ba7b9a106c.json
+
+
 class FissionFuelUtilizationFactor(Dimensionless):
     """
     This is an autogenerated partial class definition of 'FissionFuelUtilizationFactor'
@@ -36704,6 +38786,14 @@ class FissionFuelUtilizationFactor(Dimensionless):
         },
     )
     type: list[str] | None = ["Category:OSWc11d565a6b4950c9be08c3ba7b9a106c"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc16b766eaf3e547da6407e8eee408e7c.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc1785119277b56f0b8b069c41b019d06.json
 
 
 class MassPerLengthUnit(Enum):
@@ -37064,6 +39154,14 @@ class EquilibriumConstantOnConcentrationBasis(EquilibriumConstant):
     type: list[str] | None = ["Category:OSWc4990ad66b7552ada410459f6dd16099"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWc543ebb853385a1a9382f57faad6170d.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc56f5d63f59d527e9a105d4c7edda71e.json
+
+
 class ThomsonCoefficientUnit(Enum):
     volt_per_kelvin = Unit.volt_per_kelvin.value
     """
@@ -37157,6 +39255,10 @@ class AreaPerLength(QuantityValue):
 
 
 class InverseSquareTimeUnit(Enum):
+    radian_per_second_squared = Unit.radian_per_second_squared.value
+    """
+    rad/s²
+    """
     per_second_squared = Unit.per_second_squared.value
     """
     /s²
@@ -37187,10 +39289,10 @@ class InverseSquareTime(QuantityValue):
     )
     type: list[str] | None = ["Category:OSWd33f5020bd93583b807f360af0e833ca"]
     unit: InverseSquareTimeUnit | None = Field(
-        InverseSquareTimeUnit.per_second_squared,
+        InverseSquareTimeUnit.radian_per_second_squared,
         json_schema_extra={
-            "x-enum-varnames": ["per_second_squared"],
-            "options": {"enum_titles": ["/s²"]},
+            "x-enum-varnames": ["radian_per_second_squared", "per_second_squared"],
+            "options": {"enum_titles": ["rad/s²", "/s²"]},
         },
         title="InverseSquareTimeUnit",
     )
@@ -37228,7 +39330,7 @@ class AngularAcceleration(InverseSquareTime):
 
 
 class VolumePerUnitAreaUnit(Enum):
-    meter = Unit.meter.value
+    meter = "Item:OSWa2c814499650570090ea4ac058c81e3b"
     """
     m³/m²
     """
@@ -37473,6 +39575,14 @@ class CartesianCoordinates(Length):
     type: list[str] | None = ["Category:OSWc8457fe4bcf15a08881828cd270ddfa1"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWc87ddd4a7d1159f0a75b686a61ef4e8e.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc8acb208c98359d282bf6f2a59af4e15.json
+
+
 class MassicPower(SpecificPower):
     """
     Quotient Energie durch Zeit und durch zugehöriger Masse
@@ -37529,6 +39639,14 @@ class LuminousEmmitance(LuminousFluxPerArea):
         },
     )
     type: list[str] | None = ["Category:OSWc90b3cc08a04506697aeca7645bc47dd"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc92f6543cf0b54d0a5082ef1e67267ad.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWc95523dc3a3259a68e78e89f44b2f07a.json
 
 
 class VapourPermeanceUnit(Enum):
@@ -38339,7 +40457,11 @@ class ElectricConductivityUnit(Enum):
     """
     pS/m
     """
-    statmho = Unit.statmho.value
+    statmho = "Item:OSW77d4b1042f5d5da49ea7a32d7f72560b"
+    """
+    statS
+    """
+    statmho_1 = Unit.statmho.value
     """
     stat℧
     """
@@ -38383,6 +40505,10 @@ class ElectricConductivityUnit(Enum):
     """
     MS/m
     """
+    absiemens = Unit.absiemens.value
+    """
+    aS
+    """
 
 
 class ElectricConductivity(QuantityValue):
@@ -38423,6 +40549,7 @@ class ElectricConductivity(QuantityValue):
                 "siemens_per_meter",
                 "pico_siemens_per_meter",
                 "statmho",
+                "statmho",
                 "nano_siemens_per_meter",
                 "nano_siemens_per_centi_meter",
                 "micro_siemens_per_meter",
@@ -38433,11 +40560,13 @@ class ElectricConductivity(QuantityValue):
                 "siemens_per_centi_meter",
                 "kilo_siemens_per_meter",
                 "mega_siemens_per_meter",
+                "absiemens",
             ],
             "options": {
                 "enum_titles": [
                     "S/m",
                     "pS/m",
+                    "statS",
                     "stat℧",
                     "nS/m",
                     "nS/cm",
@@ -38449,6 +40578,7 @@ class ElectricConductivity(QuantityValue):
                     "S/cm",
                     "kS/m",
                     "MS/m",
+                    "aS",
                 ]
             },
         },
@@ -38498,6 +40628,10 @@ class LuminousIntensityUnit(Enum):
     """
     mcd
     """
+    candlepower = Unit.candlepower.value
+    """
+    cp
+    """
     kilo_candela = Unit.kilo_candela.value
     """
     kcd
@@ -38532,8 +40666,13 @@ class LuminousIntensity(QuantityValue):
     unit: LuminousIntensityUnit | None = Field(
         LuminousIntensityUnit.candela,
         json_schema_extra={
-            "x-enum-varnames": ["candela", "millicandela", "kilo_candela"],
-            "options": {"enum_titles": ["cd", "mcd", "kcd"]},
+            "x-enum-varnames": [
+                "candela",
+                "millicandela",
+                "candlepower",
+                "kilo_candela",
+            ],
+            "options": {"enum_titles": ["cd", "mcd", "cp", "kcd"]},
         },
         title="LuminousIntensityUnit",
     )
@@ -38803,6 +40942,14 @@ class SerumOrPlasmaLevel(AmountOfSubstancePerVolume):
     type: list[str] | None = ["Category:OSWce7f2aa6168b56259752f6165989e137"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWce9a8c0dfd2159b2a628364ae9fbe9f3.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWcebde8e38e9c5492ace1a90e9d48a097.json
+
+
 class InverseSquareMassUnit(Enum):
     per_kilo_gram_squared = Unit.per_kilo_gram_squared.value
     """
@@ -38932,6 +41079,14 @@ class FundamentalLatticeVector(LatticeVector):
         },
     )
     type: list[str] | None = ["Category:OSWcf6c6cffa49b53ff80cfd4cb418b3be5"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWcfa8c1748f3b586e9a0304ab1e2dbc41.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWcfe6332cb5935e5cb59602e245a610cd.json
 
 
 class VolumicElectromagneticEnergyUnit(Enum):
@@ -39192,6 +41347,14 @@ class LengthTemperature(QuantityValue):
         },
         title="LengthTemperatureUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWd33f5020bd93583b807f360af0e833ca.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWd34599c980285400b402962f7a36cc44.json
 
 
 class Thickness(Length):
@@ -39718,6 +41881,14 @@ class NominalAscentPropellantMass(Mass):
     type: list[str] | None = ["Category:OSWd5ff55bcf2105e6e9e7f4cf1bca75dad"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWd60aaf9b746a594a83805f0f0ae921ff.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWd648b91cc3585f4cb1299ebb6b148dc4.json
+
+
 class RelativeMassDefect(DimensionlessRatio):
     """
     The "Relative Mass Defect" is the mass defect between the monoisotopic mass of an element and the mass of its A + 1 or its A + 2 isotopic cluster.
@@ -39931,7 +42102,7 @@ class ControlMass(Mass):
 
 
 class AcidityUnit(Enum):
-    pH_value = Unit.pH_value.value
+    pH_value = "Item:OSW50e9172c55045cb3b1460b1345303ed2"
     """
     pH
     """
@@ -39970,6 +42141,14 @@ class Acidity(QuantityValue):
         },
         title="AcidityUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWd76028b659105d139a01faedd83fefbd.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWd762c41183225469b74fb0626b36aa70.json
 
 
 class ElectromagneticEnergyDensityUnit(Enum):
@@ -40234,6 +42413,14 @@ class TotalLinearStoppingPower(QuantityValue):
         },
         title="TotalLinearStoppingPowerUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWda012dbe914456a09af4429dce5dcc49.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWda38a6d51c385b428998b15f68bd787e.json
 
 
 class ThermalConductanceUnit(Enum):
@@ -40589,6 +42776,14 @@ class Piece(Count):
         },
     )
     type: list[str] | None = ["Category:OSWdc14ddb70b105a98bfa6afc265622908"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWdc5df784e44e5802beda722786fd75bf.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWdcee8dd4e72258d5abb828567c3e7a0c.json
 
 
 class LuminousEnergyUnit(Enum):
@@ -41216,6 +43411,10 @@ class ElectricDipoleMomentUnit(Enum):
     """
     C·m
     """
+    debye = "Item:OSW196be62ae9d6519da359fb56a71b0ef0"
+    """
+    D
+    """
 
 
 class ElectricDipoleMoment(QuantityValue):
@@ -41249,8 +43448,8 @@ class ElectricDipoleMoment(QuantityValue):
     unit: ElectricDipoleMomentUnit | None = Field(
         ElectricDipoleMomentUnit.coulomb_meter,
         json_schema_extra={
-            "x-enum-varnames": ["coulomb_meter"],
-            "options": {"enum_titles": ["C·m"]},
+            "x-enum-varnames": ["coulomb_meter", "debye"],
+            "options": {"enum_titles": ["C·m", "D"]},
         },
         title="ElectricDipoleMomentUnit",
     )
@@ -41672,6 +43871,14 @@ class ThermodynamicEnergy(Energy):
     type: list[str] | None = ["Category:OSWe58e83b511355b999aa0dcb40428df2a"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWe5e3a7fe15ab5beaa32db082ed17e1d5.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWe6037d9f43ba5a3680d56b8d7bfc3268.json
+
+
 class OsmoticCoefficientUnit(Enum):
     unitless = Unit.unitless.value
     """
@@ -41973,6 +44180,10 @@ class ElectricPotentialUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -41980,6 +44191,10 @@ class ElectricPotentialUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -42040,8 +44255,10 @@ class ElectricPotential(QuantityValue):
                 "femto_volt",
                 "pico_volt",
                 "nano_volt",
+                "abvolt",
                 "micro_volt",
                 "milli_volt",
+                "statvolt",
                 "kilo_volt",
                 "mega_volt",
                 "giga_volt",
@@ -42055,8 +44272,10 @@ class ElectricPotential(QuantityValue):
                     "fV",
                     "pV",
                     "nV",
+                    "abV",
                     "μV",
                     "mV",
+                    "statV",
                     "kV",
                     "MV",
                     "GV",
@@ -42068,6 +44287,14 @@ class ElectricPotential(QuantityValue):
         },
         title="ElectricPotentialUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWe8d1194aeb2e5b9f877867eab5c9cae9.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWe98ffe7d93775d5eae95108872432f2f.json
 
 
 class CompressibilityUnit(Enum):
@@ -42122,6 +44349,18 @@ class Compressibility(QuantityValue):
         },
         title="CompressibilityUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWe9be062de2d15d10891397a18212f920.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWea12214400965c818daf0b53062ccf4a.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWeac806ef7ef852fc8b87e06cea598f55.json
 
 
 class DryVolume(Volume):
@@ -42510,6 +44749,14 @@ class AmountOfSubstanceOfConcentration(Concentration):
     type: list[str] | None = ["Category:OSWec3d914b6db25306838489afb9a45cc8"]
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWec4a0bb9cee155e3a79994b906fbd3a7.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWed059354cf7c596ea0b5428168ff59fc.json
+
+
 class ThermalDiffusionFactorUnit(Enum):
     unitless = Unit.unitless.value
     """
@@ -42561,6 +44808,10 @@ class ViscosityUnit(Enum):
     """
     Pa·s
     """
+    micro_poise = Unit.micro_poise.value
+    """
+    μP
+    """
     gram_per_hour_per_meter = Unit.gram_per_hour_per_meter.value
     """
     g/(m·h)
@@ -42568,6 +44819,10 @@ class ViscosityUnit(Enum):
     kilo_gram_per_hour_per_meter = Unit.kilo_gram_per_hour_per_meter.value
     """
     kg/(m·h)
+    """
+    centi_poise = Unit.centi_poise.value
+    """
+    cP
     """
     gram_per_meter_per_second = Unit.gram_per_meter_per_second.value
     """
@@ -42577,13 +44832,25 @@ class ViscosityUnit(Enum):
     """
     mPa·s
     """
+    poise = Unit.poise.value
+    """
+    P
+    """
     gram_per_centi_meter_per_second = Unit.gram_per_centi_meter_per_second.value
     """
     g/(cm·s)
     """
+    deca_poise = Unit.deca_poise.value
+    """
+    daP
+    """
     kilo_gram_per_meter_per_second = Unit.kilo_gram_per_meter_per_second.value
     """
     kg/(m·s)
+    """
+    kilo_poise = Unit.kilo_poise.value
+    """
+    kP
     """
 
 
@@ -42617,22 +44884,32 @@ class Viscosity(QuantityValue):
         json_schema_extra={
             "x-enum-varnames": [
                 "pascal_second",
+                "micro_poise",
                 "gram_per_hour_per_meter",
                 "kilo_gram_per_hour_per_meter",
+                "centi_poise",
                 "gram_per_meter_per_second",
                 "milli_pascal_second",
+                "poise",
                 "gram_per_centi_meter_per_second",
+                "deca_poise",
                 "kilo_gram_per_meter_per_second",
+                "kilo_poise",
             ],
             "options": {
                 "enum_titles": [
                     "Pa·s",
+                    "μP",
                     "g/(m·h)",
                     "kg/(m·h)",
+                    "cP",
                     "g/(m·s)",
                     "mPa·s",
+                    "P",
                     "g/(cm·s)",
+                    "daP",
                     "kg/(m·s)",
+                    "kP",
                 ]
             },
         },
@@ -42698,6 +44975,14 @@ class EffectiveExhaustvelocity(Velocity):
         },
     )
     type: list[str] | None = ["Category:OSWee6fb4bbbb50537c9b1ccd0e9f7d826a"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWee9c7e5c343e542cb5a8b4648315902f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWeec705c7a60052698e01058732a6d8de.json
 
 
 class SpectralCrossSectionUnit(Enum):
@@ -42945,6 +45230,14 @@ class ElectricChargeVolumeDensity(QuantityValue):
         },
         title="ElectricChargeVolumeDensityUnit",
     )
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWefff8e22b4d65024bd044362634938e1.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWf00faa773bc55f9fb027a0986bf4028f.json
 
 
 class SpatialSummationFunction(Length):
@@ -43325,6 +45618,14 @@ class ElectricCurrentPerAngle(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWf5c54cd70ddf5ff3b1ef1aee6ae8f0cb.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWf5c5b968f6125fab80cfdbc0a74706fa.json
+
+
 class DonorIonizationEnergy(IonizationEnergy):
     """
     "Donor Ionization Energy" is the ionization energy of a donor.
@@ -43528,6 +45829,14 @@ class Width(Length):
         },
     )
     type: list[str] | None = ["Category:OSWf8e8296734a759deb817315f69a78fb9"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWf9c536c2ed285ff4827652539e5e0152.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWf9f89e877cfa5aefa59c208b25b14754.json
 
 
 class WorkFunction(Energy):
@@ -43817,6 +46126,10 @@ class LuminanceUnit(Enum):
     """
     cd/m²
     """
+    stilb = Unit.stilb.value
+    """
+    sb
+    """
 
 
 class Luminance(QuantityValue):
@@ -43847,8 +46160,8 @@ class Luminance(QuantityValue):
     unit: LuminanceUnit | None = Field(
         LuminanceUnit.candela_per_meter_squared,
         json_schema_extra={
-            "x-enum-varnames": ["candela_per_meter_squared"],
-            "options": {"enum_titles": ["cd/m²"]},
+            "x-enum-varnames": ["candela_per_meter_squared", "stilb"],
+            "options": {"enum_titles": ["cd/m²", "sb"]},
         },
         title="LuminanceUnit",
     )
@@ -44758,7 +47071,7 @@ class DryBulbTemperature(Temperature):
 
 
 class MassSpecificBiogeochemicalRateUnit(Enum):
-    per_day = Unit.per_day.value
+    per_day = "Item:OSW5790f83829ea55eb80619a42de61fd8c"
     """
     g/(g·d)
     """
@@ -44778,7 +47091,7 @@ class MassSpecificBiogeochemicalRateUnit(Enum):
     """
     mg/(g·h)
     """
-    per_hour = Unit.per_hour.value
+    per_hour = "Item:OSW3ef8e2c1a49653cd9e2e58e0f66ade3d"
     """
     g/(g·h)
     """
@@ -45113,6 +47426,14 @@ class Volume1(QuantityValue):
     )
 
 
+# generated by datamodel-codegen:
+#   filename:  OSWfeea42441eab5f6598b36cda1157f75f.json
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWff3b7c47e67150a481382e342ac8395e.json
+
+
 class EmissivityUnit(Enum):
     dimensionless = Unit.dimensionless.value
     """
@@ -45246,3 +47567,7 @@ class Spin(AngularMomentum):
         },
     )
     type: list[str] | None = ["Category:OSWff78da3139af553d81d4720b73d306ca"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSWff95a9d808375e7c9631c797e43546cd.json

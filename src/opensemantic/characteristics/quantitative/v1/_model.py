@@ -95,7 +95,7 @@ class QuantityValueType(CharacteristicType):
             "description*": {
                 "en": "Generates schema for value and unit (with autocomplete) based on the quantity of the most fundamental parent characteristic (e.g. Diameter will apply units of Length)"
             },
-            "defaultProperties": ["quantity"],
+            "defaultProperties": ["default_unit"],
         }
 
     type: list[str] | None = ["Category:OSWac07a46c2cf14f3daec503136861f5ab"]
@@ -104,20 +104,23 @@ class QuantityValueType(CharacteristicType):
         description_={
             "de": "Für diese Größe präferierte Anzeigeeinheit, kann von der SI Einheit abweichen"
         },
+        field_comment="Finds units for the parent characteristic by querying HasQuantity directly on the parent, then traversing its SubClassOf chain (inverse) up to 3 levels. Limited by SMW query depth restrictions.",
         options={
             "autocomplete": {
-                "query": "[[-HasUnit.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit.SubClassOf.SubClassOf.SubClassOf.SubClassOf.SubClassOf::{{{_current_subject_}}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                "query": "[[-HasUnit.-HasQuantity::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasUnit.-HasQuantity.-SubClassOf.-SubClassOf.-SubClassOf::$(parent_w)]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
             }
         },
         title="Default unit",
         title_={"de": "Standard Einheit"},
+        watch={"parent_w": "root.subclass_of.0"},
     )
     """
     Preferred display unit for this quantity, may differ from the SI unit
     """
     quantity: QuantityKind | None = Field(
         None,
-        field_comment="range: QuanityKind",
+        field_comment="Deprecated: quantity is set on FundamentalQuantityValueType, not here. Hidden to avoid confusion.",
+        options={"hidden": True},
         range="Category:OSW00fbd6feecb5408997ca18d4e681a131",
         title="Quantity",
         title_={"de": "Physikalische Größe"},
@@ -152,7 +155,7 @@ class UnitEnumerationElement(OswBaseModel):
         ...,
         options={
             "autocomplete": {
-                "query": "[[-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                "query": "[[-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
             }
         },
         watch={"quantity": "root.quantity"},
@@ -195,7 +198,7 @@ class FundamentalQuantityValueType(CharacteristicType):
         }
 
     type: list[str] | None = ["Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7"]
-    metaclass: Any | None = Field(
+    metaclass: list[str] | None = Field(
         ["Category:OSWac07a46c2cf14f3daec503136861f5ab"],
         field_comment="MetaQuantityValue",
         options={"hidden": True},
@@ -215,7 +218,7 @@ class FundamentalQuantityValueType(CharacteristicType):
         description_={"de": "In aller Regel ist dies die SI Einheit der Größe"},
         options={
             "autocomplete": {
-                "query": "[[-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{quantity}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
+                "query": "[[-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]OR[[-HasPrefixUnit.-HasUnit::{{$(quantity)}}]][[HasSymbol::like:*{{_user_input}}*]]|?HasSymbol=label"
             }
         },
         title="Default unit",
@@ -639,17 +642,69 @@ class DimensionlessUnit(Enum):
     """
     Np
     """
+    PSU = Unit.PSU.value
+    """
+    PSU
+    """
     dec = Unit.dec.value
     """
     dec
+    """
+    grain = Unit.grain.value
+    """
+    gr
     """
     octave = Unit.octave.value
     """
     octave
     """
+    ppq = Unit.ppq.value
+    """
+    ppq
+    """
+    parts_per_trillion = Unit.parts_per_trillion.value
+    """
+    ppt
+    """
+    vacuum_permittivity = Unit.vacuum_permittivity.value
+    """
+    εᵣ
+    """
+    ppb = Unit.ppb.value
+    """
+    PPB
+    """
+    PPTM = Unit.PPTM.value
+    """
+    PPTM
+    """
+    ppm = Unit.ppm.value
+    """
+    PPM
+    """
+    permille = Unit.permille.value
+    """
+    ‰
+    """
+    percent = Unit.percent.value
+    """
+    %
+    """
+    Sh = Unit.Sh.value
+    """
+    Sh
+    """
+    barn = Unit.barn.value
+    """
+    b
+    """
     COUNT = Unit.COUNT.value
     """
     COUNT
+    """
+    E = Unit.E.value
+    """
+    E
     """
     point = Unit.point.value
     """
@@ -663,7 +718,19 @@ class DimensionlessUnit(Enum):
     """
     heartbeat
     """
-    unknown = Unit.unknown.value
+    nano_technical_atmosphere = Unit.nano_technical_atmosphere.value
+    """
+    nat
+    """
+    one = Unit.one.value
+    """
+    one
+    """
+    unknown = "Item:OSWb3b241033ef351c1a86898a1f5e77217"
+    """
+    ÷
+    """
+    unknown_1 = Unit.unknown.value
     """
     χ
     """
@@ -671,9 +738,141 @@ class DimensionlessUnit(Enum):
     """
     一
     """
+    ban = Unit.ban.value
+    """
+    ban
+    """
+    Hart = Unit.Hart.value
+    """
+    Hart
+    """
+    bel = "Item:OSWfef0c07075cc531c9b4a3938821e5079"
+    """
+    B
+    """
+    to_the_10 = Unit.to_the_10.value
+    """
+    10
+    """
+    to_the_100 = Unit.to_the_100.value
+    """
+    100
+    """
+    kilo_barn = Unit.kilo_barn.value
+    """
+    kb
+    """
+    kibi_barn = Unit.kibi_barn.value
+    """
+    Kib
+    """
+    to_the_1000 = Unit.to_the_1000.value
+    """
+    1000
+    """
+    kilo_byte = Unit.kilo_byte.value
+    """
+    kB
+    """
+    kibi_byte = Unit.kibi_byte.value
+    """
+    KiB
+    """
+    mega_barn = Unit.mega_barn.value
+    """
+    Mb
+    """
+    mebi_barn = Unit.mebi_barn.value
+    """
+    Mib
+    """
+    to_the_1000000 = Unit.to_the_1000000.value
+    """
+    1000000
+    """
+    mega_byte = Unit.mega_byte.value
+    """
+    MB
+    """
+    mebi_byte = Unit.mebi_byte.value
+    """
+    MiB
+    """
+    gigabit = Unit.gigabit.value
+    """
+    Gb
+    """
+    gibi_barn = Unit.gibi_barn.value
+    """
+    Gib
+    """
+    to_the_1000000000 = Unit.to_the_1000000000.value
+    """
+    1000000000
+    """
     giga_point = Unit.giga_point.value
     """
     Gbp
+    """
+    giga_byte = Unit.giga_byte.value
+    """
+    GB
+    """
+    gibi_byte = Unit.gibi_byte.value
+    """
+    GiB
+    """
+    tera_barn = Unit.tera_barn.value
+    """
+    Tb
+    """
+    tebi_barn = Unit.tebi_barn.value
+    """
+    Tib
+    """
+    to_the_1000000000000 = Unit.to_the_1000000000000.value
+    """
+    1000000000000
+    """
+    tera_byte = Unit.tera_byte.value
+    """
+    TB
+    """
+    tebi_byte = Unit.tebi_byte.value
+    """
+    TiB
+    """
+    pebi_barn = Unit.pebi_barn.value
+    """
+    Pib
+    """
+    peta_barn = Unit.peta_barn.value
+    """
+    Pb
+    """
+    pebi_byte = Unit.pebi_byte.value
+    """
+    PiB
+    """
+    peta_byte = Unit.peta_byte.value
+    """
+    PB
+    """
+    exbi_barn = Unit.exbi_barn.value
+    """
+    Eib
+    """
+    exa_barn = Unit.exa_barn.value
+    """
+    Eb
+    """
+    exbi_byte = Unit.exbi_byte.value
+    """
+    EiB
+    """
+    exa_byte = Unit.exa_byte.value
+    """
+    EB
     """
 
 
@@ -708,30 +907,128 @@ class Dimensionless(QuantityValue):
             "enum_titles": [
                 "#",
                 "Np",
+                "PSU",
                 "dec",
+                "gr",
                 "octave",
+                "ppq",
+                "ppt",
+                "εᵣ",
+                "PPB",
+                "PPTM",
+                "PPM",
+                "‰",
+                "%",
+                "Sh",
+                "b",
                 "COUNT",
+                "E",
                 "bp",
                 "flight",
                 "heartbeat",
+                "nat",
+                "one",
+                "÷",
                 "χ",
                 "一",
+                "ban",
+                "Hart",
+                "B",
+                "10",
+                "100",
+                "kb",
+                "Kib",
+                "1000",
+                "kB",
+                "KiB",
+                "Mb",
+                "Mib",
+                "1000000",
+                "MB",
+                "MiB",
+                "Gb",
+                "Gib",
+                "1000000000",
                 "Gbp",
+                "GB",
+                "GiB",
+                "Tb",
+                "Tib",
+                "1000000000000",
+                "TB",
+                "TiB",
+                "Pib",
+                "Pb",
+                "PiB",
+                "PB",
+                "Eib",
+                "Eb",
+                "EiB",
+                "EB",
             ]
         },
         title="DimensionlessUnit",
         x_enum_varnames=[
             "dimensionless",
             "neper",
+            "PSU",
             "dec",
+            "grain",
             "octave",
+            "ppq",
+            "parts_per_trillion",
+            "vacuum_permittivity",
+            "ppb",
+            "PPTM",
+            "ppm",
+            "permille",
+            "percent",
+            "Sh",
+            "barn",
             "COUNT",
+            "E",
             "point",
             "flight",
             "heartbeat",
+            "nano_technical_atmosphere",
+            "one",
+            "unknown",
             "unknown",
             "unitless",
+            "ban",
+            "Hart",
+            "bel",
+            "to_the_10",
+            "to_the_100",
+            "kilo_barn",
+            "kibi_barn",
+            "to_the_1000",
+            "kilo_byte",
+            "kibi_byte",
+            "mega_barn",
+            "mebi_barn",
+            "to_the_1000000",
+            "mega_byte",
+            "mebi_byte",
+            "gigabit",
+            "gibi_barn",
+            "to_the_1000000000",
             "giga_point",
+            "giga_byte",
+            "gibi_byte",
+            "tera_barn",
+            "tebi_barn",
+            "to_the_1000000000000",
+            "tera_byte",
+            "tebi_byte",
+            "pebi_barn",
+            "peta_barn",
+            "pebi_byte",
+            "peta_byte",
+            "exbi_barn",
+            "exa_barn",
+            "exbi_byte",
+            "exa_byte",
         ],
     )
 
@@ -968,6 +1265,22 @@ class EnergyUnit(Enum):
     """
     W·s
     """
+    calorie = Unit.calorie.value
+    """
+    cal
+    """
+    cal_to_the_15_degree_celsius = Unit.cal_to_the_15_degree_celsius.value
+    """
+    cal{15 °C}
+    """
+    international_calorie = Unit.international_calorie.value
+    """
+    cal{IT}
+    """
+    mean_calorie = Unit.mean_calorie.value
+    """
+    cal{mean}
+    """
     kilo_joule = Unit.kilo_joule.value
     """
     kJ
@@ -979,6 +1292,14 @@ class EnergyUnit(Enum):
     hour_watt = Unit.hour_watt.value
     """
     W·h
+    """
+    kilo_calorie = Unit.kilo_calorie.value
+    """
+    kcal
+    """
+    kilo_international_calorie = Unit.kilo_international_calorie.value
+    """
+    kcal{IT}
     """
     mega_joule = Unit.mega_joule.value
     """
@@ -1004,6 +1325,10 @@ class EnergyUnit(Enum):
     """
     MW·h
     """
+    metric_ton_per_force_pound = Unit.metric_ton_per_force_pound.value
+    """
+    t/lbf
+    """
     tera_joule = Unit.tera_joule.value
     """
     TJ
@@ -1023,6 +1348,10 @@ class EnergyUnit(Enum):
     exa_joule = Unit.exa_joule.value
     """
     EJ
+    """
+    quad = Unit.quad.value
+    """
+    quad
     """
 
 
@@ -1068,20 +1397,28 @@ class Energy(QuantityValue):
                 "μJ",
                 "mJ",
                 "W·s",
+                "cal",
+                "cal{15 °C}",
+                "cal{IT}",
+                "cal{mean}",
                 "kJ",
                 "VA·h",
                 "W·h",
+                "kcal",
+                "kcal{IT}",
                 "MJ",
                 "kVA·h",
                 "kW·h",
                 "GJ",
                 "MVA·h",
                 "MW·h",
+                "t/lbf",
                 "TJ",
                 "GW·h",
                 "PJ",
                 "TW·h",
                 "EJ",
+                "quad",
             ]
         },
         title="EnergyUnit",
@@ -1099,20 +1436,28 @@ class Energy(QuantityValue):
             "micro_joule",
             "milli_joule",
             "second_watt",
+            "calorie",
+            "cal_to_the_15_degree_celsius",
+            "international_calorie",
+            "mean_calorie",
             "kilo_joule",
             "hour_volt_ampere",
             "hour_watt",
+            "kilo_calorie",
+            "kilo_international_calorie",
             "mega_joule",
             "hour_kilo_volt_ampere",
             "hour_kilo_watt",
             "giga_joule",
             "hour_mega_volt_ampere",
             "hour_mega_watt",
+            "metric_ton_per_force_pound",
             "tera_joule",
             "giga_watt_hour",
             "peta_joule",
             "hour_tera_watt",
             "exa_joule",
+            "quad",
         ],
     )
 
@@ -1818,9 +2163,29 @@ class TimeUnit(Enum):
     """
     ns
     """
+    micro_henry_per_kilo_ohm = Unit.micro_henry_per_kilo_ohm.value
+    """
+    μH/kΩ
+    """
+    milli_henry_per_kilo_ohm = Unit.milli_henry_per_kilo_ohm.value
+    """
+    mH/kΩ
+    """
+    micro_henry_per_ohm = Unit.micro_henry_per_ohm.value
+    """
+    μH/Ω
+    """
     micro_second = Unit.micro_second.value
     """
     μs
+    """
+    henry_per_kilo_ohm = Unit.henry_per_kilo_ohm.value
+    """
+    H/kΩ
+    """
+    milli_henry_per_ohm = Unit.milli_henry_per_ohm.value
+    """
+    mH/Ω
     """
     milli_second = Unit.milli_second.value
     """
@@ -1829,6 +2194,10 @@ class TimeUnit(Enum):
     deci_second = Unit.deci_second.value
     """
     ds
+    """
+    henry_per_ohm = Unit.henry_per_ohm.value
+    """
+    H/Ω
     """
     min_sidereal = Unit.min_sidereal.value
     """
@@ -1926,9 +2295,15 @@ class Time(QuantityValue):
                 "fs",
                 "ps",
                 "ns",
+                "μH/kΩ",
+                "mH/kΩ",
+                "μH/Ω",
                 "μs",
+                "H/kΩ",
+                "mH/Ω",
                 "ms",
                 "ds",
+                "H/Ω",
                 "min{sidereal}",
                 "min",
                 "ks",
@@ -1953,9 +2328,15 @@ class Time(QuantityValue):
             "femto_second",
             "pico_second",
             "nano_second",
+            "micro_henry_per_kilo_ohm",
+            "milli_henry_per_kilo_ohm",
+            "micro_henry_per_ohm",
             "micro_second",
+            "henry_per_kilo_ohm",
+            "milli_henry_per_ohm",
             "milli_second",
             "deci_second",
+            "henry_per_ohm",
             "min_sidereal",
             "minute",
             "kilo_second",
@@ -2021,6 +2402,14 @@ class ForcePerAreaUnit(Enum):
     """
     mPa
     """
+    micro_bar = Unit.micro_bar.value
+    """
+    μbar
+    """
+    micro_standard_atmosphere = Unit.micro_standard_atmosphere.value
+    """
+    μatm
+    """
     newton_per_meter_squared = Unit.newton_per_meter_squared.value
     """
     N/m²
@@ -2039,6 +2428,18 @@ class ForcePerAreaUnit(Enum):
     """
     hPa
     """
+    milli_bar = Unit.milli_bar.value
+    """
+    mbar
+    """
+    mbar_abs = Unit.mbar_abs.value
+    """
+    mbar abs
+    """
+    centi_bar = Unit.centi_bar.value
+    """
+    cbar
+    """
     gram_per_meter_per_second_squared = Unit.gram_per_meter_per_second_squared.value
     """
     g/(m·s²)
@@ -2055,6 +2456,22 @@ class ForcePerAreaUnit(Enum):
     """
     N/cm²
     """
+    technical_atmosphere = Unit.technical_atmosphere.value
+    """
+    at
+    """
+    bar = Unit.bar.value
+    """
+    bar
+    """
+    bar_absolute = Unit.bar_absolute.value
+    """
+    bar abs
+    """
+    standard_atmosphere = Unit.standard_atmosphere.value
+    """
+    atm
+    """
     mega_pascal = Unit.mega_pascal.value
     """
     MPa
@@ -2063,9 +2480,21 @@ class ForcePerAreaUnit(Enum):
     """
     N/mm²
     """
+    dirac_constant = Unit.dirac_constant.value
+    """
+    hbar
+    """
+    kilo_bar = Unit.kilo_bar.value
+    """
+    kbar
+    """
     giga_pascal = Unit.giga_pascal.value
     """
     GPa
+    """
+    mega_bar = Unit.mega_bar.value
+    """
+    Mbar
     """
 
 
@@ -2102,17 +2531,29 @@ class ForcePerArea(QuantityValue):
                 "pPa",
                 "μPa",
                 "mPa",
+                "μbar",
+                "μatm",
                 "N/m²",
                 "kg/(m·s²)",
                 "daPa",
                 "hPa",
+                "mbar",
+                "mbar abs",
+                "cbar",
                 "g/(m·s²)",
                 "kN/m²",
                 "kPa",
                 "N/cm²",
+                "at",
+                "bar",
+                "bar abs",
+                "atm",
                 "MPa",
                 "N/mm²",
+                "hbar",
+                "kbar",
                 "GPa",
+                "Mbar",
             ]
         },
         title="ForcePerAreaUnit",
@@ -2121,17 +2562,29 @@ class ForcePerArea(QuantityValue):
             "pico_pascal",
             "micro_pascal",
             "milli_pascal",
+            "micro_bar",
+            "micro_standard_atmosphere",
             "newton_per_meter_squared",
             "kilo_gram_per_meter_per_second_squared",
             "deca_pascal",
             "hecto_pascal",
+            "milli_bar",
+            "mbar_abs",
+            "centi_bar",
             "gram_per_meter_per_second_squared",
             "kilo_newton_per_meter_squared",
             "kilo_pascal",
             "newton_per_centi_meter_squared",
+            "technical_atmosphere",
+            "bar",
+            "bar_absolute",
+            "standard_atmosphere",
             "mega_pascal",
             "newton_per_milli_meter_squared",
+            "dirac_constant",
+            "kilo_bar",
             "giga_pascal",
+            "mega_bar",
         ],
     )
 
@@ -2282,6 +2735,10 @@ class ElectricCurrentUnit(Enum):
     """
     pA
     """
+    statampere = Unit.statampere.value
+    """
+    statA
+    """
     nano_ampere = Unit.nano_ampere.value
     """
     nA
@@ -2293,6 +2750,14 @@ class ElectricCurrentUnit(Enum):
     milli_ampere = Unit.milli_ampere.value
     """
     mA
+    """
+    biot = Unit.biot.value
+    """
+    Bi
+    """
+    abampere = Unit.abampere.value
+    """
+    abA
     """
     kilo_ampere = Unit.kilo_ampere.value
     """
@@ -2349,9 +2814,12 @@ class ElectricCurrent(QuantityValue):
                 "aA",
                 "fA",
                 "pA",
+                "statA",
                 "nA",
                 "μA",
                 "mA",
+                "Bi",
+                "abA",
                 "kA",
                 "MA",
                 "GA",
@@ -2365,9 +2833,12 @@ class ElectricCurrent(QuantityValue):
             "atto_ampere",
             "femto_ampere",
             "pico_ampere",
+            "statampere",
             "nano_ampere",
             "micro_ampere",
             "milli_ampere",
+            "biot",
+            "abampere",
             "kilo_ampere",
             "mega_ampere",
             "giga_ampere",
@@ -2457,11 +2928,31 @@ class ForcePerLengthUnit(Enum):
     """
     N/m
     """
+    nano_newton_per_meter = Unit.nano_newton_per_meter.value
+    """
+    nN·m/m²
+    """
+    micro_newton_per_meter = Unit.micro_newton_per_meter.value
+    """
+    μN·m/m²
+    """
     milli_newton_per_meter = (
         "Item:OSW9137313140045506900306df5eadafcc#OSW2787316ac73a5365b863fb379f6a800c"
     )
     """
     mN/m
+    """
+    milli_newton_per_meter_1 = Unit.milli_newton_per_meter.value
+    """
+    mN·m/m²
+    """
+    centi_newton_per_meter = Unit.centi_newton_per_meter.value
+    """
+    cN·m/m²
+    """
+    newton_per_meter_1 = Unit.newton_per_meter.value
+    """
+    N·m/m²
     """
     newton_per_centi_meter = Unit.newton_per_centi_meter.value
     """
@@ -2476,6 +2967,18 @@ class ForcePerLengthUnit(Enum):
     )
     """
     kN/m
+    """
+    kilo_newton_per_meter_1 = Unit.kilo_newton_per_meter.value
+    """
+    kN·m/m²
+    """
+    mega_newton_per_meter = Unit.mega_newton_per_meter.value
+    """
+    MN·m/m²
+    """
+    giga_newton_per_meter = Unit.giga_newton_per_meter.value
+    """
+    GN·m/m²
     """
 
 
@@ -2504,14 +3007,38 @@ class ForcePerLength(QuantityValue):
     type: list[str] | None = ["Category:OSW4496d2b66d71545392a81e9e05297338"]
     unit: ForcePerLengthUnit | None = Field(
         ForcePerLengthUnit.newton_per_meter,
-        options={"enum_titles": ["N/m", "mN/m", "N/cm", "N/mm", "kN/m"]},
+        options={
+            "enum_titles": [
+                "N/m",
+                "nN·m/m²",
+                "μN·m/m²",
+                "mN/m",
+                "mN·m/m²",
+                "cN·m/m²",
+                "N·m/m²",
+                "N/cm",
+                "N/mm",
+                "kN/m",
+                "kN·m/m²",
+                "MN·m/m²",
+                "GN·m/m²",
+            ]
+        },
         title="ForcePerLengthUnit",
         x_enum_varnames=[
             "newton_per_meter",
+            "nano_newton_per_meter",
+            "micro_newton_per_meter",
             "milli_newton_per_meter",
+            "milli_newton_per_meter",
+            "centi_newton_per_meter",
+            "newton_per_meter",
             "newton_per_centi_meter",
             "newton_per_milli_meter",
             "kilo_newton_per_meter",
+            "kilo_newton_per_meter",
+            "mega_newton_per_meter",
+            "giga_newton_per_meter",
         ],
     )
 
@@ -3326,33 +3853,6 @@ class PermittivityRatio(DimensionlessRatio):
 
 # generated by datamodel-codegen:
 #   filename:  OSW07c57bfb44bc521d978ee17c347b3eb4.json
-
-
-class LinearForce(ForcePerLength):
-    """
-    Another name for Force Per Length, used by the Industry Foundation Classes (IFC) standard.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "07c57bfb-44bc-521d-978e-e17c347b3eb4",
-            "title": "LinearForce",
-            "title*": {"en": "Linear Force", "de": "Streckenlast"},
-            "description": "Another name for Force Per Length, used by the Industry Foundation Classes (IFC) standard.",
-            "description*": {
-                "en": "Another name for Force Per Length, used by the Industry Foundation Classes (IFC) standard."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLinearForceValue",
-            "@context": [
-                "/wiki/Category:OSW4496d2b66d71545392a81e9e05297338?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW07c57bfb44bc521d978ee17c347b3eb4"]
 
 
 # generated by datamodel-codegen:
@@ -4195,6 +4695,10 @@ class TemperatureUnit(Enum):
     """
     m°C
     """
+    degree_Rankine = Unit.degree_Rankine.value
+    """
+    °R
+    """
     Celsius = Unit.Celsius.value
     """
     °C
@@ -4236,12 +4740,13 @@ class Temperature(QuantityValue):
     type: list[str] | None = ["Category:OSW20927e4900e95e93985698c92995f964"]
     unit: TemperatureUnit | None = Field(
         TemperatureUnit.kelvin,
-        options={"enum_titles": ["K", "mK", "m°C", "°C", "daK", "MK"]},
+        options={"enum_titles": ["K", "mK", "m°C", "°R", "°C", "daK", "MK"]},
         title="TemperatureUnit",
         x_enum_varnames=[
             "kelvin",
             "milli_kelvin",
             "milli_Celsius",
+            "degree_Rankine",
             "Celsius",
             "deca_kelvin",
             "mega_kelvin",
@@ -4357,9 +4862,17 @@ class InverseLengthUnit(Enum):
     """
     mm/m²
     """
+    debye = Unit.debye.value
+    """
+    D
+    """
     per_meter_1 = Unit.per_meter_1.value
     """
     m/m²
+    """
+    radian_per_meter = Unit.radian_per_meter.value
+    """
+    rad/m
     """
     per_centi_meter = Unit.per_centi_meter.value
     """
@@ -4416,7 +4929,9 @@ class InverseLength(QuantityValue):
                 "m/ha",
                 "/km",
                 "mm/m²",
+                "D",
                 "m/m²",
+                "rad/m",
                 "/cm",
                 "/mm",
                 "/μm",
@@ -4430,7 +4945,9 @@ class InverseLength(QuantityValue):
             "meter_per_hectare",
             "per_kilo_meter",
             "milli_meter_per_meter_squared",
+            "debye",
             "per_meter",
+            "radian_per_meter",
             "per_centi_meter",
             "per_milli_meter",
             "per_micro_meter",
@@ -4791,6 +5308,10 @@ class ConductanceUnit(Enum):
     """
     μS
     """
+    micro_n = Unit.micro_n.value
+    """
+    μ℧
+    """
     milli_siemens = Unit.milli_siemens.value
     """
     mS
@@ -4798,6 +5319,10 @@ class ConductanceUnit(Enum):
     deci_siemens = Unit.deci_siemens.value
     """
     dS
+    """
+    siemens_1 = Unit.siemens_1.value
+    """
+    ℧
     """
     kilo_siemens = Unit.kilo_siemens.value
     """
@@ -4836,15 +5361,19 @@ class Conductance(QuantityValue):
     type: list[str] | None = ["Category:OSW0e1e7031084d5e20b42b5ceba993d916"]
     unit: ConductanceUnit | None = Field(
         ConductanceUnit.siemens,
-        options={"enum_titles": ["S", "pS", "nS", "μS", "mS", "dS", "kS", "MS"]},
+        options={
+            "enum_titles": ["S", "pS", "nS", "μS", "μ℧", "mS", "dS", "℧", "kS", "MS"]
+        },
         title="ConductanceUnit",
         x_enum_varnames=[
             "siemens",
             "pico_siemens",
             "nano_siemens",
             "micro_siemens",
+            "micro_n",
             "milli_siemens",
             "deci_siemens",
+            "siemens",
             "kilo_siemens",
             "mega_siemens",
         ],
@@ -4956,6 +5485,10 @@ class LuminousFluxPerAreaUnit(Enum):
     """
     cd/m²
     """
+    phot = Unit.phot.value
+    """
+    ph
+    """
 
 
 class LuminousFluxPerArea(QuantityValue):
@@ -4985,9 +5518,9 @@ class LuminousFluxPerArea(QuantityValue):
     type: list[str] | None = ["Category:OSW79225fde5f8059d1802f8181c06b4cfa"]
     unit: LuminousFluxPerAreaUnit | None = Field(
         LuminousFluxPerAreaUnit.lux,
-        options={"enum_titles": ["lx", "cd/m²"]},
+        options={"enum_titles": ["lx", "cd/m²", "ph"]},
         title="LuminousFluxPerAreaUnit",
-        x_enum_varnames=["lux", "candela_per_meter_squared"],
+        x_enum_varnames=["lux", "candela_per_meter_squared", "phot"],
     )
 
 
@@ -5026,6 +5559,10 @@ class InverseVolumeUnit(Enum):
     per_meter_cubed = Unit.per_meter_cubed.value
     """
     /m³
+    """
+    becquerel_second_per_meter_cubed = Unit.becquerel_second_per_meter_cubed.value
+    """
+    Bq·s/m³
     """
     per_liter = Unit.per_liter.value
     """
@@ -5070,10 +5607,11 @@ class InverseVolume(QuantityValue):
     type: list[str] | None = ["Category:OSWdc5df784e44e5802beda722786fd75bf"]
     unit: InverseVolumeUnit | None = Field(
         InverseVolumeUnit.per_meter_cubed,
-        options={"enum_titles": ["/m³", "/L", "/cm³", "/mL", "/mm³"]},
+        options={"enum_titles": ["/m³", "Bq·s/m³", "/L", "/cm³", "/mL", "/mm³"]},
         title="InverseVolumeUnit",
         x_enum_varnames=[
             "per_meter_cubed",
+            "becquerel_second_per_meter_cubed",
             "per_liter",
             "per_centi_meter_cubed",
             "per_milli_liter",
@@ -5365,6 +5903,10 @@ class ForceUnit(Enum):
     """
     μN
     """
+    dyne = Unit.dyne.value
+    """
+    dyn
+    """
     milli_newton = Unit.milli_newton.value
     """
     mN
@@ -5418,12 +5960,15 @@ class Force(QuantityValue):
     type: list[str] | None = ["Category:OSW1b832c1a42c055eb9669bb0cdda18d7f"]
     unit: ForceUnit | None = Field(
         ForceUnit.newton,
-        options={"enum_titles": ["N", "nN", "μN", "mN", "cN", "dN", "kN", "MN", "GN"]},
+        options={
+            "enum_titles": ["N", "nN", "μN", "dyn", "mN", "cN", "dN", "kN", "MN", "GN"]
+        },
         title="ForceUnit",
         x_enum_varnames=[
             "newton",
             "nano_newton",
             "micro_newton",
+            "dyne",
             "milli_newton",
             "centi_newton",
             "deci_newton",
@@ -5814,11 +6359,9 @@ class HeatCapacityRatio(DimensionlessRatio):
 
 
 class MassPerAreaTimeUnit(Enum):
-    kilo_gram_per_meter_squared_per_second = (
-        Unit.kilo_gram_per_meter_squared_per_second.value
-    )
+    pascal_second_per_meter = Unit.pascal_second_per_meter.value
     """
-    kg/(m²·s)
+    Pa·s/m
     """
     gram_per_hectare_per_year = Unit.gram_per_hectare_per_year.value
     """
@@ -5900,6 +6443,12 @@ class MassPerAreaTimeUnit(Enum):
     """
     g/(m²·s)
     """
+    kilo_gram_per_meter_squared_per_second = (
+        Unit.kilo_gram_per_meter_squared_per_second.value
+    )
+    """
+    kg/(m²·s)
+    """
     kilo_gram_per_meter_squared_per_second_1 = (
         Unit.kilo_gram_per_meter_squared_per_second_1.value
     )
@@ -5938,10 +6487,10 @@ class MassPerAreaTime(QuantityValue):
 
     type: list[str] | None = ["Category:OSW9e775ee5d35455faaa88953b35b2d911"]
     unit: MassPerAreaTimeUnit | None = Field(
-        MassPerAreaTimeUnit.kilo_gram_per_meter_squared_per_second,
+        MassPerAreaTimeUnit.pascal_second_per_meter,
         options={
             "enum_titles": [
-                "kg/(m²·s)",
+                "Pa·s/m",
                 "g/(ha·a)",
                 "μg/(m²·d)",
                 "ng/(cm²·d)",
@@ -5959,13 +6508,14 @@ class MassPerAreaTime(QuantityValue):
                 "mg/(m²·s)",
                 "kg/(m²·d)",
                 "g/(m²·s)",
+                "kg/(m²·s)",
                 "kg/(s·m²)",
                 "g/(s·m²)",
             ]
         },
         title="MassPerAreaTimeUnit",
         x_enum_varnames=[
-            "kilo_gram_per_meter_squared_per_second",
+            "pascal_second_per_meter",
             "gram_per_hectare_per_year",
             "micro_gram_per_day_per_meter_squared",
             "nano_gram_per_centi_meter_squared_per_day",
@@ -5983,6 +6533,7 @@ class MassPerAreaTime(QuantityValue):
             "milli_gram_per_meter_squared_per_second",
             "kilo_gram_per_day_per_meter_squared",
             "gram_per_meter_squared_per_second",
+            "kilo_gram_per_meter_squared_per_second",
             "kilo_gram_per_meter_squared_per_second",
             "gram_per_meter_squared_per_second",
         ],
@@ -6021,7 +6572,7 @@ class AcousticImpediance(MassPerAreaTime):
 
 
 class PlaneAngleUnit(Enum):
-    radian = Unit.radian.value
+    radiation_absorbed_dose = Unit.radian.value
     """
     rad
     """
@@ -6085,7 +6636,7 @@ class PlaneAngle(QuantityValue):
 
     type: list[str] | None = ["Category:OSWcfa8c1748f3b586e9a0304ab1e2dbc41"]
     unit: PlaneAngleUnit | None = Field(
-        PlaneAngleUnit.radian,
+        PlaneAngleUnit.radiation_absorbed_dose,
         options={
             "enum_titles": [
                 "rad",
@@ -6101,7 +6652,7 @@ class PlaneAngle(QuantityValue):
         },
         title="PlaneAngleUnit",
         x_enum_varnames=[
-            "radian",
+            "radiation_absorbed_dose",
             "micro_radian",
             "minute",
             "mil_NATO",
@@ -6665,33 +7216,6 @@ class ConductivityVariance(QuantityValue):
 #   filename:  OSW129f1aed78505813a671e17140ddd9e3.json
 
 
-class MagneticFieldStrength(ElectricCurrentPerLength):
-    """
-    $\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "129f1aed-7850-5813-a671-e17140ddd9e3",
-            "title": "MagneticFieldStrength",
-            "title*": {"en": "Magnetic field strength", "de": "Magnetische Feldstärke"},
-            "description": "$\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$.",
-            "description*": {
-                "en": "$\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMagneticFieldStrengthValue",
-            "@context": [
-                "/wiki/Category:OSW8ba7ac8b06c453e2885cc41c9d9ee0bb?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW129f1aed78505813a671e17140ddd9e3"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW12b88b32ed2f58c5aa633841b687b985.json
 
@@ -7134,6 +7658,10 @@ class MassUnit(Enum):
     """
     kg
     """
+    dalton = Unit.dalton.value
+    """
+    Da
+    """
     femto_gram = Unit.femto_gram.value
     """
     fg
@@ -7162,6 +7690,10 @@ class MassUnit(Enum):
     """
     dg
     """
+    carat = Unit.carat.value
+    """
+    ct
+    """
     gram = Unit.gram.value
     """
     g
@@ -7170,13 +7702,41 @@ class MassUnit(Enum):
     """
     dag
     """
+    ampere_turn = "Item:OSW54afa4358b8655338e8e82e2ea7fac65"
+    """
+    AT
+    """
+    troy_ounce = Unit.troy_ounce.value
+    """
+    oz{Troy}
+    """
     hecto_gram = Unit.hecto_gram.value
     """
     hg
     """
+    troy_pound = Unit.troy_pound.value
+    """
+    lbt
+    """
+    pound = Unit.pound.value
+    """
+    lbm
+    """
     deci_metric_ton = Unit.deci_metric_ton.value
     """
     dt
+    """
+    klbm = Unit.klbm.value
+    """
+    klbm
+    """
+    tn = Unit.tn.value
+    """
+    tn
+    """
+    ton = Unit.ton.value
+    """
+    ton{short}
     """
     mega_gram = Unit.mega_gram.value
     """
@@ -7189,6 +7749,10 @@ class MassUnit(Enum):
     knot = Unit.knot.value
     """
     kt
+    """
+    Mtn = Unit.Mtn.value
+    """
+    Mtn
     """
     mega_metric_ton = Unit.mega_metric_ton.value
     """
@@ -7226,6 +7790,7 @@ class Mass(QuantityValue):
         options={
             "enum_titles": [
                 "kg",
+                "Da",
                 "fg",
                 "pg",
                 "ng",
@@ -7233,19 +7798,29 @@ class Mass(QuantityValue):
                 "mg",
                 "cg",
                 "dg",
+                "ct",
                 "g",
                 "dag",
+                "AT",
+                "oz{Troy}",
                 "hg",
+                "lbt",
+                "lbm",
                 "dt",
+                "klbm",
+                "tn",
+                "ton{short}",
                 "Mg",
                 "t",
                 "kt",
+                "Mtn",
                 "Mt",
             ]
         },
         title="MassUnit",
         x_enum_varnames=[
             "kilo_gram",
+            "dalton",
             "femto_gram",
             "pico_gram",
             "nano_gram",
@@ -7253,13 +7828,22 @@ class Mass(QuantityValue):
             "milli_gram",
             "centi_gram",
             "deci_gram",
+            "carat",
             "gram",
             "deca_gram",
+            "ampere_turn",
+            "troy_ounce",
             "hecto_gram",
+            "troy_pound",
+            "pound",
             "deci_metric_ton",
+            "klbm",
+            "tn",
+            "ton",
             "mega_gram",
             "metric_ton",
             "knot",
+            "Mtn",
             "mega_metric_ton",
         ],
     )
@@ -7332,6 +7916,18 @@ class ForcePerAngleUnit(Enum):
     """
     N/rad
     """
+    newton_per_radian_1 = Unit.newton_per_radian_1.value
+    """
+    N·m/(m·rad)
+    """
+    newton_per_degree = Unit.newton_per_degree.value
+    """
+    N·m/(°·m)
+    """
+    kilo_newton_per_degree = Unit.kilo_newton_per_degree.value
+    """
+    kN·m/(°·m)
+    """
 
 
 class ForcePerAngle(QuantityValue):
@@ -7359,9 +7955,14 @@ class ForcePerAngle(QuantityValue):
     type: list[str] | None = ["Category:OSW15c4097ed256572c97e7a1dbbfb154dd"]
     unit: ForcePerAngleUnit | None = Field(
         ForcePerAngleUnit.newton_per_radian,
-        options={"enum_titles": ["N/rad"]},
+        options={"enum_titles": ["N/rad", "N·m/(m·rad)", "N·m/(°·m)", "kN·m/(°·m)"]},
         title="ForcePerAngleUnit",
-        x_enum_varnames=["newton_per_radian"],
+        x_enum_varnames=[
+            "newton_per_radian",
+            "newton_per_radian",
+            "newton_per_degree",
+            "kilo_newton_per_degree",
+        ],
     )
 
 
@@ -7991,6 +8592,10 @@ class VoltageUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -7998,6 +8603,10 @@ class VoltageUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -8059,8 +8668,10 @@ class Voltage(QuantityValue):
                 "fV",
                 "pV",
                 "nV",
+                "abV",
                 "μV",
                 "mV",
+                "statV",
                 "kV",
                 "MV",
                 "GV",
@@ -8075,8 +8686,10 @@ class Voltage(QuantityValue):
             "femto_volt",
             "pico_volt",
             "nano_volt",
+            "abvolt",
             "micro_volt",
             "milli_volt",
+            "statvolt",
             "kilo_volt",
             "mega_volt",
             "giga_volt",
@@ -8457,49 +9070,6 @@ class NeutronDiffusionLength(Length):
 
 # generated by datamodel-codegen:
 #   filename:  OSW1b832c1a42c055eb9669bb0cdda18d7f.json
-
-
-class Force(QuantityValue):
-    """
-    "Force" is an influence that causes mass to accelerate. It may be experienced as a lift, a push, or a pull. Force is defined by Newton's Second Law as $F = m \\times a $, where $F$ is force, $m$ is mass and $a$ is acceleration. Net force is mathematically equal to the time rate of change of the momentum of the body on which it acts. Since momentum is a vector quantity (has both a magnitude and direction), force also is a vector quantity.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "1b832c1a-42c0-55eb-9669-bb0cdda18d7f",
-            "title": "Force",
-            "title*": {"en": "Force", "de": "Kraft"},
-            "description": '"Force" is an influence that causes mass to accelerate. It may be experienced as a lift, a push, or a pull. Force is defined by Newton\'s Second Law as $F = m \\times a $, where $F$ is force, $m$ is mass and $a$ is acceleration. Net force is mathematically equal to the time rate of change of the momentum of the body on which it acts. Since momentum is a vector quantity (has both a magnitude and direction), force also is a vector quantity.',
-            "description*": {
-                "en": '"Force" is an influence that causes mass to accelerate. It may be experienced as a lift, a push, or a pull. Force is defined by Newton\'s Second Law as $F = m \\times a $, where $F$ is force, $m$ is mass and $a$ is acceleration. Net force is mathematically equal to the time rate of change of the momentum of the body on which it acts. Since momentum is a vector quantity (has both a magnitude and direction), force also is a vector quantity.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasForceValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW1b832c1a42c055eb9669bb0cdda18d7f"]
-    unit: ForceUnit | None = Field(
-        ForceUnit.newton,
-        options={"enum_titles": ["N", "nN", "μN", "mN", "cN", "dN", "kN", "MN", "GN"]},
-        title="ForceUnit",
-        x_enum_varnames=[
-            "newton",
-            "nano_newton",
-            "micro_newton",
-            "milli_newton",
-            "centi_newton",
-            "deci_newton",
-            "kilo_newton",
-            "mega_newton",
-            "giga_newton",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -9004,31 +9574,6 @@ class NozzleWallsThrustReaction(Force):
 #   filename:  OSW1e2d83c5660e50828bd14194ea5d5717.json
 
 
-class AreaRatio(DimensionlessRatio):
-    """
-    This is an autogenerated partial class definition of 'AreaRatio'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "1e2d83c5-660e-5082-8bd1-4194ea5d5717",
-            "title": "AreaRatio",
-            "title*": {"en": "Area Ratio"},
-            "description": "This is an autogenerated partial class definition of 'AreaRatio'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAreaRatioValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW1e2d83c5660e50828bd14194ea5d5717"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW1e5c0baddb355cd591ec727ff16e88d9.json
 
@@ -9149,9 +9694,17 @@ class MagneticFluxDensityUnit(Enum):
     """
     nT
     """
+    gamma = Unit.gamma.value
+    """
+    γ
+    """
     micro_tesla = Unit.micro_tesla.value
     """
     μT
+    """
+    abT = Unit.abT.value
+    """
+    abT
     """
     milli_tesla = Unit.milli_tesla.value
     """
@@ -9190,12 +9743,14 @@ class MagneticFluxDensity(QuantityValue):
     type: list[str] | None = ["Category:OSW91fc2f110c7f52628dce39bc0278562b"]
     unit: MagneticFluxDensityUnit | None = Field(
         MagneticFluxDensityUnit.tesla,
-        options={"enum_titles": ["T", "nT", "μT", "mT", "kT"]},
+        options={"enum_titles": ["T", "nT", "γ", "μT", "abT", "mT", "kT"]},
         title="MagneticFluxDensityUnit",
         x_enum_varnames=[
             "tesla",
             "nano_tesla",
+            "gamma",
             "micro_tesla",
+            "abT",
             "milli_tesla",
             "kilo_tesla",
         ],
@@ -9338,105 +9893,8 @@ class MigrationArea(Area):
 #   filename:  OSW1fcf1694712e5684885071efdf775bd9.json
 
 
-class Area(QuantityValue):
-    """
-    Area is a quantity expressing the two-dimensional size of a defined part of a surface, typically a region bounded by a closed curve.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "1fcf1694-712e-5684-8850-71efdf775bd9",
-            "title": "Area",
-            "title*": {"en": "Area", "de": "Fläche"},
-            "description": "Area is a quantity expressing the two-dimensional size of a defined part of a surface, typically a region bounded by a closed curve.",
-            "description*": {
-                "en": "Area is a quantity expressing the two-dimensional size of a defined part of a surface, typically a region bounded by a closed curve."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW1fcf1694712e5684885071efdf775bd9"]
-    unit: AreaUnit | None = Field(
-        AreaUnit.meter_squared,
-        options={
-            "enum_titles": [
-                "m²",
-                "nm²",
-                "μm²",
-                "mm²",
-                "cm²",
-                "dm²",
-                "a",
-                "daa",
-                "ha",
-                "km²",
-            ]
-        },
-        title="AreaUnit",
-        x_enum_varnames=[
-            "meter_squared",
-            "nano_meter_squared",
-            "micro_meter_squared",
-            "milli_meter_squared",
-            "centi_meter_squared",
-            "deci_meter_squared",
-            "year",
-            "deca_year",
-            "hectare",
-            "kilo_meter_squared",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW20927e4900e95e93985698c92995f964.json
-
-
-class Temperature(QuantityValue):
-    """
-    Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "20927e49-00e9-5e93-9856-98c92995f964",
-            "title": "Temperature",
-            "title*": {"en": "Temperature"},
-            "description": "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity.",
-            "description*": {
-                "en": "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasTemperatureValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW20927e4900e95e93985698c92995f964"]
-    unit: TemperatureUnit | None = Field(
-        TemperatureUnit.kelvin,
-        options={"enum_titles": ["K", "mK", "m°C", "°C", "daK", "MK"]},
-        title="TemperatureUnit",
-        x_enum_varnames=[
-            "kelvin",
-            "milli_kelvin",
-            "milli_Celsius",
-            "Celsius",
-            "deca_kelvin",
-            "mega_kelvin",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -9923,33 +10381,6 @@ class BurstFactor(QuantityValue):
 #   filename:  OSW2339256af71e5635a541ac7f5a437141.json
 
 
-class Angle(DimensionlessRatio):
-    """
-    The abstract notion of angle. Narrow concepts include plane angle and solid angle. While both plane angle and solid angle are dimensionless, they are actually length/length and area/area respectively.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "2339256a-f71e-5635-a541-ac7f5a437141",
-            "title": "Angle",
-            "title*": {"en": "Angle"},
-            "description": "The abstract notion of angle. Narrow concepts include plane angle and solid angle. While both plane angle and solid angle are dimensionless, they are actually length/length and area/area respectively.",
-            "description*": {
-                "en": "The abstract notion of angle. Narrow concepts include plane angle and solid angle. While both plane angle and solid angle are dimensionless, they are actually length/length and area/area respectively."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAngleValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW2339256af71e5635a541ac7f5a437141"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW2341adcf1a54557f886137e4180398d9.json
 
@@ -10046,63 +10477,6 @@ class MacroscopicTotalCrossSection(CrossSection):
 #   filename:  OSW23837e2c50f05ba884682b08465bf173.json
 
 
-class InverseLength(QuantityValue):
-    """
-    Reciprocal length or inverse length is a measurement used in several branches of science and mathematics. As the reciprocal of length, common units used for this measurement include the reciprocal metre or inverse metre ($m^{-1}$), the reciprocal centimetre or inverse centimetre ($cm^{-1}$), and, in optics, the dioptre.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "23837e2c-50f0-5ba8-8468-2b08465bf173",
-            "title": "InverseLength",
-            "title*": {"en": "Inverse Length"},
-            "description": "Reciprocal length or inverse length is a measurement used in several branches of science and mathematics. As the reciprocal of length, common units used for this measurement include the reciprocal metre or inverse metre ($m^{-1}$), the reciprocal centimetre or inverse centimetre ($cm^{-1}$), and, in optics, the dioptre.",
-            "description*": {
-                "en": "Reciprocal length or inverse length is a measurement used in several branches of science and mathematics. As the reciprocal of length, common units used for this measurement include the reciprocal metre or inverse metre ($m^{-1}$), the reciprocal centimetre or inverse centimetre ($cm^{-1}$), and, in optics, the dioptre."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInverseLengthValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW23837e2c50f05ba884682b08465bf173"]
-    unit: InverseLengthUnit | None = Field(
-        InverseLengthUnit.per_meter,
-        options={
-            "enum_titles": [
-                "/m",
-                "m/ha",
-                "/km",
-                "mm/m²",
-                "m/m²",
-                "/cm",
-                "/mm",
-                "/μm",
-                "/nm",
-                "/pm",
-            ]
-        },
-        title="InverseLengthUnit",
-        x_enum_varnames=[
-            "per_meter",
-            "meter_per_hectare",
-            "per_kilo_meter",
-            "milli_meter_per_meter_squared",
-            "per_meter",
-            "per_centi_meter",
-            "per_milli_meter",
-            "per_micro_meter",
-            "per_nano_meter",
-            "per_pico_meter",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW2389ed8639535a34968939f5fa9559b2.json
 
@@ -10163,33 +10537,6 @@ class PositiveLength1(Length):
         }
 
     type: list[str] | None = ["Category:OSW04772b7915d6597fadf5b7d44f4e90a5"]
-
-
-class PositiveLength(PositiveLength1):
-    """
-    "PositiveLength" is a measure of length strictly greater than zero.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "238bf8ec-20d0-5670-bba3-2c1b44182138",
-            "title": "PositiveLength",
-            "title*": {"en": "Positive Length"},
-            "description": '"PositiveLength" is a measure of length strictly greater than zero.',
-            "description*": {
-                "en": '"PositiveLength" is a measure of length strictly greater than zero.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPositiveLengthValue",
-            "@context": [
-                "/wiki/Category:OSW04772b7915d6597fadf5b7d44f4e90a5?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW238bf8ec20d05670bba32c1b44182138"]
 
 
 # generated by datamodel-codegen:
@@ -11036,9 +11383,21 @@ class ElectricChargePerMassUnit(Enum):
     """
     /(T·s)
     """
+    milli_molar_gas_constant = Unit.milli_molar_gas_constant.value
+    """
+    mR
+    """
+    molar_gas_constant = Unit.molar_gas_constant.value
+    """
+    R
+    """
     milli_coulomb_per_kilo_gram = Unit.milli_coulomb_per_kilo_gram.value
     """
     mC/kg
+    """
+    kilo_molar_gas_constant = Unit.kilo_molar_gas_constant.value
+    """
+    kR
     """
     ampere_meter_squared_per_joule_per_second = (
         Unit.ampere_meter_squared_per_joule_per_second.value
@@ -11094,7 +11453,10 @@ class ElectricChargePerMass(QuantityValue):
         options={
             "enum_titles": [
                 "/(T·s)",
+                "mR",
+                "R",
                 "mC/kg",
+                "kR",
                 "A·m²/(J·s)",
                 "C/kg",
                 "Hz/T",
@@ -11105,7 +11467,10 @@ class ElectricChargePerMass(QuantityValue):
         title="ElectricChargePerMassUnit",
         x_enum_varnames=[
             "per_second_per_tesla",
+            "milli_molar_gas_constant",
+            "molar_gas_constant",
             "milli_coulomb_per_kilo_gram",
+            "kilo_molar_gas_constant",
             "ampere_meter_squared_per_joule_per_second",
             "coulomb_per_kilo_gram",
             "hertz_per_tesla",
@@ -11721,33 +12086,6 @@ class SpecificModulus(QuantityValue):
 #   filename:  OSW2b4e65f26005511487ca6d47b859e932.json
 
 
-class SignalStrength(ElectricField):
-    """
-    In telecommunications, particularly in radio, signal strength refers to the magnitude of the electric field at a reference point that is a significant distance from the transmitting antenna. It may also be referred to as received signal level or field strength. Typically, it is expressed in voltage per length or signal power received by a reference antenna. High-powered transmissions, such as those used in broadcasting, are expressed in dB-millivolts per metre (dBmV/m).
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "2b4e65f2-6005-5114-87ca-6d47b859e932",
-            "title": "SignalStrength",
-            "title*": {"en": "Signal Strength"},
-            "description": "In telecommunications, particularly in radio, signal strength refers to the magnitude of the electric field at a reference point that is a significant distance from the transmitting antenna. It may also be referred to as received signal level or field strength. Typically, it is expressed in voltage per length or signal power received by a reference antenna. High-powered transmissions, such as those used in broadcasting, are expressed in dB-millivolts per metre (dBmV/m).",
-            "description*": {
-                "en": "In telecommunications, particularly in radio, signal strength refers to the magnitude of the electric field at a reference point that is a significant distance from the transmitting antenna. It may also be referred to as received signal level or field strength. Typically, it is expressed in voltage per length or signal power received by a reference antenna. High-powered transmissions, such as those used in broadcasting, are expressed in dB-millivolts per metre (dBmV/m)."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasSignalStrengthValue",
-            "@context": [
-                "/wiki/Category:OSW4f0b3f4a40ad5ffbb492a000abe2b30d?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW2b4e65f26005511487ca6d47b859e932"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW2ba24c911c375c43a823fe91a4fc825a.json
 
@@ -12016,33 +12354,6 @@ class Radiosity(PowerPerArea):
 #   filename:  OSW2cae7f47264e5a25abee5713c593bc56.json
 
 
-class HeatFlowRate(Power):
-    """
-    The rate of heat flow between two systems is measured in watts (joules per second). The formula for rate of heat flow is $\\bigtriangleup Q / \\bigtriangleup t = -K \\times A \\times \\bigtriangleup T/x$, where $\\bigtriangleup Q / \\bigtriangleup t$ is the rate of heat flow; $-K$ is the thermal conductivity factor; A is the surface area; $\\bigtriangleup T$ is the change in temperature and $x$ is the thickness of the material. $\\bigtriangleup  T/ x$ is called the temperature gradient and is always negative because of the heat of flow always goes from more thermal energy to less).
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "2cae7f47-264e-5a25-abee-5713c593bc56",
-            "title": "HeatFlowRate",
-            "title*": {"en": "Heat Flow Rate"},
-            "description": "The rate of heat flow between two systems is measured in watts (joules per second). The formula for rate of heat flow is $\\bigtriangleup Q / \\bigtriangleup t = -K \\times A \\times \\bigtriangleup T/x$, where $\\bigtriangleup Q / \\bigtriangleup t$ is the rate of heat flow; $-K$ is the thermal conductivity factor; A is the surface area; $\\bigtriangleup T$ is the change in temperature and $x$ is the thickness of the material. $\\bigtriangleup  T/ x$ is called the temperature gradient and is always negative because of the heat of flow always goes from more thermal energy to less).",
-            "description*": {
-                "en": "The rate of heat flow between two systems is measured in watts (joules per second). The formula for rate of heat flow is $\\bigtriangleup Q / \\bigtriangleup t = -K \\times A \\times \\bigtriangleup T/x$, where $\\bigtriangleup Q / \\bigtriangleup t$ is the rate of heat flow; $-K$ is the thermal conductivity factor; A is the surface area; $\\bigtriangleup T$ is the change in temperature and $x$ is the thickness of the material. $\\bigtriangleup  T/ x$ is called the temperature gradient and is always negative because of the heat of flow always goes from more thermal energy to less)."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasHeatFlowRateValue",
-            "@context": [
-                "/wiki/Category:OSWa819b53101b854ad923f9f13dfb41794?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW2cae7f47264e5a25abee5713c593bc56"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW2d0da104d005586998d511764fbb2517.json
 
@@ -12141,6 +12452,50 @@ class Population(Count):
         }
 
     type: list[str] | None = ["Category:OSW2d1d1f04bf8d579180ad371211ea8969"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW2d29c3f218f75d669b67f8008851f82e.json
+
+
+class PowerPerAreaAngleUnit(Enum):
+    watt_per_meter_squared_per_steradian = (
+        Unit.watt_per_meter_squared_per_steradian.value
+    )
+    """
+    W/(m²·sr)
+    """
+
+
+class PowerPerAreaAngle(QuantityValue):
+    """
+    This is an autogenerated partial class definition of 'PowerPerAreaAngle'
+    """
+
+    class Config:
+        schema_extra = {
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "2d29c3f2-18f7-5d66-9b67-f8008851f82e",
+            "title": "PowerPerAreaAngle",
+            "title*": {"en": "Power per Area Angle"},
+            "description": "This is an autogenerated partial class definition of 'PowerPerAreaAngle'",
+            "description*": {},
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasPowerPerAreaAngleValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        }
+
+    type: list[str] | None = ["Category:OSW2d29c3f218f75d669b67f8008851f82e"]
+    unit: PowerPerAreaAngleUnit | None = Field(
+        PowerPerAreaAngleUnit.watt_per_meter_squared_per_steradian,
+        options={"enum_titles": ["W/(m²·sr)"]},
+        title="PowerPerAreaAngleUnit",
+        x_enum_varnames=["watt_per_meter_squared_per_steradian"],
+    )
 
 
 # generated by datamodel-codegen:
@@ -12514,6 +12869,10 @@ class EnergyPerElectricChargeUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -12521,6 +12880,10 @@ class EnergyPerElectricChargeUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -12581,8 +12944,10 @@ class EnergyPerElectricCharge(QuantityValue):
                 "fV",
                 "pV",
                 "nV",
+                "abV",
                 "μV",
                 "mV",
+                "statV",
                 "kV",
                 "MV",
                 "GV",
@@ -12597,8 +12962,10 @@ class EnergyPerElectricCharge(QuantityValue):
             "femto_volt",
             "pico_volt",
             "nano_volt",
+            "abvolt",
             "micro_volt",
             "milli_volt",
+            "statvolt",
             "kilo_volt",
             "mega_volt",
             "giga_volt",
@@ -13057,73 +13424,6 @@ class InverseSquareEnergy(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSW2ff3a26daf13563481acc8b0ebc5b37f.json
-
-
-class ForcePerArea(QuantityValue):
-    """
-    The force applied to a unit area of surface; measured in pascals (SI unit) or in dynes (cgs unit)
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "2ff3a26d-af13-5634-81ac-c8b0ebc5b37f",
-            "title": "ForcePerArea",
-            "title*": {"en": "Force Per Area"},
-            "description": "The force applied to a unit area of surface; measured in pascals (SI unit) or in dynes (cgs unit)",
-            "description*": {
-                "en": "The force applied to a unit area of surface; measured in pascals (SI unit) or in dynes (cgs unit)"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasForcePerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW2ff3a26daf13563481acc8b0ebc5b37f"]
-    unit: ForcePerAreaUnit | None = Field(
-        ForcePerAreaUnit.pascal,
-        options={
-            "enum_titles": [
-                "Pa",
-                "pPa",
-                "μPa",
-                "mPa",
-                "N/m²",
-                "kg/(m·s²)",
-                "daPa",
-                "hPa",
-                "g/(m·s²)",
-                "kN/m²",
-                "kPa",
-                "N/cm²",
-                "MPa",
-                "N/mm²",
-                "GPa",
-            ]
-        },
-        title="ForcePerAreaUnit",
-        x_enum_varnames=[
-            "pascal",
-            "pico_pascal",
-            "micro_pascal",
-            "milli_pascal",
-            "newton_per_meter_squared",
-            "kilo_gram_per_meter_per_second_squared",
-            "deca_pascal",
-            "hecto_pascal",
-            "gram_per_meter_per_second_squared",
-            "kilo_newton_per_meter_squared",
-            "kilo_pascal",
-            "newton_per_centi_meter_squared",
-            "mega_pascal",
-            "newton_per_milli_meter_squared",
-            "giga_pascal",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -13621,9 +13921,13 @@ class RadianceFactor(QuantityValue):
 
 
 class AccelerationUnit(Enum):
-    meter_per_second_squared = Unit.meter_per_second_squared.value
+    newton_per_kilo_gram = Unit.newton_per_kilo_gram.value
     """
-    m/s²
+    N/kg
+    """
+    newton_per_gram = Unit.newton_per_gram.value
+    """
+    N/g
     """
     milli_meter_per_second_squared = Unit.milli_meter_per_second_squared.value
     """
@@ -13633,9 +13937,25 @@ class AccelerationUnit(Enum):
     """
     cm/s²
     """
+    meter_squared_pascal_per_kilo_gram = Unit.meter_squared_pascal_per_kilo_gram.value
+    """
+    Pa·m²/kg
+    """
+    meter_per_second_squared = Unit.meter_per_second_squared.value
+    """
+    m/s²
+    """
+    meter_squared_pascal_per_gram = Unit.meter_squared_pascal_per_gram.value
+    """
+    Pa·m²/g
+    """
     kilo_meter_per_second_squared = Unit.kilo_meter_per_second_squared.value
     """
     km/s²
+    """
+    kilo_pascal_meter_squared_per_gram = Unit.kilo_pascal_meter_squared_per_gram.value
+    """
+    kPa·m²/g
     """
 
 
@@ -13674,14 +13994,31 @@ class Acceleration(QuantityValue):
 
     type: list[str] | None = ["Category:OSW347462e67d905995af16f97dc7c9ef48"]
     unit: AccelerationUnit | None = Field(
-        AccelerationUnit.meter_per_second_squared,
-        options={"enum_titles": ["m/s²", "mm/s²", "cm/s²", "km/s²"]},
+        AccelerationUnit.newton_per_kilo_gram,
+        options={
+            "enum_titles": [
+                "N/kg",
+                "N/g",
+                "mm/s²",
+                "cm/s²",
+                "Pa·m²/kg",
+                "m/s²",
+                "Pa·m²/g",
+                "km/s²",
+                "kPa·m²/g",
+            ]
+        },
         title="AccelerationUnit",
         x_enum_varnames=[
-            "meter_per_second_squared",
+            "newton_per_kilo_gram",
+            "newton_per_gram",
             "milli_meter_per_second_squared",
             "centi_meter_per_second_squared",
+            "meter_squared_pascal_per_kilo_gram",
+            "meter_per_second_squared",
+            "meter_squared_pascal_per_gram",
             "kilo_meter_per_second_squared",
+            "kilo_pascal_meter_squared_per_gram",
         ],
     )
 
@@ -13724,6 +14061,10 @@ class EnergyPerTemperatureUnit(Enum):
     """
     J/K
     """
+    electron_volt_per_kelvin = Unit.electron_volt_per_kelvin.value
+    """
+    eV/K
+    """
     kilo_joule_per_kelvin = Unit.kilo_joule_per_kelvin.value
     """
     kJ/K
@@ -13759,10 +14100,11 @@ class EnergyPerTemperature(QuantityValue):
     type: list[str] | None = ["Category:OSWc16b766eaf3e547da6407e8eee408e7c"]
     unit: EnergyPerTemperatureUnit | None = Field(
         EnergyPerTemperatureUnit.joule_per_kelvin,
-        options={"enum_titles": ["J/K", "kJ/K", "MJ/K"]},
+        options={"enum_titles": ["J/K", "eV/K", "kJ/K", "MJ/K"]},
         title="EnergyPerTemperatureUnit",
         x_enum_varnames=[
             "joule_per_kelvin",
+            "electron_volt_per_kelvin",
             "kilo_joule_per_kelvin",
             "mega_joule_per_kelvin",
         ],
@@ -14102,89 +14444,6 @@ class LorenzCoefficient(QuantityValue):
 #   filename:  OSW389cb87d31be515aa5d2f12e2b66e938.json
 
 
-class Time(QuantityValue):
-    """
-    Time is a basic component of the measuring system used to sequence events, to compare the durations of events and the intervals between them, and to quantify the motions of objects.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "389cb87d-31be-515a-a5d2-f12e2b66e938",
-            "title": "Time",
-            "title*": {"en": "Time", "de": "Zeit"},
-            "description": "Time is a basic component of the measuring system used to sequence events, to compare the durations of events and the intervals between them, and to quantify the motions of objects.",
-            "description*": {
-                "en": "Time is a basic component of the measuring system used to sequence events, to compare the durations of events and the intervals between them, and to quantify the motions of objects."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasTimeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW389cb87d31be515aa5d2f12e2b66e938"]
-    unit: TimeUnit | None = Field(
-        TimeUnit.second,
-        options={
-            "enum_titles": [
-                "s",
-                "as",
-                "fs",
-                "ps",
-                "ns",
-                "μs",
-                "ms",
-                "ds",
-                "min{sidereal}",
-                "min",
-                "ks",
-                "h{sidereal}",
-                "h",
-                "day{sidereal}",
-                "d",
-                "wk",
-                "Ms",
-                "mo",
-                "a{tropical}",
-                "a",
-                "a{sidereal}",
-                "ka",
-                "Ma",
-            ]
-        },
-        title="TimeUnit",
-        x_enum_varnames=[
-            "second",
-            "atto_second",
-            "femto_second",
-            "pico_second",
-            "nano_second",
-            "micro_second",
-            "milli_second",
-            "deci_second",
-            "min_sidereal",
-            "minute",
-            "kilo_second",
-            "h_sidereal",
-            "hour",
-            "day_sidereal",
-            "day",
-            "week",
-            "mega_second",
-            "month",
-            "tropical_year",
-            "year",
-            "a_sidereal",
-            "kilo_year",
-            "mega_year",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW3914f80e373d5d1f9a6df3a8643ce608.json
 
@@ -14356,91 +14615,6 @@ class FissionMultiplicationFactor(Dimensionless):
 
 # generated by datamodel-codegen:
 #   filename:  OSW397c67ece63a5a5c96bad9349f49f3d7.json
-
-
-class Velocity(QuantityValue):
-    """
-    In kinematics, velocity is the speed of an object and a specification of its direction of motion. Speed describes only how fast an object is moving, whereas velocity gives both how fast and in what direction the object is moving.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "397c67ec-e63a-5a5c-96ba-d9349f49f3d7",
-            "title": "Velocity",
-            "title*": {"en": "Velocity", "de": "Geschwindigkeit"},
-            "description": "In kinematics, velocity is the speed of an object and a specification of its direction of motion. Speed describes only how fast an object is moving, whereas velocity gives both how fast and in what direction the object is moving.",
-            "description*": {
-                "en": "In kinematics, velocity is the speed of an object and a specification of its direction of motion. Speed describes only how fast an object is moving, whereas velocity gives both how fast and in what direction the object is moving."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasVelocityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW397c67ece63a5a5c96bad9349f49f3d7"]
-    unit: VelocityUnit | None = Field(
-        VelocityUnit.meter_per_second,
-        options={
-            "enum_titles": [
-                "m/s",
-                "cm/ka",
-                "mm/a",
-                "cm/a",
-                "mm/d",
-                "μm/min",
-                "m/a",
-                "mm/h",
-                "μm/s",
-                "cm/h",
-                "m/d",
-                "mm/min",
-                "m/h",
-                "mm/s",
-                "cm/s",
-                "km/d",
-                "m/min",
-                "km/h",
-                "Hz·m",
-                "kHz·m",
-                "km/s",
-                "MHz·m",
-                "GHz·m",
-                "MHz·km",
-            ]
-        },
-        title="VelocityUnit",
-        x_enum_varnames=[
-            "meter_per_second",
-            "centi_meter_per_kilo_year",
-            "milli_meter_per_year",
-            "centi_meter_per_year",
-            "milli_meter_per_day",
-            "micro_meter_per_minute",
-            "meter_per_year",
-            "milli_meter_per_hour",
-            "micro_meter_per_second",
-            "centi_meter_per_hour",
-            "meter_per_day",
-            "milli_meter_per_minute",
-            "meter_per_hour",
-            "milli_meter_per_second",
-            "centi_meter_per_second",
-            "kilo_meter_per_day",
-            "meter_per_minute",
-            "kilo_meter_per_hour",
-            "hertz_meter",
-            "kilo_hertz_meter",
-            "kilo_meter_per_second",
-            "mega_hertz_meter",
-            "giga_hertz_meter",
-            "kilo_meter_mega_hertz",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -15427,51 +15601,6 @@ class BucklingFactor(Dimensionless):
 #   filename:  OSW3f643ed2dc235d8ab1c823dfa357c16b.json
 
 
-class Permeability(QuantityValue):
-    """
-    $\\textit{Permeability}$ is the degree of magnetization of a material that responds linearly to an applied magnetic field.
-      In general permeability is a tensor-valued quantity.
-      The definition given applies to an isotropic medium.
-      For an anisotropic medium permeability is a second order tensor.
-      In electromagnetism, permeability is the measure of the ability of a material to support the formation of a magnetic field within itself.
-      In other words, it is the degree of magnetization that a material obtains in response to an applied magnetic field.
-      Magnetic permeability is typically represented by the Greek letter $\\mu$.
-      The term was coined in September, 1885 by Oliver Heaviside.
-      The reciprocal of magnetic permeability is $\\textit{Magnetic Reluctivity}$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "3f643ed2-dc23-5d8a-b1c8-23dfa357c16b",
-            "title": "Permeability",
-            "title*": {"en": "Permeability"},
-            "description": "$\\textit{Permeability}$ is the degree of magnetization of a material that responds linearly to an applied magnetic field. \n  In general permeability is a tensor-valued quantity. \n  The definition given applies to an isotropic medium. \n  For an anisotropic medium permeability is a second order tensor. \n  In electromagnetism, permeability is the measure of the ability of a material to support the formation of a magnetic field within itself. \n  In other words, it is the degree of magnetization that a material obtains in response to an applied magnetic field. \n  Magnetic permeability is typically represented by the Greek letter $\\mu$. \n  The term was coined in September, 1885 by Oliver Heaviside. \n  The reciprocal of magnetic permeability is $\\textit{Magnetic Reluctivity}$.",
-            "description*": {
-                "en": "$\\textit{Permeability}$ is the degree of magnetization of a material that responds linearly to an applied magnetic field. \n  In general permeability is a tensor-valued quantity. \n  The definition given applies to an isotropic medium. \n  For an anisotropic medium permeability is a second order tensor. \n  In electromagnetism, permeability is the measure of the ability of a material to support the formation of a magnetic field within itself. \n  In other words, it is the degree of magnetization that a material obtains in response to an applied magnetic field. \n  Magnetic permeability is typically represented by the Greek letter $\\mu$. \n  The term was coined in September, 1885 by Oliver Heaviside. \n  The reciprocal of magnetic permeability is $\\textit{Magnetic Reluctivity}$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPermeabilityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW3f643ed2dc235d8ab1c823dfa357c16b"]
-    unit: PermeabilityUnit | None = Field(
-        PermeabilityUnit.henry_per_meter,
-        options={"enum_titles": ["H/m", "nH/m", "μH/m"]},
-        title="PermeabilityUnit",
-        x_enum_varnames=[
-            "henry_per_meter",
-            "nano_henry_per_meter",
-            "micro_henry_per_meter",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW3f7f94e0ebca5ff2a0e5467635d13433.json
 
@@ -15781,6 +15910,56 @@ class MolalityOfSolute(AmountOfSubstancePerMass):
 
 
 class SpecificEnergyUnit(Enum):
+    sievert = Unit.sievert.value
+    """
+    Sv
+    """
+    nano_gray = Unit.nano_gray.value
+    """
+    nGy
+    """
+    nano_sievert = Unit.nano_sievert.value
+    """
+    nSv
+    """
+    micro_gray = Unit.micro_gray.value
+    """
+    μGy
+    """
+    micro_sievert = Unit.micro_sievert.value
+    """
+    μSv
+    """
+    milli_radian = (
+        "Item:OSW4b2b623272425e3782acfc8f764b0363#OSWc040588e32a95f5b9f3ba431304620d2"
+    )
+    """
+    mrad
+    """
+    milli_gray = Unit.milli_gray.value
+    """
+    mGy
+    """
+    milli_sievert = Unit.milli_sievert.value
+    """
+    mSv
+    """
+    centi_gray = Unit.centi_gray.value
+    """
+    cGy
+    """
+    radiation_absorbed_dose = "Item:OSW4b2b623272425e3782acfc8f764b0363"
+    """
+    rad
+    """
+    rem = Unit.rem.value
+    """
+    rem
+    """
+    gray = Unit.gray.value
+    """
+    Gy
+    """
     joule_per_kilo_gram = Unit.joule_per_kilo_gram.value
     """
     J/kg
@@ -15793,6 +15972,10 @@ class SpecificEnergyUnit(Enum):
     """
     mJ/g
     """
+    meter_squared_per_second_squared = Unit.meter_squared_per_second_squared.value
+    """
+    m²/s²
+    """
     joule_per_gram = Unit.joule_per_gram.value
     """
     J/g
@@ -15801,13 +15984,27 @@ class SpecificEnergyUnit(Enum):
     """
     N·m/g
     """
+    kilo_gray = Unit.kilo_gray.value
+    """
+    kGy
+    """
     kilo_joule_per_kilo_gram = Unit.kilo_joule_per_kilo_gram.value
     """
     kJ/kg
     """
+    mega_gray = Unit.mega_gray.value
+    """
+    MGy
+    """
     mega_joule_per_kilo_gram = Unit.mega_joule_per_kilo_gram.value
     """
     MJ/kg
+    """
+    kilo_meter_squared_per_second_squared = (
+        Unit.kilo_meter_squared_per_second_squared.value
+    )
+    """
+    km²/s²
     """
 
 
@@ -15847,19 +16044,59 @@ class SpecificEnergy(QuantityValue):
 
     type: list[str] | None = ["Category:OSW9a32b5a84f235a0cb0a9e9fba9bd252e"]
     unit: SpecificEnergyUnit | None = Field(
-        SpecificEnergyUnit.joule_per_kilo_gram,
+        SpecificEnergyUnit.sievert,
         options={
-            "enum_titles": ["J/kg", "N·m/kg", "mJ/g", "J/g", "N·m/g", "kJ/kg", "MJ/kg"]
+            "enum_titles": [
+                "Sv",
+                "nGy",
+                "nSv",
+                "μGy",
+                "μSv",
+                "mrad",
+                "mGy",
+                "mSv",
+                "cGy",
+                "rad",
+                "rem",
+                "Gy",
+                "J/kg",
+                "N·m/kg",
+                "mJ/g",
+                "m²/s²",
+                "J/g",
+                "N·m/g",
+                "kGy",
+                "kJ/kg",
+                "MGy",
+                "MJ/kg",
+                "km²/s²",
+            ]
         },
         title="SpecificEnergyUnit",
         x_enum_varnames=[
+            "sievert",
+            "nano_gray",
+            "nano_sievert",
+            "micro_gray",
+            "micro_sievert",
+            "milli_radian",
+            "milli_gray",
+            "milli_sievert",
+            "centi_gray",
+            "radiation_absorbed_dose",
+            "rem",
+            "gray",
             "joule_per_kilo_gram",
             "meter_newton_per_kilo_gram",
             "milli_joule_per_gram",
+            "meter_squared_per_second_squared",
             "joule_per_gram",
             "meter_newton_per_gram",
+            "kilo_gray",
             "kilo_joule_per_kilo_gram",
+            "mega_gray",
             "mega_joule_per_kilo_gram",
+            "kilo_meter_squared_per_second_squared",
         ],
     )
 
@@ -15893,61 +16130,6 @@ class SpecificEnthalpy(SpecificEnergy):
 
 # generated by datamodel-codegen:
 #   filename:  OSW40c46aba16f45962a7330b7f8b88681e.json
-
-
-class PowerPerArea(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'PowerPerArea'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "40c46aba-16f4-5962-a733-0b7f8b88681e",
-            "title": "PowerPerArea",
-            "title*": {"en": "Power Per Area"},
-            "description": "This is an autogenerated partial class definition of 'PowerPerArea'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPowerPerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW40c46aba16f45962a7330b7f8b88681e"]
-    unit: PowerPerAreaUnit | None = Field(
-        PowerPerAreaUnit.watt_per_meter_squared,
-        options={
-            "enum_titles": [
-                "W/m²",
-                "pW/m²",
-                "nW/m²",
-                "μW/m²",
-                "J/(m²·d)",
-                "mW/m²",
-                "J/(cm²·d)",
-                "MJ/(m²·d)",
-                "kW/m²",
-                "W/cm²",
-            ]
-        },
-        title="PowerPerAreaUnit",
-        x_enum_varnames=[
-            "watt_per_meter_squared",
-            "pico_watt_per_meter_squared",
-            "nano_watt_per_meter_squared",
-            "micro_watt_per_meter_squared",
-            "joule_per_day_per_meter_squared",
-            "milli_watt_per_meter_squared",
-            "joule_per_centi_meter_squared_per_day",
-            "mega_joule_per_day_per_meter_squared",
-            "kilo_watt_per_meter_squared",
-            "watt_per_centi_meter_squared",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -16045,31 +16227,6 @@ class RelativeMolecularMass(DimensionlessRatio):
 
 # generated by datamodel-codegen:
 #   filename:  OSW42543b13af4c5af88462e7ac8ff8707d.json
-
-
-class VehicleVelocity(Velocity):
-    """
-    This is an autogenerated partial class definition of 'VehicleVelocity'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "42543b13-af4c-5af8-8462-e7ac8ff8707d",
-            "title": "VehicleVelocity",
-            "title*": {"en": "Vehicle Velocity"},
-            "description": "This is an autogenerated partial class definition of 'VehicleVelocity'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasVehicleVelocityValue",
-            "@context": [
-                "/wiki/Category:OSW397c67ece63a5a5c96bad9349f49f3d7?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW42543b13af4c5af88462e7ac8ff8707d"]
 
 
 # generated by datamodel-codegen:
@@ -16584,43 +16741,6 @@ class BloodGlucoseLevelByMass(QuantityValue):
 #   filename:  OSW4496d2b66d71545392a81e9e05297338.json
 
 
-class ForcePerLength(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'ForcePerLength'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "4496d2b6-6d71-5453-92a8-1e9e05297338",
-            "title": "ForcePerLength",
-            "title*": {"en": "Force per Length"},
-            "description": "This is an autogenerated partial class definition of 'ForcePerLength'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasForcePerLengthValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW4496d2b66d71545392a81e9e05297338"]
-    unit: ForcePerLengthUnit | None = Field(
-        ForcePerLengthUnit.newton_per_meter,
-        options={"enum_titles": ["N/m", "mN/m", "N/cm", "N/mm", "kN/m"]},
-        title="ForcePerLengthUnit",
-        x_enum_varnames=[
-            "newton_per_meter",
-            "milli_newton_per_meter",
-            "newton_per_centi_meter",
-            "newton_per_milli_meter",
-            "kilo_newton_per_meter",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW44eec22e65f759d99d9efa4c5dc5b54f.json
 
@@ -17122,83 +17242,6 @@ class CoefficientOfHeatTransfer(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSW46d8ae433dda5e368d8e76800d85ee12.json
-
-
-class EnergyPerArea(QuantityValue):
-    """
-    Energy per unit area is a measure of the energy either impinging upon or generated from a given unit of area. This can be a measure of the "toughness" of a material, being the amount of energy that needs to be applied per unit area of a crack to cause it to fracture. This is a constant for a given material..
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "46d8ae43-3dda-5e36-8d8e-76800d85ee12",
-            "title": "EnergyPerArea",
-            "title*": {"en": "Energy per Area"},
-            "description": 'Energy per unit area is a measure of the energy either impinging upon or generated from a given unit of area. This can be a measure of the "toughness" of a material, being the amount of energy that needs to be applied per unit area of a crack to cause it to fracture. This is a constant for a given material..',
-            "description*": {
-                "en": 'Energy per unit area is a measure of the energy either impinging upon or generated from a given unit of area. This can be a measure of the "toughness" of a material, being the amount of energy that needs to be applied per unit area of a crack to cause it to fracture. This is a constant for a given material..'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasEnergyPerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW46d8ae433dda5e368d8e76800d85ee12"]
-    unit: EnergyPerAreaUnit | None = Field(
-        EnergyPerAreaUnit.kilo_gram_per_second_squared,
-        options={
-            "enum_titles": [
-                "kg/s²",
-                "nN·m/m²",
-                "erg/m²",
-                "μN·m/m²",
-                "erg/cm²",
-                "mJ/m²",
-                "mN·m/m²",
-                "cN·m/m²",
-                "J/m²",
-                "N·m/m²",
-                "W·s/m²",
-                "g/s²",
-                "kN·m/m²",
-                "W·h/m²",
-                "J/cm²",
-                "MJ/m²",
-                "MN·m/m²",
-                "kW·h/m²",
-                "GJ/m²",
-                "GN·m/m²",
-            ]
-        },
-        title="EnergyPerAreaUnit",
-        x_enum_varnames=[
-            "kilo_gram_per_second_squared",
-            "nano_newton_per_meter",
-            "erg_per_meter_squared",
-            "micro_newton_per_meter",
-            "erg_per_centi_meter_squared",
-            "milli_joule_per_meter_squared",
-            "milli_newton_per_meter",
-            "centi_newton_per_meter",
-            "joule_per_meter_squared",
-            "newton_per_meter",
-            "second_watt_per_meter_squared",
-            "gram_per_second_squared",
-            "kilo_newton_per_meter",
-            "hour_watt_per_meter_squared",
-            "joule_per_centi_meter_squared",
-            "mega_joule_per_meter_squared",
-            "mega_newton_per_meter",
-            "hour_kilo_watt_per_meter_squared",
-            "giga_joule_per_meter_squared",
-            "giga_newton_per_meter",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -18709,67 +18752,6 @@ class ThrustToWeightRatio(DimensionlessRatio):
 #   filename:  OSW4ce5add385d2545ab8ab50e4b222dab4.json
 
 
-class Concentration(QuantityValue):
-    """
-    In chemistry, concentration is defined as the abundance of a constituent divided by the total volume of a mixture. Furthermore, in chemistry, four types of mathematical description can be distinguished: mass concentration, molar concentration, number concentration, and volume concentration. The term concentration can be applied to any kind of chemical mixture, but most frequently it refers to solutes in solutions.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "4ce5add3-85d2-545a-b8ab-50e4b222dab4",
-            "title": "Concentration",
-            "title*": {"en": "Concentration"},
-            "description": "In chemistry, concentration is defined as the abundance of a constituent divided by the total volume of a mixture. Furthermore, in chemistry, four types of mathematical description can be distinguished: mass concentration, molar concentration, number concentration, and volume concentration. The term concentration can be applied to any kind of chemical mixture, but most frequently it refers to solutes in solutions.",
-            "description*": {
-                "en": "In chemistry, concentration is defined as the abundance of a constituent divided by the total volume of a mixture. Furthermore, in chemistry, four types of mathematical description can be distinguished: mass concentration, molar concentration, number concentration, and volume concentration. The term concentration can be applied to any kind of chemical mixture, but most frequently it refers to solutes in solutions."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasConcentrationValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW4ce5add385d2545ab8ab50e4b222dab4"]
-    unit: ConcentrationUnit | None = Field(
-        ConcentrationUnit.mole_per_meter_cubed,
-        options={
-            "enum_titles": [
-                "mol/m³",
-                "fmol/L",
-                "pmol/m³",
-                "pmol/L",
-                "nmol/L",
-                "mmol/m³",
-                "μmol/L",
-                "mmol/L",
-                "cmol/L",
-                "kmol/m³",
-                "mol/L",
-                "mol/dm³",
-            ]
-        },
-        title="ConcentrationUnit",
-        x_enum_varnames=[
-            "mole_per_meter_cubed",
-            "femto_mole_per_liter",
-            "pico_mole_per_meter_cubed",
-            "pico_mole_per_liter",
-            "nano_mole_per_liter",
-            "milli_mole_per_meter_cubed",
-            "micro_mole_per_liter",
-            "milli_mole_per_liter",
-            "centi_mole_per_liter",
-            "kilo_mole_per_meter_cubed",
-            "mole_per_liter",
-            "mole_per_deci_meter_cubed",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW4d26c25abed1595ebf6faebbb937aa29.json
 
@@ -19042,102 +19024,8 @@ class MagneticVectorPotential(QuantityValue):
 #   filename:  OSW4f0b36aedcac5f4dafcc0eaec8eb86dd.json
 
 
-class ElectricChargePerArea(QuantityValue):
-    """
-    In electromagnetism, charge density is a measure of electric charge per unit volume of space, in one, two or three dimensions. More specifically: the linear, surface, or volume charge density is the amount of electric charge per unit length, surface area, or volume, respectively. The respective SI units are $C \\cdot m^{-1}$, $C \\cdot m^{-2}$ or $C \\cdot m^{-3}$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "4f0b36ae-dcac-5f4d-afcc-0eaec8eb86dd",
-            "title": "ElectricChargePerArea",
-            "title*": {"en": "Electric charge per area"},
-            "description": "In electromagnetism, charge density is a measure of electric charge per unit volume of space, in one, two or three dimensions. More specifically: the linear, surface, or volume charge density is the amount of electric charge per unit length, surface area, or volume, respectively. The respective SI units are $C \\cdot m^{-1}$, $C \\cdot m^{-2}$ or $C \\cdot m^{-3}$.",
-            "description*": {
-                "en": "In electromagnetism, charge density is a measure of electric charge per unit volume of space, in one, two or three dimensions. More specifically: the linear, surface, or volume charge density is the amount of electric charge per unit length, surface area, or volume, respectively. The respective SI units are $C \\cdot m^{-1}$, $C \\cdot m^{-2}$ or $C \\cdot m^{-3}$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasElectricChargePerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW4f0b36aedcac5f4dafcc0eaec8eb86dd"]
-    unit: ElectricChargePerAreaUnit | None = Field(
-        ElectricChargePerAreaUnit.coulomb_per_meter_squared,
-        options={
-            "enum_titles": [
-                "C/m²",
-                "μC/m²",
-                "mC/m²",
-                "kC/m²",
-                "C/cm²",
-                "C/mm²",
-                "MC/m²",
-            ]
-        },
-        title="ElectricChargePerAreaUnit",
-        x_enum_varnames=[
-            "coulomb_per_meter_squared",
-            "micro_coulomb_per_meter_squared",
-            "milli_coulomb_per_meter_squared",
-            "kilo_coulomb_per_meter_squared",
-            "coulomb_per_centi_meter_squared",
-            "coulomb_per_milli_meter_squared",
-            "mega_coulomb_per_meter_squared",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW4f0b3f4a40ad5ffbb492a000abe2b30d.json
-
-
-class ElectricField(QuantityValue):
-    """
-    The space surrounding an electric charge or in the presence of a time-varying magnetic field has a property called an electric field. This electric field exerts a force on other electrically charged objects. In the idealized case, the force exerted between two point charges is inversely proportional to the square of the distance between them. (Coulomb's Law).
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "4f0b3f4a-40ad-5ffb-b492-a000abe2b30d",
-            "title": "ElectricField",
-            "title*": {"en": "Electric Field"},
-            "description": "The space surrounding an electric charge or in the presence of a time-varying magnetic field has a property called an electric field. This electric field exerts a force on other electrically charged objects. In the idealized case, the force exerted between two point charges is inversely proportional to the square of the distance between them. (Coulomb's Law).",
-            "description*": {
-                "en": "The space surrounding an electric charge or in the presence of a time-varying magnetic field has a property called an electric field. This electric field exerts a force on other electrically charged objects. In the idealized case, the force exerted between two point charges is inversely proportional to the square of the distance between them. (Coulomb's Law)."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasElectricFieldValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW4f0b3f4a40ad5ffbb492a000abe2b30d"]
-    unit: ElectricFieldUnit | None = Field(
-        ElectricFieldUnit.volt_per_meter,
-        options={
-            "enum_titles": ["V/m", "μV/m", "mV/m", "V/cm", "V/mm", "kV/m", "MV/m"]
-        },
-        title="ElectricFieldUnit",
-        x_enum_varnames=[
-            "volt_per_meter",
-            "micro_volt_per_meter",
-            "milli_volt_per_meter",
-            "volt_per_centi_meter",
-            "volt_per_milli_meter",
-            "kilo_volt_per_meter",
-            "mega_volt_per_meter",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -19173,33 +19061,6 @@ class Irradiance(PowerPerArea):
 
 # generated by datamodel-codegen:
 #   filename:  OSW4f80d4743b2f5971bdcffe28391fa016.json
-
-
-class ForceMagnitude(Force):
-    """
-    The 'magnitude' of a force is its 'size' or 'strength', regardless of the direction in which it acts.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "4f80d474-3b2f-5971-bdcf-fe28391fa016",
-            "title": "ForceMagnitude",
-            "title*": {"en": "Force Magnitude"},
-            "description": "The 'magnitude' of a force is its 'size' or 'strength', regardless of the direction in which it acts.",
-            "description*": {
-                "en": "The 'magnitude' of a force is its 'size' or 'strength', regardless of the direction in which it acts."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasForceMagnitudeValue",
-            "@context": [
-                "/wiki/Category:OSW1b832c1a42c055eb9669bb0cdda18d7f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW4f80d4743b2f5971bdcffe28391fa016"]
 
 
 # generated by datamodel-codegen:
@@ -19355,62 +19216,8 @@ class MigrationLength(Length):
 #   filename:  OSW5066212adfda5519af307363bd1c5c79.json
 
 
-class MagneticFieldStrength(ElectricCurrentPerLength):
-    """
-    $\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "5066212a-dfda-5519-af30-7363bd1c5c79",
-            "title": "MagneticFieldStrength",
-            "title*": {"en": "Magnetic field strength", "de": "Magnetische Feldstärke"},
-            "description": "$\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$.",
-            "description*": {
-                "en": "$\\textit{Magnetic Field Strength}$ is a vector quantity obtained at a given point by subtracting the magnetization $M$ from the magnetic flux density $B$ divided by the magnetic constant $\\mu_0$. The magnetic field strength is related to the total current density $J_{tot}$ via: $\\text{rot} H = J_{tot}$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMagneticFieldStrengthValue",
-            "@context": [
-                "/wiki/Category:OSW8ba7ac8b06c453e2885cc41c9d9ee0bb?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW5066212adfda5519af307363bd1c5c79"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW5074a29ba5505fc98e379b0a9df0bd69.json
-
-
-class Distance(Length):
-    """
-    "Distance" is a numerical description of how far apart objects are.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "5074a29b-a550-5fc9-8e37-9b0a9df0bd69",
-            "title": "Distance",
-            "title*": {"en": "Distance", "de": "Entfernung"},
-            "description": '"Distance" is a numerical description of how far apart objects are.',
-            "description*": {
-                "en": '"Distance" is a numerical description of how far apart objects are.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasDistanceValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW5074a29ba5505fc98e379b0a9df0bd69"]
 
 
 # generated by datamodel-codegen:
@@ -19875,6 +19682,10 @@ class InductanceUnit(Enum):
     """
     pH
     """
+    abhenry = Unit.abhenry.value
+    """
+    abH
+    """
     nano_henry = Unit.nano_henry.value
     """
     nH
@@ -19890,6 +19701,10 @@ class InductanceUnit(Enum):
     kilo_henry = Unit.kilo_henry.value
     """
     kH
+    """
+    stathenry = Unit.stathenry.value
+    """
+    statH
     """
 
 
@@ -19920,15 +19735,17 @@ class Inductance(QuantityValue):
     type: list[str] | None = ["Category:OSW704290344ec45e1bb91d2b2736233473"]
     unit: InductanceUnit | None = Field(
         InductanceUnit.henry,
-        options={"enum_titles": ["H", "pH", "nH", "μH", "mH", "kH"]},
+        options={"enum_titles": ["H", "pH", "abH", "nH", "μH", "mH", "kH", "statH"]},
         title="InductanceUnit",
         x_enum_varnames=[
             "henry",
             "pH_value",
+            "abhenry",
             "nano_henry",
             "micro_henry",
             "milli_henry",
             "kilo_henry",
+            "stathenry",
         ],
     )
 
@@ -20171,33 +19988,6 @@ class LogarithmOfOctanolWaterPartitionCoefficient(DimensionlessRatio):
 
 # generated by datamodel-codegen:
 #   filename:  OSW54513644901155ce82c3161b8ce76cf1.json
-
-
-class MomentOfInertiaInTheYAxis(MomentOfInertia):
-    """
-    The rotational inertia or resistance to change in direction or speed of rotation about a defined axis.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "54513644-9011-55ce-82c3-161b8ce76cf1",
-            "title": "MomentOfInertiaInTheYAxis",
-            "title*": {"en": "Moment of Inertia in the Y axis"},
-            "description": "The rotational inertia or resistance to change in direction or speed of rotation about a defined axis.",
-            "description*": {
-                "en": "The rotational inertia or resistance to change in direction or speed of rotation about a defined axis."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMomentOfInertiaInTheYAxisValue",
-            "@context": [
-                "/wiki/Category:OSW2e958a0e653558a8abf2bd1fa3c6dd59?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW54513644901155ce82c3161b8ce76cf1"]
 
 
 # generated by datamodel-codegen:
@@ -20624,105 +20414,6 @@ class MolarAttenuationCoefficient(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSW571f68d4b4715284b2dc5020ad51cf72.json
-
-
-class Density(QuantityValue):
-    """
-    The mass density or density of a material is defined as its mass per unit volume.
-      The symbol most often used for density is $\\rho$.
-       Mathematically, density is defined as mass divided by volume: $\\rho = m/V$,
-        where $\\rho$ is the density, $m$ is the mass, and $V$ is the volume.
-        In some cases, density is also defined as its weight per unit volume, although this quantity is more properly called specific weight.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "571f68d4-b471-5284-b2dc-5020ad51cf72",
-            "title": "Density",
-            "title*": {"en": "Density"},
-            "description": "The mass density or density of a material is defined as its mass per unit volume. \n  The symbol most often used for density is $\\rho$. \n   Mathematically, density is defined as mass divided by volume: $\\rho = m/V$,\n    where $\\rho$ is the density, $m$ is the mass, and $V$ is the volume. \n    In some cases, density is also defined as its weight per unit volume, although this quantity is more properly called specific weight.",
-            "description*": {
-                "en": "The mass density or density of a material is defined as its mass per unit volume. \n  The symbol most often used for density is $\\rho$. \n   Mathematically, density is defined as mass divided by volume: $\\rho = m/V$,\n    where $\\rho$ is the density, $m$ is the mass, and $V$ is the volume. \n    In some cases, density is also defined as its weight per unit volume, although this quantity is more properly called specific weight."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasDensityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW571f68d4b4715284b2dc5020ad51cf72"]
-    unit: DensityUnit | None = Field(
-        DensityUnit.gram_per_liter,
-        options={
-            "enum_titles": [
-                "g/L",
-                "fg/L",
-                "ng/m³",
-                "pg/L",
-                "ng/L",
-                "pg/mL",
-                "μg/m³",
-                "ng/dL",
-                "mg/m³",
-                "ng/mL",
-                "μg/L",
-                "μg/dL",
-                "gr{UK}/m³",
-                "g/m³",
-                "mg/L",
-                "ng/μL",
-                "μg/mL",
-                "mg/dL",
-                "g/dm³",
-                "kg/m³",
-                "mg/mL",
-                "g/dL",
-                "Mg/m³",
-                "g/cm³",
-                "g/mL",
-                "kg/L",
-                "kg/dm³",
-                "t/m³",
-                "kg/cm³",
-            ]
-        },
-        title="DensityUnit",
-        x_enum_varnames=[
-            "gram_per_liter",
-            "femto_gram_per_liter",
-            "nano_gram_per_meter_cubed",
-            "pico_gram_per_liter",
-            "nano_gram_per_liter",
-            "pico_gram_per_milli_liter",
-            "micro_gram_per_meter_cubed",
-            "nano_gram_per_deci_liter",
-            "milli_gram_per_meter_cubed",
-            "nano_gram_per_milli_liter",
-            "micro_gram_per_liter",
-            "micro_gram_per_deci_liter",
-            "grain_per_meter_cubed",
-            "gram_per_meter_cubed",
-            "milli_gram_per_liter",
-            "nano_gram_per_micro_liter",
-            "micro_gram_per_milli_liter",
-            "milli_gram_per_deci_liter",
-            "gram_per_deci_meter_cubed",
-            "kilo_gram_per_meter_cubed",
-            "milli_gram_per_milli_liter",
-            "gram_per_deci_liter",
-            "mega_gram_per_meter_cubed",
-            "gram_per_centi_meter_cubed",
-            "gram_per_milli_liter",
-            "kilo_gram_per_liter",
-            "kilo_gram_per_deci_meter_cubed",
-            "metric_ton_per_meter_cubed",
-            "kilo_gram_per_centi_meter_cubed",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -23017,31 +22708,6 @@ class Flux(QuantityValue):
 #   filename:  OSW67faac860ed758758aa4484387e5d5c9.json
 
 
-class DimensionlessRatio(Dimensionless):
-    """
-    This is an autogenerated partial class definition of 'DimensionlessRatio'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "67faac86-0ed7-5875-8aa4-484387e5d5c9",
-            "title": "DimensionlessRatio",
-            "title*": {"en": "Dimensionless Ratio"},
-            "description": "This is an autogenerated partial class definition of 'DimensionlessRatio'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasDimensionlessRatioValue",
-            "@context": [
-                "/wiki/Category:OSWbcaa33bd770e53e09d5e6087d141648b?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW67faac860ed758758aa4484387e5d5c9"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW6837c50be0b85f76835e5fdd56bf054f.json
 
@@ -23396,38 +23062,6 @@ class MaximumBetaParticleEnergy(Energy):
 #   filename:  OSW69b648b4fe1a5607b167a699f899be87.json
 
 
-class ThermodynamicTemperature(Temperature):
-    """
-    Thermodynamic temperature is the absolute measure of temperature and is one of the principal parameters of thermodynamics.
-    Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold.
-    In thermodynamics, in a system of which the entropy is considered as an independent externally controlled variable, absolute, or thermodynamic temperature is defined as the derivative of the internal energy with respect to the entropy. This is a base quantity in the International System of Quantities, ISQ, on which the International System of Units, SI, is based.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "69b648b4-fe1a-5607-b167-a699f899be87",
-            "title": "ThermodynamicTemperature",
-            "title*": {
-                "en": "Thermodynamic temperature",
-                "de": "Thermodynamische Temperatur",
-            },
-            "description": "Thermodynamic temperature is the absolute measure of temperature and is one of the principal parameters of thermodynamics.\nTemperature is a physical property of matter that quantitatively expresses the common notions of hot and cold.\nIn thermodynamics, in a system of which the entropy is considered as an independent externally controlled variable, absolute, or thermodynamic temperature is defined as the derivative of the internal energy with respect to the entropy. This is a base quantity in the International System of Quantities, ISQ, on which the International System of Units, SI, is based.",
-            "description*": {
-                "en": "Thermodynamic temperature is the absolute measure of temperature and is one of the principal parameters of thermodynamics.\nTemperature is a physical property of matter that quantitatively expresses the common notions of hot and cold.\nIn thermodynamics, in a system of which the entropy is considered as an independent externally controlled variable, absolute, or thermodynamic temperature is defined as the derivative of the internal energy with respect to the entropy. This is a base quantity in the International System of Quantities, ISQ, on which the International System of Units, SI, is based."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasThermodynamicTemperatureValue",
-            "@context": [
-                "/wiki/Category:OSW20927e4900e95e93985698c92995f964?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW69b648b4fe1a5607b167a699f899be87"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW6a2c83eb813354edace5e2d9ead479b9.json
 
@@ -23656,6 +23290,10 @@ class CapacitanceUnit(Enum):
     """
     aF
     """
+    statfarad = Unit.statfarad.value
+    """
+    statF
+    """
     femto_farad = Unit.femto_farad.value
     """
     fF
@@ -23679,6 +23317,10 @@ class CapacitanceUnit(Enum):
     kilo_farad = Unit.kilo_farad.value
     """
     kF
+    """
+    abfarad = Unit.abfarad.value
+    """
+    abF
     """
 
 
@@ -23709,17 +23351,32 @@ class Capacitance(QuantityValue):
     type: list[str] | None = ["Category:OSW6bad72aa82835ea49eea9bb061beae80"]
     unit: CapacitanceUnit | None = Field(
         CapacitanceUnit.farad,
-        options={"enum_titles": ["F", "aF", "fF", "pF", "nF", "μF", "mF", "kF"]},
+        options={
+            "enum_titles": [
+                "F",
+                "aF",
+                "statF",
+                "fF",
+                "pF",
+                "nF",
+                "μF",
+                "mF",
+                "kF",
+                "abF",
+            ]
+        },
         title="CapacitanceUnit",
         x_enum_varnames=[
             "farad",
             "atto_farad",
+            "statfarad",
             "femto_farad",
             "pico_farad",
             "nano_farad",
             "micro_farad",
             "milli_farad",
             "kilo_farad",
+            "abfarad",
         ],
     )
 
@@ -23865,45 +23522,6 @@ class ReactorTimeConstant(Time):
 
 # generated by datamodel-codegen:
 #   filename:  OSW6ce762ef103d5b15976dcfa13914bef4.json
-
-
-class LinearElectricCurrentDensity(QuantityValue):
-    """
-    "Linear Electric Linear Current Density" is the electric current per unit length. Electric current, $I$, through a curve $C$ is defined as $I = \\int_C J _s \\times e_n$, where $e_n$ is a unit vector perpendicular to the surface and line vector element, and $dr$ is the differential of position vector $r$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "6ce762ef-103d-5b15-976d-cfa13914bef4",
-            "title": "LinearElectricCurrentDensity",
-            "title*": {"en": "Linear Electric Current Density"},
-            "description": '"Linear Electric Linear Current Density" is the electric current per unit length. Electric current, $I$, through a curve $C$ is defined as $I = \\int_C J _s \\times e_n$, where $e_n$ is a unit vector perpendicular to the surface and line vector element, and $dr$ is the differential of position vector $r$.',
-            "description*": {
-                "en": '"Linear Electric Linear Current Density" is the electric current per unit length. Electric current, $I$, through a curve $C$ is defined as $I = \\int_C J _s \\times e_n$, where $e_n$ is a unit vector perpendicular to the surface and line vector element, and $dr$ is the differential of position vector $r$.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLinearElectricCurrentDensityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW6ce762ef103d5b15976dcfa13914bef4"]
-    unit: LinearElectricCurrentDensityUnit | None = Field(
-        LinearElectricCurrentDensityUnit.ampere_per_meter,
-        options={"enum_titles": ["A/m", "mA/mm", "A/cm", "A/mm", "kA/m"]},
-        title="LinearElectricCurrentDensityUnit",
-        x_enum_varnames=[
-            "ampere_per_meter",
-            "milli_ampere_per_milli_meter",
-            "ampere_per_centi_meter",
-            "ampere_per_milli_meter",
-            "kilo_ampere_per_meter",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -24143,6 +23761,10 @@ class ElectricPotentialDifferenceUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -24150,6 +23772,10 @@ class ElectricPotentialDifferenceUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -24213,8 +23839,10 @@ class ElectricPotentialDifference(QuantityValue):
                 "fV",
                 "pV",
                 "nV",
+                "abV",
                 "μV",
                 "mV",
+                "statV",
                 "kV",
                 "MV",
                 "GV",
@@ -24229,8 +23857,10 @@ class ElectricPotentialDifference(QuantityValue):
             "femto_volt",
             "pico_volt",
             "nano_volt",
+            "abvolt",
             "micro_volt",
             "milli_volt",
+            "statvolt",
             "kilo_volt",
             "mega_volt",
             "giga_volt",
@@ -24347,6 +23977,10 @@ class AdmittanceUnit(Enum):
     """
     μS
     """
+    micro_n = Unit.micro_n.value
+    """
+    μ℧
+    """
     milli_siemens = Unit.milli_siemens.value
     """
     mS
@@ -24354,6 +23988,10 @@ class AdmittanceUnit(Enum):
     deci_siemens = Unit.deci_siemens.value
     """
     dS
+    """
+    siemens_1 = Unit.siemens_1.value
+    """
+    ℧
     """
     kilo_siemens = Unit.kilo_siemens.value
     """
@@ -24392,15 +24030,19 @@ class Admittance(QuantityValue):
     type: list[str] | None = ["Category:OSW6dd896b08fd55c6a9ea1a7270bb59d48"]
     unit: AdmittanceUnit | None = Field(
         AdmittanceUnit.siemens,
-        options={"enum_titles": ["S", "pS", "nS", "μS", "mS", "dS", "kS", "MS"]},
+        options={
+            "enum_titles": ["S", "pS", "nS", "μS", "μ℧", "mS", "dS", "℧", "kS", "MS"]
+        },
         title="AdmittanceUnit",
         x_enum_varnames=[
             "siemens",
             "pico_siemens",
             "nano_siemens",
             "micro_siemens",
+            "micro_n",
             "milli_siemens",
             "deci_siemens",
+            "siemens",
             "kilo_siemens",
             "mega_siemens",
         ],
@@ -24687,46 +24329,6 @@ class LatticePlaneSpacing(Length):
 #   filename:  OSW704290344ec45e1bb91d2b2736233473.json
 
 
-class Inductance(QuantityValue):
-    """
-    "Inductance" is an electromagentic quantity that characterizes a circuit's resistance to any change of electric current; a change in the electric current through induces an opposing electromotive force (EMF). Quantitatively, inductance is proportional to the magnetic flux per unit of electric current.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "70429034-4ec4-5e1b-b91d-2b2736233473",
-            "title": "Inductance",
-            "title*": {"en": "Inductance", "de": "Induktivität"},
-            "description": '"Inductance" is an electromagentic quantity that characterizes a circuit\'s resistance to any change of electric current; a change in the electric current through induces an opposing electromotive force (EMF). Quantitatively, inductance is proportional to the magnetic flux per unit of electric current.',
-            "description*": {
-                "en": '"Inductance" is an electromagentic quantity that characterizes a circuit\'s resistance to any change of electric current; a change in the electric current through induces an opposing electromotive force (EMF). Quantitatively, inductance is proportional to the magnetic flux per unit of electric current.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInductanceValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW704290344ec45e1bb91d2b2736233473"]
-    unit: InductanceUnit | None = Field(
-        InductanceUnit.henry,
-        options={"enum_titles": ["H", "pH", "nH", "μH", "mH", "kH"]},
-        title="InductanceUnit",
-        x_enum_varnames=[
-            "henry",
-            "pH_value",
-            "nano_henry",
-            "micro_henry",
-            "milli_henry",
-            "kilo_henry",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW7119e1d761815d4facb1dbee71829517.json
 
@@ -24794,6 +24396,243 @@ class OpeningRatio(DimensionlessRatio):
 
 
 # generated by datamodel-codegen:
+#   filename:  OSW71632403ff765a32b2e51f57d38fd64d.json
+
+
+class InverseTimeUnit(Enum):
+    per_second = Unit.per_second.value
+    """
+    /s
+    """
+    nano_becquerel = Unit.nano_becquerel.value
+    """
+    nBq
+    """
+    per_year = Unit.per_year.value
+    """
+    /a
+    """
+    per_month = Unit.per_month.value
+    """
+    /mo
+    """
+    micro_becquerel = Unit.micro_becquerel.value
+    """
+    μBq
+    """
+    per_week = Unit.per_week.value
+    """
+    /wk
+    """
+    per_day = Unit.per_day.value
+    """
+    /d
+    """
+    per_hour = Unit.per_hour.value
+    """
+    /h
+    """
+    milli_becquerel = Unit.milli_becquerel.value
+    """
+    mBq
+    """
+    milli_hertz = Unit.milli_hertz.value
+    """
+    mHz
+    """
+    per_minute = Unit.per_minute.value
+    """
+    /min
+    """
+    becquerel = Unit.becquerel.value
+    """
+    Bq
+    """
+    hertz = Unit.hertz.value
+    """
+    Hz
+    """
+    per_milli_second = Unit.per_milli_second.value
+    """
+    /ms
+    """
+    kilo_becquerel = Unit.kilo_becquerel.value
+    """
+    kBq
+    """
+    kilo_hertz = Unit.kilo_hertz.value
+    """
+    kHz
+    """
+    micro_curie = Unit.micro_curie.value
+    """
+    μCi
+    """
+    mega_becquerel = Unit.mega_becquerel.value
+    """
+    MBq
+    """
+    mega_hertz = Unit.mega_hertz.value
+    """
+    MHz
+    """
+    milli_curie = Unit.milli_curie.value
+    """
+    mCi
+    """
+    giga_becquerel = Unit.giga_becquerel.value
+    """
+    GBq
+    """
+    giga_hertz = Unit.giga_hertz.value
+    """
+    GHz
+    """
+    curie = Unit.curie.value
+    """
+    Ci
+    """
+    tera_becquerel = Unit.tera_becquerel.value
+    """
+    TBq
+    """
+    tera_hertz = Unit.tera_hertz.value
+    """
+    THz
+    """
+    kilo_curie = Unit.kilo_curie.value
+    """
+    kCi
+    """
+    peta_becquerel = Unit.peta_becquerel.value
+    """
+    PBq
+    """
+    peta_hertz = Unit.peta_hertz.value
+    """
+    PHz
+    """
+
+
+class InverseTime(QuantityValue):
+    """
+    This is an autogenerated partial class definition of 'InverseTime'
+    """
+
+    class Config:
+        schema_extra = {
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "7468741a-399c-5233-8e44-a8242cfed871",
+            "title": "InverseTime",
+            "title*": {"en": "Inverse Time"},
+            "description": "This is an autogenerated partial class definition of 'InverseTime'",
+            "description*": {},
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasInverseTimeValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        }
+
+    type: list[str] | None = ["Category:OSW7468741a399c52338e44a8242cfed871"]
+    unit: InverseTimeUnit | None = Field(
+        InverseTimeUnit.per_second,
+        options={
+            "enum_titles": [
+                "/s",
+                "nBq",
+                "/a",
+                "/mo",
+                "μBq",
+                "/wk",
+                "/d",
+                "/h",
+                "mBq",
+                "mHz",
+                "/min",
+                "Bq",
+                "Hz",
+                "/ms",
+                "kBq",
+                "kHz",
+                "μCi",
+                "MBq",
+                "MHz",
+                "mCi",
+                "GBq",
+                "GHz",
+                "Ci",
+                "TBq",
+                "THz",
+                "kCi",
+                "PBq",
+                "PHz",
+            ]
+        },
+        title="InverseTimeUnit",
+        x_enum_varnames=[
+            "per_second",
+            "nano_becquerel",
+            "per_year",
+            "per_month",
+            "micro_becquerel",
+            "per_week",
+            "per_day",
+            "per_hour",
+            "milli_becquerel",
+            "milli_hertz",
+            "per_minute",
+            "becquerel",
+            "hertz",
+            "per_milli_second",
+            "kilo_becquerel",
+            "kilo_hertz",
+            "micro_curie",
+            "mega_becquerel",
+            "mega_hertz",
+            "milli_curie",
+            "giga_becquerel",
+            "giga_hertz",
+            "curie",
+            "tera_becquerel",
+            "tera_hertz",
+            "kilo_curie",
+            "peta_becquerel",
+            "peta_hertz",
+        ],
+    )
+
+
+class DecayConstant(InverseTime):
+    """
+    The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.
+    """
+
+    class Config:
+        schema_extra = {
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
+            "uuid": "71632403-ff76-5a32-b2e5-1f57d38fd64d",
+            "title": "DecayConstant",
+            "title*": {"en": "Decay Constant"},
+            "description": 'The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.',
+            "description*": {
+                "en": 'The "Decay Constant" is the proportionality between the size of a population of radioactive atoms and the rate at which the population decreases because of radioactive decay.'
+            },
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasDecayConstantValue",
+            "@context": [
+                "/wiki/Category:OSW7468741a399c52338e44a8242cfed871?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        }
+
+    type: list[str] | None = ["Category:OSW71632403ff765a32b2e51f57d38fd64d"]
+
+
+# generated by datamodel-codegen:
 #   filename:  OSW71dc7977cd3a539889a4af664c2e02da.json
 
 
@@ -24806,9 +24645,17 @@ class MagneticFieldUnit(Enum):
     """
     nT
     """
+    gamma = Unit.gamma.value
+    """
+    γ
+    """
     micro_tesla = Unit.micro_tesla.value
     """
     μT
+    """
+    abT = Unit.abT.value
+    """
+    abT
     """
     milli_tesla = Unit.milli_tesla.value
     """
@@ -24847,12 +24694,14 @@ class MagneticField(QuantityValue):
     type: list[str] | None = ["Category:OSW71dc7977cd3a539889a4af664c2e02da"]
     unit: MagneticFieldUnit | None = Field(
         MagneticFieldUnit.tesla,
-        options={"enum_titles": ["T", "nT", "μT", "mT", "kT"]},
+        options={"enum_titles": ["T", "nT", "γ", "μT", "abT", "mT", "kT"]},
         title="MagneticFieldUnit",
         x_enum_varnames=[
             "tesla",
             "nano_tesla",
+            "gamma",
             "micro_tesla",
+            "abT",
             "milli_tesla",
             "kilo_tesla",
         ],
@@ -25308,6 +25157,10 @@ class CubicExpansionCoefficient(ExpansionRatio):
 
 
 # generated by datamodel-codegen:
+#   filename:  OSW7468741a399c52338e44a8242cfed871.json
+
+
+# generated by datamodel-codegen:
 #   filename:  OSW74ae1de66beb525ea52eedabf09ab228.json
 
 
@@ -25449,6 +25302,188 @@ class EquilibriumPositionVectorOfIon(Length):
         }
 
     type: list[str] | None = ["Category:OSW75f2f083a2e856f3bd3757d099851530"]
+
+
+# generated by datamodel-codegen:
+#   filename:  OSW76131090bf885b3b93394f5f4574e1a1.json
+
+
+class SpecificImpulseUnit(Enum):
+    second = Unit.second.value
+    """
+    s
+    """
+    atto_second = Unit.atto_second.value
+    """
+    as
+    """
+    femto_second = Unit.femto_second.value
+    """
+    fs
+    """
+    pico_second = Unit.pico_second.value
+    """
+    ps
+    """
+    nano_second = Unit.nano_second.value
+    """
+    ns
+    """
+    micro_second = Unit.micro_second.value
+    """
+    μs
+    """
+    milli_second = Unit.milli_second.value
+    """
+    ms
+    """
+    deci_second = Unit.deci_second.value
+    """
+    ds
+    """
+    min_sidereal = Unit.min_sidereal.value
+    """
+    min{sidereal}
+    """
+    minute = Unit.minute.value
+    """
+    min
+    """
+    kilo_second = Unit.kilo_second.value
+    """
+    ks
+    """
+    h_sidereal = Unit.h_sidereal.value
+    """
+    h{sidereal}
+    """
+    hour = Unit.hour.value
+    """
+    h
+    """
+    day_sidereal = Unit.day_sidereal.value
+    """
+    day{sidereal}
+    """
+    day = Unit.day.value
+    """
+    d
+    """
+    week = Unit.week.value
+    """
+    wk
+    """
+    mega_second = Unit.mega_second.value
+    """
+    Ms
+    """
+    month = Unit.month.value
+    """
+    mo
+    """
+    tropical_year = Unit.tropical_year.value
+    """
+    a{tropical}
+    """
+    year = "Item:OSW46d071e2e2b45635abd2ec5b83cac7f7"
+    """
+    a
+    """
+    a_sidereal = Unit.a_sidereal.value
+    """
+    a{sidereal}
+    """
+    kilo_year = Unit.kilo_year.value
+    """
+    ka
+    """
+    mega_year = Unit.mega_year.value
+    """
+    Ma
+    """
+
+
+class SpecificImpulse(QuantityValue):
+    """
+    The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$.
+    """
+
+    class Config:
+        schema_extra = {
+            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
+            "uuid": "76131090-bf88-5b3b-9339-4f5f4574e1a1",
+            "title": "SpecificImpulse",
+            "title*": {"en": "Specific Impulse"},
+            "description": "The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$.",
+            "description*": {
+                "en": "The impulse produced by a rocket divided by the mass $mp$ of propellant consumed. Specific impulse ${I_{sp}}$ is a widely used measure of performance for chemical, nuclear, and electric rockets. It is usually given in seconds for both U.S. Customary and International System (SI) units.  The impulse produced by a rocket is the thrust force $F$ times its duration $t$ in seconds. $I_{sp}$ is the thrust per unit mass flowrate, but with $g_o$, is the thrust per weight flowrate. The specific impulse is given by the equation: $I_{sp} = \\frac{F}{\\dot{m}g_o}$."
+            },
+            "defaultProperties": ["type"],
+            "x-smw-quantity-property": "Property:HasSpecificImpulseValue",
+            "@context": [
+                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
+                {},
+            ],
+            "$defs": {},
+        }
+
+    type: list[str] | None = ["Category:OSW76131090bf885b3b93394f5f4574e1a1"]
+    unit: SpecificImpulseUnit | None = Field(
+        SpecificImpulseUnit.second,
+        options={
+            "enum_titles": [
+                "s",
+                "as",
+                "fs",
+                "ps",
+                "ns",
+                "μs",
+                "ms",
+                "ds",
+                "min{sidereal}",
+                "min",
+                "ks",
+                "h{sidereal}",
+                "h",
+                "day{sidereal}",
+                "d",
+                "wk",
+                "Ms",
+                "mo",
+                "a{tropical}",
+                "a",
+                "a{sidereal}",
+                "ka",
+                "Ma",
+            ]
+        },
+        title="SpecificImpulseUnit",
+        x_enum_varnames=[
+            "second",
+            "atto_second",
+            "femto_second",
+            "pico_second",
+            "nano_second",
+            "micro_second",
+            "milli_second",
+            "deci_second",
+            "min_sidereal",
+            "minute",
+            "kilo_second",
+            "h_sidereal",
+            "hour",
+            "day_sidereal",
+            "day",
+            "week",
+            "mega_second",
+            "month",
+            "tropical_year",
+            "year",
+            "a_sidereal",
+            "kilo_year",
+            "mega_year",
+        ],
+    )
 
 
 # generated by datamodel-codegen:
@@ -25916,67 +25951,6 @@ class SpecificOpticalRotatoryPower(QuantityValue):
 #   filename:  OSW77f25284632d50b0ae2be064592412ce.json
 
 
-class Torque(QuantityValue):
-    """
-    In physics, a torque ($\\tau$) is a vector that measures the tendency of a force to rotate an object about some axis. The magnitude of a torque is defined as force times its lever arm. Just as a force is a push or a pull, a torque can be thought of as a twist. The SI unit for torque is newton meters ($N m$). In U.S. customary units, it is measured in foot pounds (ft lbf) (also known as "pounds feet").
-    Mathematically, the torque on a particle (which has the position r in some reference frame) can be defined as the cross product: $τ = r x F$
-    where,
-    r is the particle's position vector relative to the fulcrum
-    F is the force acting on the particles,
-    or, more generally, torque can be defined as the rate of change of angular momentum: $τ = dL/dt$
-    where,
-    L is the angular momentum vector
-    t stands for time.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "77f25284-632d-50b0-ae2b-e064592412ce",
-            "title": "Torque",
-            "title*": {"en": "Torque", "de": "Torsionmoment"},
-            "description": 'In physics, a torque ($\\tau$) is a vector that measures the tendency of a force to rotate an object about some axis. The magnitude of a torque is defined as force times its lever arm. Just as a force is a push or a pull, a torque can be thought of as a twist. The SI unit for torque is newton meters ($N m$). In U.S. customary units, it is measured in foot pounds (ft lbf) (also known as "pounds feet").\nMathematically, the torque on a particle (which has the position r in some reference frame) can be defined as the cross product: $τ = r x F$\nwhere,\nr is the particle\'s position vector relative to the fulcrum\nF is the force acting on the particles,\nor, more generally, torque can be defined as the rate of change of angular momentum: $τ = dL/dt$\nwhere,\nL is the angular momentum vector\nt stands for time.',
-            "description*": {
-                "en": 'In physics, a torque ($\\tau$) is a vector that measures the tendency of a force to rotate an object about some axis. The magnitude of a torque is defined as force times its lever arm. Just as a force is a push or a pull, a torque can be thought of as a twist. The SI unit for torque is newton meters ($N m$). In U.S. customary units, it is measured in foot pounds (ft lbf) (also known as "pounds feet").\nMathematically, the torque on a particle (which has the position r in some reference frame) can be defined as the cross product: $τ = r x F$\nwhere,\nr is the particle\'s position vector relative to the fulcrum\nF is the force acting on the particles,\nor, more generally, torque can be defined as the rate of change of angular momentum: $τ = dL/dt$\nwhere,\nL is the angular momentum vector\nt stands for time.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasTorqueValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW77f25284632d50b0ae2be064592412ce"]
-    unit: TorqueUnit | None = Field(
-        TorqueUnit.meter_newton,
-        options={
-            "enum_titles": [
-                "N·m",
-                "μN·m",
-                "mN·m",
-                "N·cm",
-                "cN·m",
-                "dN·m",
-                "kN·m",
-                "MN·m",
-            ]
-        },
-        title="TorqueUnit",
-        x_enum_varnames=[
-            "meter_newton",
-            "meter_micro_newton",
-            "meter_milli_newton",
-            "centi_meter_newton",
-            "centi_newton_meter",
-            "deci_newton_meter",
-            "kilo_newton_meter",
-            "mega_newton_meter",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW7825b2bbb4c258348224e4e6d4f364e8.json
 
@@ -26010,33 +25984,6 @@ class MacroscopicCrossSection(CrossSection):
 
 # generated by datamodel-codegen:
 #   filename:  OSW78b09fe474c85bf09529d7eb3db0fe78.json
-
-
-class GapEnergy(Energy):
-    """
-    "Gap Energy" is the difference in energy between the lowest level of conduction band and the highest level of valence band. It is an energy range in a solid where no electron states can exist.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "78b09fe4-74c8-5bf0-9529-d7eb3db0fe78",
-            "title": "GapEnergy",
-            "title*": {"en": "Gap Energy"},
-            "description": '"Gap Energy" is the difference in energy between the lowest level of conduction band and the highest level of valence band. It is an energy range in a solid where no electron states can exist.',
-            "description*": {
-                "en": '"Gap Energy" is the difference in energy between the lowest level of conduction band and the highest level of valence band. It is an energy range in a solid where no electron states can exist.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasGapEnergyValue",
-            "@context": [
-                "/wiki/Category:OSWc87ddd4a7d1159f0a75b686a61ef4e8e?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW78b09fe474c85bf09529d7eb3db0fe78"]
 
 
 # generated by datamodel-codegen:
@@ -26085,39 +26032,6 @@ class MolarEntropy(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSW79225fde5f8059d1802f8181c06b4cfa.json
-
-
-class LuminousFluxPerArea(QuantityValue):
-    """
-    In photometry, illuminance is the total luminous flux incident on a surface, per unit area. It is a measure of how much the incident light illuminates the surface, wavelength-weighted by the luminosity function to correlate with human brightness perception. Similarly, luminous emittance is the luminous flux per unit area emitted from a surface. In SI derived units these are measured in $lux (lx)$ or $lumens per square metre$ ($cd \\cdot m^{-2}$). In the CGS system, the unit of illuminance is the $phot$, which is equal to $10,000 lux$. The $foot-candle$ is a non-metric unit of illuminance that is used in photography.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "79225fde-5f80-59d1-802f-8181c06b4cfa",
-            "title": "LuminousFluxPerArea",
-            "title*": {"en": "Luminous Flux per Area"},
-            "description": "In photometry, illuminance is the total luminous flux incident on a surface, per unit area. It is a measure of how much the incident light illuminates the surface, wavelength-weighted by the luminosity function to correlate with human brightness perception. Similarly, luminous emittance is the luminous flux per unit area emitted from a surface. In SI derived units these are measured in $lux (lx)$ or $lumens per square metre$ ($cd \\cdot m^{-2}$). In the CGS system, the unit of illuminance is the $phot$, which is equal to $10,000 lux$. The $foot-candle$ is a non-metric unit of illuminance that is used in photography.",
-            "description*": {
-                "en": "In photometry, illuminance is the total luminous flux incident on a surface, per unit area. It is a measure of how much the incident light illuminates the surface, wavelength-weighted by the luminosity function to correlate with human brightness perception. Similarly, luminous emittance is the luminous flux per unit area emitted from a surface. In SI derived units these are measured in $lux (lx)$ or $lumens per square metre$ ($cd \\cdot m^{-2}$). In the CGS system, the unit of illuminance is the $phot$, which is equal to $10,000 lux$. The $foot-candle$ is a non-metric unit of illuminance that is used in photography."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLuminousFluxPerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW79225fde5f8059d1802f8181c06b4cfa"]
-    unit: LuminousFluxPerAreaUnit | None = Field(
-        LuminousFluxPerAreaUnit.lux,
-        options={"enum_titles": ["lx", "cd/m²"]},
-        title="LuminousFluxPerAreaUnit",
-        x_enum_varnames=["lux", "candela_per_meter_squared"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -26280,6 +26194,10 @@ class DynamicViscosityUnit(Enum):
     """
     Pa·s
     """
+    micro_poise = Unit.micro_poise.value
+    """
+    μP
+    """
     gram_per_hour_per_meter = Unit.gram_per_hour_per_meter.value
     """
     g/(m·h)
@@ -26287,6 +26205,10 @@ class DynamicViscosityUnit(Enum):
     kilo_gram_per_hour_per_meter = Unit.kilo_gram_per_hour_per_meter.value
     """
     kg/(m·h)
+    """
+    centi_poise = Unit.centi_poise.value
+    """
+    cP
     """
     gram_per_meter_per_second = Unit.gram_per_meter_per_second.value
     """
@@ -26296,13 +26218,25 @@ class DynamicViscosityUnit(Enum):
     """
     mPa·s
     """
+    poise = Unit.poise.value
+    """
+    P
+    """
     gram_per_centi_meter_per_second = Unit.gram_per_centi_meter_per_second.value
     """
     g/(cm·s)
     """
+    deca_poise = Unit.deca_poise.value
+    """
+    daP
+    """
     kilo_gram_per_meter_per_second = Unit.kilo_gram_per_meter_per_second.value
     """
     kg/(m·s)
+    """
+    kilo_poise = Unit.kilo_poise.value
+    """
+    kP
     """
 
 
@@ -26336,23 +26270,33 @@ class DynamicViscosity(QuantityValue):
         options={
             "enum_titles": [
                 "Pa·s",
+                "μP",
                 "g/(m·h)",
                 "kg/(m·h)",
+                "cP",
                 "g/(m·s)",
                 "mPa·s",
+                "P",
                 "g/(cm·s)",
+                "daP",
                 "kg/(m·s)",
+                "kP",
             ]
         },
         title="DynamicViscosityUnit",
         x_enum_varnames=[
             "pascal_second",
+            "micro_poise",
             "gram_per_hour_per_meter",
             "kilo_gram_per_hour_per_meter",
+            "centi_poise",
             "gram_per_meter_per_second",
             "milli_pascal_second",
+            "poise",
             "gram_per_centi_meter_per_second",
+            "deca_poise",
             "kilo_gram_per_meter_per_second",
+            "kilo_poise",
         ],
     )
 
@@ -26392,96 +26336,8 @@ class InfiniteMultiplicationFactor(MultiplicationFactor):
 #   filename:  OSW7bf742d673495bb8bd77d1ea5295b2cd.json
 
 
-class Thrust(Force):
-    """
-    Thrust is a reaction force described quantitatively by Newton's Second and Third Laws. When a system expels or accelerates mass in one direction the accelerated mass will cause a proportional but opposite force on that system.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "7bf742d6-7349-5bb8-bd77-d1ea5295b2cd",
-            "title": "Thrust",
-            "title*": {"en": "Thrust"},
-            "description": "Thrust is a reaction force described quantitatively by Newton's Second and Third Laws. When a system expels or accelerates mass in one direction the accelerated mass will cause a proportional but opposite force on that system.",
-            "description*": {
-                "en": "Thrust is a reaction force described quantitatively by Newton's Second and Third Laws. When a system expels or accelerates mass in one direction the accelerated mass will cause a proportional but opposite force on that system."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasThrustValue",
-            "@context": [
-                "/wiki/Category:OSW1b832c1a42c055eb9669bb0cdda18d7f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW7bf742d673495bb8bd77d1ea5295b2cd"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW7c210ed3aad85519ae7330073a9d6f9f.json
-
-
-class ElectricCurrent(QuantityValue):
-    """
-    "Electric Current" is the flow (movement) of electric charge. The amount of electric current through some surface, for example, a section through a copper conductor, is defined as the amount of electric charge flowing through that surface over time. Current is a scalar-valued quantity. Electric current is one of the base quantities in the International System of Quantities, ISQ, on which the International System of Units, SI, is based.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "7c210ed3-aad8-5519-ae73-30073a9d6f9f",
-            "title": "ElectricCurrent",
-            "title*": {"en": "Electric current", "de": "Elektrische Stromstärke"},
-            "description": '"Electric Current" is the flow (movement) of electric charge. The amount of electric current through some surface, for example, a section through a copper conductor, is defined as the amount of electric charge flowing through that surface over time. Current is a scalar-valued quantity. Electric current is one of the base quantities in the International System of Quantities, ISQ, on which the International System of Units, SI, is based.',
-            "description*": {
-                "en": '"Electric Current" is the flow (movement) of electric charge. The amount of electric current through some surface, for example, a section through a copper conductor, is defined as the amount of electric charge flowing through that surface over time. Current is a scalar-valued quantity. Electric current is one of the base quantities in the International System of Quantities, ISQ, on which the International System of Units, SI, is based.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasElectricCurrentValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW7c210ed3aad85519ae7330073a9d6f9f"]
-    unit: ElectricCurrentUnit | None = Field(
-        ElectricCurrentUnit.ampere,
-        options={
-            "enum_titles": [
-                "A",
-                "aA",
-                "fA",
-                "pA",
-                "nA",
-                "μA",
-                "mA",
-                "kA",
-                "MA",
-                "GA",
-                "TA",
-                "PA",
-            ]
-        },
-        title="ElectricCurrentUnit",
-        x_enum_varnames=[
-            "ampere",
-            "atto_ampere",
-            "femto_ampere",
-            "pico_ampere",
-            "nano_ampere",
-            "micro_ampere",
-            "milli_ampere",
-            "kilo_ampere",
-            "mega_ampere",
-            "giga_ampere",
-            "tera_ampere",
-            "peta_ampere",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -27521,33 +27377,6 @@ class Illuminance1(LuminousFluxPerArea):
     type: list[str] | None = ["Category:OSW0e767858fc7a5df0a3be780057b78446"]
 
 
-class Illuminance(Illuminance1):
-    """
-    Spherical illuminance is equal to quotient of the total luminous flux $\\Phi_v$ incident on a small sphere by the cross section area of that sphere.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "80d4e8b7-a89e-5054-ba5a-7f10dcb99838",
-            "title": "Illuminance",
-            "title*": {"en": "Illuminance"},
-            "description": "Spherical illuminance is equal to quotient of the total luminous flux $\\Phi_v$ incident on a small sphere by the cross section area of that sphere.",
-            "description*": {
-                "en": "Spherical illuminance is equal to quotient of the total luminous flux $\\Phi_v$ incident on a small sphere by the cross section area of that sphere."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasIlluminanceValue",
-            "@context": [
-                "/wiki/Category:OSW0e767858fc7a5df0a3be780057b78446?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW80d4e8b7a89e5054ba5a7f10dcb99838"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW80e9cf7556915b54b8326b588abc2531.json
 
@@ -27628,6 +27457,10 @@ class ThermalInsulanceUnit(Enum):
     """
     m²·K/W
     """
+    clo_unit = Unit.clo_unit.value
+    """
+    clo
+    """
 
 
 class ThermalInsulance(QuantityValue):
@@ -27657,9 +27490,9 @@ class ThermalInsulance(QuantityValue):
     type: list[str] | None = ["Category:OSW8139b63734d3516c827b33f08ced96fb"]
     unit: ThermalInsulanceUnit | None = Field(
         ThermalInsulanceUnit.kelvin_meter_squared_per_watt,
-        options={"enum_titles": ["m²·K/W"]},
+        options={"enum_titles": ["m²·K/W", "clo"]},
         title="ThermalInsulanceUnit",
-        x_enum_varnames=["kelvin_meter_squared_per_watt"],
+        x_enum_varnames=["kelvin_meter_squared_per_watt", "clo_unit"],
     )
 
 
@@ -28401,6 +28234,14 @@ class MagneticFluxUnit(Enum):
     """
     Wb
     """
+    maxwell = Unit.maxwell.value
+    """
+    Mx
+    """
+    unit_pole = Unit.unit_pole.value
+    """
+    pole
+    """
     milli_weber = Unit.milli_weber.value
     """
     mWb
@@ -28442,10 +28283,12 @@ class MagneticFlux(QuantityValue):
     type: list[str] | None = ["Category:OSW82a515de9bcc5af8a2f33974e7ec0f1a"]
     unit: MagneticFluxUnit | None = Field(
         MagneticFluxUnit.weber,
-        options={"enum_titles": ["Wb", "mWb", "N·m/A", "kWb"]},
+        options={"enum_titles": ["Wb", "Mx", "pole", "mWb", "N·m/A", "kWb"]},
         title="MagneticFluxUnit",
         x_enum_varnames=[
             "weber",
+            "maxwell",
+            "unit_pole",
             "milli_weber",
             "meter_newton_per_ampere",
             "kilo_weber",
@@ -28501,33 +28344,6 @@ class AtomScatteringFactor(QuantityValue):
 #   filename:  OSW836be461e71a51709b062f462f697f2c.json
 
 
-class MomentOfInertiaInTheZAxis(MomentOfInertia):
-    """
-    The rotational inertia or resistance to change in direction or speed of rotation about a defined axis.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "836be461-e71a-5170-9b06-2f462f697f2c",
-            "title": "MomentOfInertiaInTheZAxis",
-            "title*": {"en": "Moment of Inertia in the Z axis"},
-            "description": "The rotational inertia or resistance to change in direction or speed of rotation about a defined axis.",
-            "description*": {
-                "en": "The rotational inertia or resistance to change in direction or speed of rotation about a defined axis."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMomentOfInertiaInTheZAxisValue",
-            "@context": [
-                "/wiki/Category:OSW2e958a0e653558a8abf2bd1fa3c6dd59?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW836be461e71a51709b062f462f697f2c"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW8383080425d3579eade2a3ffc9db4d21.json
 
@@ -28566,6 +28382,10 @@ class PermeabilityRatioUnit(Enum):
     """
     #
     """
+    k = Unit.k.value
+    """
+    kᵣ
+    """
 
 
 class PermeabilityRatio(QuantityValue):
@@ -28595,9 +28415,9 @@ class PermeabilityRatio(QuantityValue):
     type: list[str] | None = ["Category:OSW83b5310c3d625578b62c3727b49bba56"]
     unit: PermeabilityRatioUnit | None = Field(
         PermeabilityRatioUnit.dimensionless,
-        options={"enum_titles": ["#"]},
+        options={"enum_titles": ["#", "kᵣ"]},
         title="PermeabilityRatioUnit",
-        x_enum_varnames=["dimensionless"],
+        x_enum_varnames=["dimensionless", "k"],
     )
 
 
@@ -29028,33 +28848,6 @@ class Enthalpy(Energy):
 
 # generated by datamodel-codegen:
 #   filename:  OSW877f6c0b113452649d1a4ac5ea3a6710.json
-
-
-class Strain(DimensionlessRatio):
-    """
-    In any branch of science dealing with materials and their behaviour, strain is the geometrical expression of deformation caused by the action of stress on a physical body. Strain is calculated by first assuming a change between two body states: the beginning state and the final state. Then the difference in placement of two points in this body in those two states expresses the numerical value of strain. Strain therefore expresses itself as a change in size and/or shape. [Wikipedia]
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "877f6c0b-1134-5264-9d1a-4ac5ea3a6710",
-            "title": "Strain",
-            "title*": {"en": "Strain"},
-            "description": "In any branch of science dealing with materials and their behaviour, strain is the geometrical expression of deformation caused by the action of stress on a physical body. Strain is calculated by first assuming a change between two body states: the beginning state and the final state. Then the difference in placement of two points in this body in those two states expresses the numerical value of strain. Strain therefore expresses itself as a change in size and/or shape. [Wikipedia]",
-            "description*": {
-                "en": "In any branch of science dealing with materials and their behaviour, strain is the geometrical expression of deformation caused by the action of stress on a physical body. Strain is calculated by first assuming a change between two body states: the beginning state and the final state. Then the difference in placement of two points in this body in those two states expresses the numerical value of strain. Strain therefore expresses itself as a change in size and/or shape. [Wikipedia]"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasStrainValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW877f6c0b113452649d1a4ac5ea3a6710"]
 
 
 # generated by datamodel-codegen:
@@ -29572,58 +29365,8 @@ class HamiltonFunction(QuantityValue):
 #   filename:  OSW89d1a9df9ae256df9c0fdf46b74cb96b.json
 
 
-class CenterOfGravityInTheXAxis(Length):
-    """
-    This is an autogenerated partial class definition of 'CenterOfGravityInTheXAxis'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "89d1a9df-9ae2-56df-9c0f-df46b74cb96b",
-            "title": "CenterOfGravityInTheXAxis",
-            "title*": {"en": "Center of Gravity in the X axis"},
-            "description": "This is an autogenerated partial class definition of 'CenterOfGravityInTheXAxis'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCenterOfGravityInTheXAxisValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW89d1a9df9ae256df9c0fdf46b74cb96b"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW8a36c97724bc5aa28c3049aeb0ef7d86.json
-
-
-class CenterOfGravityInTheZAxis(Length):
-    """
-    This is an autogenerated partial class definition of 'CenterOfGravityInTheZAxis'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "8a36c977-24bc-5aa2-8c30-49aeb0ef7d86",
-            "title": "CenterOfGravityInTheZAxis",
-            "title*": {"en": "Center of Gravity in the Z axis"},
-            "description": "This is an autogenerated partial class definition of 'CenterOfGravityInTheZAxis'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCenterOfGravityInTheZAxisValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW8a36c97724bc5aa28c3049aeb0ef7d86"]
 
 
 # generated by datamodel-codegen:
@@ -29892,31 +29635,6 @@ class Prevalence(DimensionlessRatio):
 
 # generated by datamodel-codegen:
 #   filename:  OSW8ba7ac8b06c453e2885cc41c9d9ee0bb.json
-
-
-class ElectricCurrentPerLength(LinearElectricCurrentDensity):
-    """
-    This is an autogenerated partial class definition of 'ElectricCurrentPerLength'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "8ba7ac8b-06c4-53e2-885c-c41c9d9ee0bb",
-            "title": "ElectricCurrentPerLength",
-            "title*": {"en": "Electric Current per Length"},
-            "description": "This is an autogenerated partial class definition of 'ElectricCurrentPerLength'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasElectricCurrentPerLengthValue",
-            "@context": [
-                "/wiki/Category:OSW6ce762ef103d5b15976dcfa13914bef4?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW8ba7ac8b06c453e2885cc41c9d9ee0bb"]
 
 
 # generated by datamodel-codegen:
@@ -30384,121 +30102,12 @@ class QualityFactor(QuantityValue):
 #   filename:  OSW8f13994fed1a5281985ec6c2532ad4a5.json
 
 
-class GeneralizedForce(QuantityValue):
-    """
-    Generalized Momentum, also known as the canonical or conjugate momentum, extends the concepts of both linear momentum and angular momentum. To distinguish it from generalized momentum, the product of mass and velocity is also referred to as mechanical, kinetic or kinematic momentum.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "8f13994f-ed1a-5281-985e-c6c2532ad4a5",
-            "title": "GeneralizedForce",
-            "title*": {"en": "Generalized Force"},
-            "description": "Generalized Momentum, also known as the canonical or conjugate momentum, extends the concepts of both linear momentum and angular momentum. To distinguish it from generalized momentum, the product of mass and velocity is also referred to as mechanical, kinetic or kinematic momentum.",
-            "description*": {
-                "en": "Generalized Momentum, also known as the canonical or conjugate momentum, extends the concepts of both linear momentum and angular momentum. To distinguish it from generalized momentum, the product of mass and velocity is also referred to as mechanical, kinetic or kinematic momentum."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasGeneralizedForceValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW8f13994fed1a5281985ec6c2532ad4a5"]
-    unit: GeneralizedForceUnit | None = Field(
-        GeneralizedForceUnit.unitless,
-        options={"enum_titles": ["一"]},
-        title="GeneralizedForceUnit",
-        x_enum_varnames=["unitless"],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW8f66d565d52b52bab7fe2840caf54ffa.json
 
 
-class FrictionCoefficient(DimensionlessRatio):
-    """
-    "Friction Coefficient" is the ratio of the force of friction between two bodies and the force pressing them together
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "8f66d565-d52b-52ba-b7fe-2840caf54ffa",
-            "title": "FrictionCoefficient",
-            "title*": {"en": "Friction Coefficient"},
-            "description": '"Friction Coefficient" is the ratio of the force of friction between two bodies and the force pressing them together',
-            "description*": {
-                "en": '"Friction Coefficient" is the ratio of the force of friction between two bodies and the force pressing them together'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasFrictionCoefficientValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW8f66d565d52b52bab7fe2840caf54ffa"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW8fa2469531415841b65412f705d138d6.json
-
-
-class SpecificHeatCapacity(QuantityValue):
-    """
-    Specific Heat Capacity of a solid or liquid is defined as the heat required to raise unit mass of substance by one degree of temperature. This is Heat Capacity divided by Mass. Note that there are corresponding molar quantities.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "8fa24695-3141-5841-b654-12f705d138d6",
-            "title": "SpecificHeatCapacity",
-            "title*": {"en": "Specific Heat Capacity"},
-            "description": "Specific Heat Capacity of a solid or liquid is defined as the heat required to raise unit mass of substance by one degree of temperature. This is Heat Capacity divided by Mass. Note that there are corresponding molar quantities.",
-            "description*": {
-                "en": "Specific Heat Capacity of a solid or liquid is defined as the heat required to raise unit mass of substance by one degree of temperature. This is Heat Capacity divided by Mass. Note that there are corresponding molar quantities."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasSpecificHeatCapacityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW8fa2469531415841b65412f705d138d6"]
-    unit: SpecificHeatCapacityUnit | None = Field(
-        SpecificHeatCapacityUnit.joule_per_kelvin_per_kilo_gram,
-        options={
-            "enum_titles": [
-                "J/(kg·K)",
-                "J/(kg·°C)",
-                "m²/(s²·K)",
-                "J/(g·K)",
-                "J/(g·°C)",
-                "kJ/(kg·K)",
-            ]
-        },
-        title="SpecificHeatCapacityUnit",
-        x_enum_varnames=[
-            "joule_per_kelvin_per_kilo_gram",
-            "joule_per_Celsius_per_kilo_gram",
-            "meter_squared_per_kelvin_per_second_squared",
-            "joule_per_gram_per_kelvin",
-            "joule_per_Celsius_per_gram",
-            "kilo_joule_per_kelvin_per_kilo_gram",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -30670,74 +30279,8 @@ class RadiantFlux(Power):
 #   filename:  OSW91fc2f110c7f52628dce39bc0278562b.json
 
 
-class MagneticFluxDensity(QuantityValue):
-    """
-    vektorielle Feldgröße B, die auf jedes geladene Teilchen, das eine Geschwindigkeit v hat, eine Kraft F ausübt, die gleich dem Produkt aus dem Vektorprodukt v x B und der elektrischen Ladung Q des Teilchens ist oder vektorielle Größe gleich dem Produkt aus der Magnetisierung M und der magnetischen Feldkonstante µ₀
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "91fc2f11-0c7f-5262-8dce-39bc0278562b",
-            "title": "MagneticFluxDensity",
-            "title*": {"en": "Magnetic flux density", "de": "Magnetische Flussdichte"},
-            "description": "vektorielle Feldgröße B, die auf jedes geladene Teilchen, das eine Geschwindigkeit v hat, eine Kraft F ausübt, die gleich dem Produkt aus dem Vektorprodukt v x B und der elektrischen Ladung Q des Teilchens ist oder vektorielle Größe gleich dem Produkt aus der Magnetisierung M und der magnetischen Feldkonstante µ₀",
-            "description*": {
-                "en": "vektorielle Feldgröße B, die auf jedes geladene Teilchen, das eine Geschwindigkeit v hat, eine Kraft F ausübt, die gleich dem Produkt aus dem Vektorprodukt v x B und der elektrischen Ladung Q des Teilchens ist oder vektorielle Größe gleich dem Produkt aus der Magnetisierung M und der magnetischen Feldkonstante µ₀"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMagneticFluxDensityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW91fc2f110c7f52628dce39bc0278562b"]
-    unit: MagneticFluxDensityUnit | None = Field(
-        MagneticFluxDensityUnit.tesla,
-        options={"enum_titles": ["T", "nT", "μT", "mT", "kT"]},
-        title="MagneticFluxDensityUnit",
-        x_enum_varnames=[
-            "tesla",
-            "nano_tesla",
-            "micro_tesla",
-            "milli_tesla",
-            "kilo_tesla",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW92473183e45854a8bd13de8f0aefff19.json
-
-
-class Friction(Force):
-    """
-    "Friction" is the force of two surfaces In contact, or the force of a medium acting on a moving object (that is air on an aircraft). When contacting surfaces move relative to each other, the friction between the two objects converts kinetic energy into thermal energy.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "92473183-e458-54a8-bd13-de8f0aefff19",
-            "title": "Friction",
-            "title*": {"en": "Friction"},
-            "description": '"Friction" is the force of two surfaces In contact, or the force of a medium acting on a moving object (that is air on an aircraft). When contacting surfaces move relative to each other, the friction between the two objects converts kinetic energy into thermal energy.',
-            "description*": {
-                "en": '"Friction" is the force of two surfaces In contact, or the force of a medium acting on a moving object (that is air on an aircraft). When contacting surfaces move relative to each other, the friction between the two objects converts kinetic energy into thermal energy.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasFrictionValue",
-            "@context": [
-                "/wiki/Category:OSW1b832c1a42c055eb9669bb0cdda18d7f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW92473183e45854a8bd13de8f0aefff19"]
 
 
 # generated by datamodel-codegen:
@@ -30929,33 +30472,6 @@ class PressureLossPerLength(QuantityValue):
 #   filename:  OSW9321ad05d637531b87fdaf5993788342.json
 
 
-class WaterSolubility(AmountOfSubstancePerVolume):
-    """
-    An amount of substance per unit volume that is the concentration of a saturated solution expressed as the ratio of the solute concentration over the volume of water.  A substance's solubility fundamentally depends on several physical and chemical properties of the solution as well as the environment it is in.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "9321ad05-d637-531b-87fd-af5993788342",
-            "title": "WaterSolubility",
-            "title*": {"en": "Water Solubility"},
-            "description": "An amount of substance per unit volume that is the concentration of a saturated solution expressed as the ratio of the solute concentration over the volume of water.  A substance's solubility fundamentally depends on several physical and chemical properties of the solution as well as the environment it is in.",
-            "description*": {
-                "en": "An amount of substance per unit volume that is the concentration of a saturated solution expressed as the ratio of the solute concentration over the volume of water.  A substance's solubility fundamentally depends on several physical and chemical properties of the solution as well as the environment it is in."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasWaterSolubilityValue",
-            "@context": [
-                "/wiki/Category:OSW98493d0d7b8b528fa42a2332c8cf502f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9321ad05d637531b87fdaf5993788342"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW940166fa5c7053708125f0c10236d916.json
 
@@ -30988,6 +30504,10 @@ class MagnetomotiveForceUnit(Enum):
     milli_ampere = Unit.milli_ampere.value
     """
     mA
+    """
+    gigabit = "Item:OSW9fb7b9e67a4753bdb7e0a2eeecb87f61"
+    """
+    Gb
     """
     ampere = Unit.ampere.value
     """
@@ -31056,6 +30576,7 @@ class MagnetomotiveForce(QuantityValue):
                 "nA",
                 "μA",
                 "mA",
+                "Gb",
                 "A",
                 "kA",
                 "MA",
@@ -31073,6 +30594,7 @@ class MagnetomotiveForce(QuantityValue):
             "nano_ampere",
             "micro_ampere",
             "milli_ampere",
+            "gigabit",
             "ampere",
             "kilo_ampere",
             "mega_ampere",
@@ -31184,70 +30706,8 @@ class RadiantFluence(QuantityValue):
 #   filename:  OSW952db9929d395609a9d90fd5dbcb6b69.json
 
 
-class ApiGravity(DimensionlessRatio):
-    """
-    The American Petroleum Institute gravity, or API gravity, is a measure of how heavy or light a petroleum liquid is compared to water: if its API gravity is greater than 10, it is lighter and floats on water; if less than 10, it is heavier and sinks.
-
-    API gravity is thus an inverse measure of a petroleum liquid's density relative to that of water (also known as specific gravity). It is used to compare densities of petroleum liquids. For example, if one petroleum liquid is less dense than another, it has a greater API gravity. Although API gravity is mathematically a dimensionless quantity (see the formula below), it is referred to as being in 'degrees'. API gravity is graduated in degrees on a hydrometer instrument. API gravity values of most petroleum liquids fall between 10 and 70 degrees.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "952db992-9d39-5609-a9d9-0fd5dbcb6b69",
-            "title": "ApiGravity",
-            "title*": {"en": "API Gravity"},
-            "description": "The American Petroleum Institute gravity, or API gravity, is a measure of how heavy or light a petroleum liquid is compared to water: if its API gravity is greater than 10, it is lighter and floats on water; if less than 10, it is heavier and sinks.\n\nAPI gravity is thus an inverse measure of a petroleum liquid's density relative to that of water (also known as specific gravity). It is used to compare densities of petroleum liquids. For example, if one petroleum liquid is less dense than another, it has a greater API gravity. Although API gravity is mathematically a dimensionless quantity (see the formula below), it is referred to as being in 'degrees'. API gravity is graduated in degrees on a hydrometer instrument. API gravity values of most petroleum liquids fall between 10 and 70 degrees.",
-            "description*": {
-                "en": "The American Petroleum Institute gravity, or API gravity, is a measure of how heavy or light a petroleum liquid is compared to water: if its API gravity is greater than 10, it is lighter and floats on water; if less than 10, it is heavier and sinks.\n\nAPI gravity is thus an inverse measure of a petroleum liquid's density relative to that of water (also known as specific gravity). It is used to compare densities of petroleum liquids. For example, if one petroleum liquid is less dense than another, it has a greater API gravity. Although API gravity is mathematically a dimensionless quantity (see the formula below), it is referred to as being in 'degrees'. API gravity is graduated in degrees on a hydrometer instrument. API gravity values of most petroleum liquids fall between 10 and 70 degrees."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasApiGravityValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW952db9929d395609a9d90fd5dbcb6b69"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW9534c898b7d45510adfa6673507a4e10.json
-
-
-class AngularFrequency(QuantityValue):
-    """
-    "Angular frequency", symbol $\\omega$ (also referred to by the terms angular speed, radial frequency, circular frequency, orbital frequency, radian frequency, and pulsatance) is a scalar measure of rotation rate. Angular frequency (or angular speed) is the magnitude of the vector quantity angular velocity.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "9534c898-b7d4-5510-adfa-6673507a4e10",
-            "title": "AngularFrequency",
-            "title*": {"en": "Angular frequency", "de": "Kreisfrequenz"},
-            "description": '"Angular frequency", symbol $\\omega$ (also referred to by the terms angular speed, radial frequency, circular frequency, orbital frequency, radian frequency, and pulsatance) is a scalar measure of rotation rate. Angular frequency (or angular speed) is the magnitude of the vector quantity angular velocity.',
-            "description*": {
-                "en": '"Angular frequency", symbol $\\omega$ (also referred to by the terms angular speed, radial frequency, circular frequency, orbital frequency, radian frequency, and pulsatance) is a scalar measure of rotation rate. Angular frequency (or angular speed) is the magnitude of the vector quantity angular velocity.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAngularFrequencyValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9534c898b7d45510adfa6673507a4e10"]
-    unit: AngularFrequencyUnit | None = Field(
-        AngularFrequencyUnit.radian_per_second,
-        options={"enum_titles": ["rad/s", "rad/h", "rad/min"]},
-        title="AngularFrequencyUnit",
-        x_enum_varnames=["radian_per_second", "radian_per_hour", "radian_per_minute"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -31525,33 +30985,6 @@ class GaugePressure(Pressure):
 #   filename:  OSW98493d0d7b8b528fa42a2332c8cf502f.json
 
 
-class AmountOfSubstancePerVolume(Concentration):
-    """
-    The amount of substance per unit volume is called the molar density. Molar density is an intensive property of a substance and depends on the temperature and pressure.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "98493d0d-7b8b-528f-a42a-2332c8cf502f",
-            "title": "AmountOfSubstancePerVolume",
-            "title*": {"en": "Amount of Substance per Volume"},
-            "description": "The amount of substance per unit volume is called the molar density. Molar density is an intensive property of a substance and depends on the temperature and pressure.",
-            "description*": {
-                "en": "The amount of substance per unit volume is called the molar density. Molar density is an intensive property of a substance and depends on the temperature and pressure."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAmountOfSubstancePerVolumeValue",
-            "@context": [
-                "/wiki/Category:OSW4ce5add385d2545ab8ab50e4b222dab4?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW98493d0d7b8b528fa42a2332c8cf502f"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW9882e31701b25fa18ff69a38f57debf5.json
 
@@ -31565,39 +30998,6 @@ class IonConcentrationUnit(Enum):
     """
     cd/klm
     """
-
-
-class IonConcentration(QuantityValue):
-    """
-    "Luminous Intensity Distribution" is a measure of the luminous intensity of a light source that changes according to the direction of the ray. It is normally based on some standardized distribution light distribution curves. Usually measured in Candela/Lumen (cd/lm) or (cd/klm).
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "9882e317-01b2-5fa1-8ff6-9a38f57debf5",
-            "title": "IonConcentration",
-            "title*": {"en": "Ion Concentration"},
-            "description": '"Luminous Intensity Distribution" is a measure of the luminous intensity of a light source that changes according to the direction of the ray. It is normally based on some standardized distribution light distribution curves. Usually measured in Candela/Lumen (cd/lm) or (cd/klm).',
-            "description*": {
-                "en": '"Luminous Intensity Distribution" is a measure of the luminous intensity of a light source that changes according to the direction of the ray. It is normally based on some standardized distribution light distribution curves. Usually measured in Candela/Lumen (cd/lm) or (cd/klm).'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasIonConcentrationValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9882e31701b25fa18ff69a38f57debf5"]
-    unit: IonConcentrationUnit | None = Field(
-        IonConcentrationUnit.candela_per_lumen,
-        options={"enum_titles": ["cd/lm", "cd/klm"]},
-        title="IonConcentrationUnit",
-        x_enum_varnames=["candela_per_lumen", "candela_per_kilo_lumen"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -31863,59 +31263,6 @@ class StandardGravitationalParameter(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSW9a32b5a84f235a0cb0a9e9fba9bd252e.json
-
-
-class SpecificEnergy(QuantityValue):
-    """
-    $\\textit{Specific Energy}$ is defined as the energy per unit mass.
-      Common metric units are $J/kg$.
-      It is an intensive property.
-      Contrast this with energy, which is an extensive property.
-      There are two main types of specific energy: potential energy and specific kinetic energy.
-      Others are the $\\textit{gray}$ and $\\textit{sievert}$, which are measures for the absorption of radiation.
-      $$$$
-      The concept of specific energy applies to a particular or theoretical way of extracting useful energy from the material considered that is usually implied by context.
-      These intensive properties are each symbolized by using the lower case letter of the symbol for the corresponding extensive property,
-       which is symbolized by a capital letter.
-      For example, the extensive thermodynamic property enthalpy is symbolized by $H$; specific enthalpy is symbolized by $h$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "9a32b5a8-4f23-5a0c-b0a9-e9fba9bd252e",
-            "title": "SpecificEnergy",
-            "title*": {"en": "Specific Energy"},
-            "description": "$\\textit{Specific Energy}$ is defined as the energy per unit mass. \n  Common metric units are $J/kg$. \n  It is an intensive property. \n  Contrast this with energy, which is an extensive property. \n  There are two main types of specific energy: potential energy and specific kinetic energy. \n  Others are the $\\textit{gray}$ and $\\textit{sievert}$, which are measures for the absorption of radiation. \n  $$$$\n  The concept of specific energy applies to a particular or theoretical way of extracting useful energy from the material considered that is usually implied by context. \n  These intensive properties are each symbolized by using the lower case letter of the symbol for the corresponding extensive property,\n   which is symbolized by a capital letter. \n  For example, the extensive thermodynamic property enthalpy is symbolized by $H$; specific enthalpy is symbolized by $h$.",
-            "description*": {
-                "en": "$\\textit{Specific Energy}$ is defined as the energy per unit mass. \n  Common metric units are $J/kg$. \n  It is an intensive property. \n  Contrast this with energy, which is an extensive property. \n  There are two main types of specific energy: potential energy and specific kinetic energy. \n  Others are the $\\textit{gray}$ and $\\textit{sievert}$, which are measures for the absorption of radiation. \n  $$$$\n  The concept of specific energy applies to a particular or theoretical way of extracting useful energy from the material considered that is usually implied by context. \n  These intensive properties are each symbolized by using the lower case letter of the symbol for the corresponding extensive property,\n   which is symbolized by a capital letter. \n  For example, the extensive thermodynamic property enthalpy is symbolized by $H$; specific enthalpy is symbolized by $h$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasSpecificEnergyValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9a32b5a84f235a0cb0a9e9fba9bd252e"]
-    unit: SpecificEnergyUnit | None = Field(
-        SpecificEnergyUnit.joule_per_kilo_gram,
-        options={
-            "enum_titles": ["J/kg", "N·m/kg", "mJ/g", "J/g", "N·m/g", "kJ/kg", "MJ/kg"]
-        },
-        title="SpecificEnergyUnit",
-        x_enum_varnames=[
-            "joule_per_kilo_gram",
-            "meter_newton_per_kilo_gram",
-            "milli_joule_per_gram",
-            "joule_per_gram",
-            "meter_newton_per_gram",
-            "kilo_joule_per_kilo_gram",
-            "mega_joule_per_kilo_gram",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -33242,83 +32589,6 @@ class RotationalStiffness(TorquePerAngle):
 #   filename:  OSW9e775ee5d35455faaa88953b35b2d911.json
 
 
-class MassPerAreaTime(QuantityValue):
-    """
-    In Physics and Engineering, mass flux is the rate of mass flow per unit area. The common symbols are $j$, $J$, $\\phi$, or $\\Phi$  (Greek lower or capital Phi), sometimes with subscript $m$ to indicate mass is the flowing quantity.  Its SI units are $ kg s^{-1} m^{-2}$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "9e775ee5-d354-55fa-aa88-953b35b2d911",
-            "title": "MassPerAreaTime",
-            "title*": {"en": "Mass per Area Time"},
-            "description": "In Physics and Engineering, mass flux is the rate of mass flow per unit area. The common symbols are $j$, $J$, $\\phi$, or $\\Phi$  (Greek lower or capital Phi), sometimes with subscript $m$ to indicate mass is the flowing quantity.  Its SI units are $ kg s^{-1} m^{-2}$.",
-            "description*": {
-                "en": "In Physics and Engineering, mass flux is the rate of mass flow per unit area. The common symbols are $j$, $J$, $\\phi$, or $\\Phi$  (Greek lower or capital Phi), sometimes with subscript $m$ to indicate mass is the flowing quantity.  Its SI units are $ kg s^{-1} m^{-2}$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMassPerAreaTimeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9e775ee5d35455faaa88953b35b2d911"]
-    unit: MassPerAreaTimeUnit | None = Field(
-        MassPerAreaTimeUnit.kilo_gram_per_meter_squared_per_second,
-        options={
-            "enum_titles": [
-                "kg/(m²·s)",
-                "g/(ha·a)",
-                "μg/(m²·d)",
-                "ng/(cm²·d)",
-                "kg/(ha·a)",
-                "mg/(m²·d)",
-                "μg/(cm²·wk)",
-                "g/(m²·a)",
-                "mg/(m²·h)",
-                "g/(m²·wk)",
-                "Mg/(ha·a)",
-                "t/(ha·a)",
-                "g/(m²·d)",
-                "g/(m²·h)",
-                "g/(cm²·a)",
-                "mg/(m²·s)",
-                "kg/(m²·d)",
-                "g/(m²·s)",
-                "kg/(s·m²)",
-                "g/(s·m²)",
-            ]
-        },
-        title="MassPerAreaTimeUnit",
-        x_enum_varnames=[
-            "kilo_gram_per_meter_squared_per_second",
-            "gram_per_hectare_per_year",
-            "micro_gram_per_day_per_meter_squared",
-            "nano_gram_per_centi_meter_squared_per_day",
-            "kilo_gram_per_hectare_per_year",
-            "milli_gram_per_day_per_meter_squared",
-            "micro_g_per_cm_squared_wk",
-            "gram_per_meter_squared_per_year",
-            "milli_gram_per_hour_per_meter_squared",
-            "gram_per_meter_squared_per_week",
-            "mega_gram_per_hectare_per_year",
-            "metric_ton_per_hectare_per_year",
-            "gram_per_day_per_meter_squared",
-            "gram_per_hour_per_meter_squared",
-            "gram_per_centi_meter_squared_per_year",
-            "milli_gram_per_meter_squared_per_second",
-            "kilo_gram_per_day_per_meter_squared",
-            "gram_per_meter_squared_per_second",
-            "kilo_gram_per_meter_squared_per_second",
-            "gram_per_meter_squared_per_second",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSW9eb931426c785245bf64c1fe1dce25c8.json
 
@@ -33507,72 +32777,8 @@ class ThermalDiffusivity(AreaPerTime):
 #   filename:  OSW9f693a8e95ec59248b109c678328b872.json
 
 
-class DiffusionCoefficient(QuantityValue):
-    """
-    The "Diffusion Coefficient" is a proportionality constant between the molar flux due to molecular diffusion and the gradient in the concentration of the species (or the driving force for diffusion). Diffusivity is encountered in Fick's law and numerous other equations of physical chemistry.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "9f693a8e-95ec-5924-8b10-9c678328b872",
-            "title": "DiffusionCoefficient",
-            "title*": {"en": "Diffusion coefficient", "de": "Diffusionskoeffizient"},
-            "description": 'The "Diffusion Coefficient" is a proportionality constant between the molar flux due to molecular diffusion and the gradient in the concentration of the species (or the driving force for diffusion). Diffusivity is encountered in Fick\'s law and numerous other equations of physical chemistry.',
-            "description*": {
-                "en": 'The "Diffusion Coefficient" is a proportionality constant between the molar flux due to molecular diffusion and the gradient in the concentration of the species (or the driving force for diffusion). Diffusivity is encountered in Fick\'s law and numerous other equations of physical chemistry.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasDiffusionCoefficientValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSW9f693a8e95ec59248b109c678328b872"]
-    unit: DiffusionCoefficientUnit | None = Field(
-        DiffusionCoefficientUnit.meter_squared_per_second,
-        options={"enum_titles": ["m²/s", "mm²/s", "cm²/s"]},
-        title="DiffusionCoefficientUnit",
-        x_enum_varnames=[
-            "meter_squared_per_second",
-            "milli_meter_squared_per_second",
-            "centi_meter_squared_per_second",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWa002dbedf44c5a86a375783a4e7ba6e7.json
-
-
-class CrossSection(Area):
-    """
-    "Cross-section" is used to express the likelihood of interaction between particles. For a specified target particle and for a specified reaction or process produced by incident charged or uncharged particles of specified type and energy, it is the mean number of such reactions or processes divided by the incident-particle fluence.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a002dbed-f44c-5a86-a375-783a4e7ba6e7",
-            "title": "CrossSection",
-            "title*": {"en": "Cross-section"},
-            "description": '"Cross-section" is used to express the likelihood of interaction between particles. For a specified target particle and for a specified reaction or process produced by incident charged or uncharged particles of specified type and energy, it is the mean number of such reactions or processes divided by the incident-particle fluence.',
-            "description*": {
-                "en": '"Cross-section" is used to express the likelihood of interaction between particles. For a specified target particle and for a specified reaction or process produced by incident charged or uncharged particles of specified type and energy, it is the mean number of such reactions or processes divided by the incident-particle fluence.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCrossSectionValue",
-            "@context": [
-                "/wiki/Category:OSW1fcf1694712e5684885071efdf775bd9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa002dbedf44c5a86a375783a4e7ba6e7"]
 
 
 # generated by datamodel-codegen:
@@ -34028,33 +33234,6 @@ class SurfaceDensity(QuantityValue):
 #   filename:  OSWa1400ee0d19b55c09bfac6fad4965a58.json
 
 
-class InternalEnergy(Energy):
-    """
-    The internal energy is the total energy contained by a thermodynamic system. It is the energy needed to create the system, but excludes the energy to displace the system's surroundings, any energy associated with a move as a whole, or due to external force fields. Internal energy has two major components, kinetic energy and potential energy. The internal energy (U) is the sum of all forms of energy (Ei) intrinsic to a thermodynamic system:  $  U = \\sum_i E_i $
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a1400ee0-d19b-55c0-9bfa-c6fad4965a58",
-            "title": "InternalEnergy",
-            "title*": {"en": "Internal energy", "de": "Innere Energie"},
-            "description": "The internal energy is the total energy contained by a thermodynamic system. It is the energy needed to create the system, but excludes the energy to displace the system's surroundings, any energy associated with a move as a whole, or due to external force fields. Internal energy has two major components, kinetic energy and potential energy. The internal energy (U) is the sum of all forms of energy (Ei) intrinsic to a thermodynamic system:  $  U = \\sum_i E_i $",
-            "description*": {
-                "en": "The internal energy is the total energy contained by a thermodynamic system. It is the energy needed to create the system, but excludes the energy to displace the system's surroundings, any energy associated with a move as a whole, or due to external force fields. Internal energy has two major components, kinetic energy and potential energy. The internal energy (U) is the sum of all forms of energy (Ei) intrinsic to a thermodynamic system:  $  U = \\sum_i E_i $"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInternalEnergyValue",
-            "@context": [
-                "/wiki/Category:OSWc87ddd4a7d1159f0a75b686a61ef4e8e?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa1400ee0d19b55c09bfac6fad4965a58"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWa142144f1fb3549191b50f624bdcbb94.json
 
@@ -34088,33 +33267,6 @@ class InertMass(Mass):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa190a51f7ec150b2aea3c45ff0ac32d3.json
-
-
-class LarmorAngularFrequency(AngularFrequency):
-    """
-    The "Larmor Frequency" describes angular momentum vector precession about the external field axis with an angular frequency.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a190a51f-7ec1-50b2-aea3-c45ff0ac32d3",
-            "title": "LarmorAngularFrequency",
-            "title*": {"en": "Larmor Angular Frequency"},
-            "description": 'The "Larmor Frequency" describes angular momentum vector precession about the external field axis with an angular frequency.',
-            "description*": {
-                "en": 'The "Larmor Frequency" describes angular momentum vector precession about the external field axis with an angular frequency.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLarmorAngularFrequencyValue",
-            "@context": [
-                "/wiki/Category:OSW9534c898b7d45510adfa6673507a4e10?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa190a51f7ec150b2aea3c45ff0ac32d3"]
 
 
 # generated by datamodel-codegen:
@@ -34538,33 +33690,6 @@ class CouplingFactor(QuantityValue):
 #   filename:  OSWa35c06b30b7750c49dd53768ffd9e756.json
 
 
-class QuantumNumber(Dimensionless):
-    """
-    The "Quantum Number" describes values of conserved quantities in the dynamics of the quantum system. Perhaps the most peculiar aspect of quantum mechanics is the quantization of observable quantities, since quantum numbers are discrete sets of integers or half-integers.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a35c06b3-0b77-50c4-9dd5-3768ffd9e756",
-            "title": "QuantumNumber",
-            "title*": {"en": "Quantum Number"},
-            "description": 'The "Quantum Number" describes values of conserved quantities in the dynamics of the quantum system. Perhaps the most peculiar aspect of quantum mechanics is the quantization of observable quantities, since quantum numbers are discrete sets of integers or half-integers.',
-            "description*": {
-                "en": 'The "Quantum Number" describes values of conserved quantities in the dynamics of the quantum system. Perhaps the most peculiar aspect of quantum mechanics is the quantization of observable quantities, since quantum numbers are discrete sets of integers or half-integers.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasQuantumNumberValue",
-            "@context": [
-                "/wiki/Category:OSWbcaa33bd770e53e09d5e6087d141648b?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa35c06b30b7750c49dd53768ffd9e756"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWa37f106768d4575abdb567b17d904d2d.json
 
@@ -34611,37 +33736,6 @@ class DensityOfStates(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa3a8179bb49f5fafa9ff680f4d7f9f34.json
-
-
-class ExpansionRatio(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'ExpansionRatio'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "a3a8179b-b49f-5faf-a9ff-680f4d7f9f34",
-            "title": "ExpansionRatio",
-            "title*": {"en": "Expansion Ratio"},
-            "description": "This is an autogenerated partial class definition of 'ExpansionRatio'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasExpansionRatioValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa3a8179bb49f5fafa9ff680f4d7f9f34"]
-    unit: ExpansionRatioUnit | None = Field(
-        ExpansionRatioUnit.per_kelvin,
-        options={"enum_titles": ["/K", "/MK"]},
-        title="ExpansionRatioUnit",
-        x_enum_varnames=["per_kelvin", "per_mega_kelvin"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -34876,33 +33970,6 @@ class EarthClosestApproachVehicleVelocity(VehicleVelocity):
 #   filename:  OSWa572282dc5c4510399eeafa0ce8e8519.json
 
 
-class KineticEnergy(Energy):
-    """
-    The kinetic energy of an object is the energy which it possesses due to its motion. It is defined as the work needed to accelerate a body of a given mass from rest to its stated velocity.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a572282d-c5c4-5103-99ee-afa0ce8e8519",
-            "title": "KineticEnergy",
-            "title*": {"en": "Kinetic energy", "de": "Kinetische Energie"},
-            "description": "The kinetic energy of an object is the energy which it possesses due to its motion. It is defined as the work needed to accelerate a body of a given mass from rest to its stated velocity.",
-            "description*": {
-                "en": "The kinetic energy of an object is the energy which it possesses due to its motion. It is defined as the work needed to accelerate a body of a given mass from rest to its stated velocity."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasKineticEnergyValue",
-            "@context": [
-                "/wiki/Category:OSWc87ddd4a7d1159f0a75b686a61ef4e8e?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa572282dc5c4510399eeafa0ce8e8519"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWa573ff74e1f15ca286ce442b065146dc.json
 
@@ -34934,65 +34001,6 @@ class InitialVehicleMass(Mass):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa57dc71706f75ba7995a8eebdcea18da.json
-
-
-class RotationalFrequency(QuantityValue):
-    """
-    IfcRotationalFrequencyMeasure is a measure of the number of cycles that an item revolves in unit time. Usually measured in cycles/s.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "a57dc717-06f7-5ba7-995a-8eebdcea18da",
-            "title": "RotationalFrequency",
-            "title*": {"en": "RotationalFrequency"},
-            "description": "IfcRotationalFrequencyMeasure is a measure of the number of cycles that an item revolves in unit time. Usually measured in cycles/s.",
-            "description*": {
-                "en": "IfcRotationalFrequencyMeasure is a measure of the number of cycles that an item revolves in unit time. Usually measured in cycles/s."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasRotationalFrequencyValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa57dc71706f75ba7995a8eebdcea18da"]
-    unit: RotationalFrequencyUnit | None = Field(
-        RotationalFrequencyUnit.per_second,
-        options={
-            "enum_titles": [
-                "/s",
-                "mHz",
-                "rev/min",
-                "Hz",
-                "c/s",
-                "/ms",
-                "kHz",
-                "MHz",
-                "GHz",
-                "THz",
-                "PHz",
-            ]
-        },
-        title="RotationalFrequencyUnit",
-        x_enum_varnames=[
-            "per_second",
-            "milli_hertz",
-            "per_minute",
-            "hertz",
-            "cycle_per_second",
-            "per_milli_second",
-            "kilo_hertz",
-            "mega_hertz",
-            "giga_hertz",
-            "tera_hertz",
-            "peta_hertz",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -35057,43 +34065,6 @@ class FinalOrCurrentVehicleMass(Mass):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa7079f30224250c9b5d10367541f3c54.json
-
-
-class EnergyDensity(QuantityValue):
-    """
-    Energy density is defined as energy per unit volume. The SI unit for energy density is the joule per cubic meter.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "a7079f30-2242-50c9-b5d1-0367541f3c54",
-            "title": "EnergyDensity",
-            "title*": {"en": "Energy Density"},
-            "description": "Energy density is defined as energy per unit volume. The SI unit for energy density is the joule per cubic meter.",
-            "description*": {
-                "en": "Energy density is defined as energy per unit volume. The SI unit for energy density is the joule per cubic meter."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasEnergyDensityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa7079f30224250c9b5d10367541f3c54"]
-    unit: EnergyDensityUnit | None = Field(
-        EnergyDensityUnit.joule_per_meter_cubed,
-        options={"enum_titles": ["J/m³", "W·h/m³", "MJ/m³"]},
-        title="EnergyDensityUnit",
-        x_enum_varnames=[
-            "joule_per_meter_cubed",
-            "hour_watt_per_meter_cubed",
-            "mega_joule_per_meter_cubed",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -35177,33 +34148,6 @@ class OsmoticPressure(Pressure):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa76d21440d01543aaa63a7e8d97c0438.json
-
-
-class PositiveDimensionlessRatio(DimensionlessRatio):
-    """
-    A "Normalized Dimensionless Ratio" is a dimensionless ratio ranging from 0.0 to 1.0
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "a76d2144-0d01-543a-aa63-a7e8d97c0438",
-            "title": "PositiveDimensionlessRatio",
-            "title*": {"en": "Positive Dimensionless Ratio"},
-            "description": 'A "Normalized Dimensionless Ratio" is a dimensionless ratio ranging from 0.0 to 1.0',
-            "description*": {
-                "en": 'A "Normalized Dimensionless Ratio" is a dimensionless ratio ranging from 0.0 to 1.0'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPositiveDimensionlessRatioValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa76d21440d01543aaa63a7e8d97c0438"]
 
 
 # generated by datamodel-codegen:
@@ -35314,111 +34258,6 @@ class RichardsonConstant(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWa819b53101b854ad923f9f13dfb41794.json
-
-
-class Power(QuantityValue):
-    """
-    Power is the rate at which work is performed or energy is transmitted, or the amount of energy required or expended for a given unit of time. As a rate of change of work done or the energy of a subsystem, power is: $P = W/t$, where $P$ is power, $W$ is work and {t} is time.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "a819b531-01b8-54ad-923f-9f13dfb41794",
-            "title": "Power",
-            "title*": {"en": "Power", "de": "Leistung"},
-            "description": "Power is the rate at which work is performed or energy is transmitted, or the amount of energy required or expended for a given unit of time. As a rate of change of work done or the energy of a subsystem, power is: $P = W/t$, where $P$ is power, $W$ is work and {t} is time.",
-            "description*": {
-                "en": "Power is the rate at which work is performed or energy is transmitted, or the amount of energy required or expended for a given unit of time. As a rate of change of work done or the energy of a subsystem, power is: $P = W/t$, where $P$ is power, $W$ is work and {t} is time."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPowerValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWa819b53101b854ad923f9f13dfb41794"]
-    unit: PowerUnit | None = Field(
-        PowerUnit.watt,
-        options={
-            "enum_titles": [
-                "W",
-                "pJ/s",
-                "pW",
-                "nJ/s",
-                "nW",
-                "μJ/s",
-                "μW",
-                "W·h/a",
-                "J/h",
-                "Pa·L/s",
-                "mJ/s",
-                "mW",
-                "hPa·L/s",
-                "kJ/h",
-                "J/s",
-                "Pa·m³/s",
-                "hPa·m³/s",
-                "MJ/h",
-                "MPa·L/s",
-                "kJ/s",
-                "kW",
-                "GJ/h",
-                "MJ/s",
-                "MPa·m³/s",
-                "MW",
-                "TW·h/a",
-                "GJ/s",
-                "GW",
-                "TJ/s",
-                "TW",
-                "PJ/s",
-                "PW",
-                "EJ/s",
-                "EW",
-            ]
-        },
-        title="PowerUnit",
-        x_enum_varnames=[
-            "watt",
-            "pico_joule_per_second",
-            "pico_watt",
-            "nano_joule_per_second",
-            "nano_watt",
-            "micro_joule_per_second",
-            "micro_watt",
-            "hour_watt_per_year",
-            "joule_per_hour",
-            "liter_pascal_per_second",
-            "milli_joule_per_second",
-            "milli_watt",
-            "hecto_pascal_liter_per_second",
-            "kilo_joule_per_hour",
-            "joule_per_second",
-            "meter_cubed_pascal_per_second",
-            "hecto_pascal_meter_cubed_per_second",
-            "mega_joule_per_hour",
-            "liter_mega_pascal_per_second",
-            "kilo_joule_per_second",
-            "kilo_watt",
-            "giga_joule_per_hour",
-            "mega_joule_per_second",
-            "mega_pascal_meter_cubed_per_second",
-            "mega_watt",
-            "hour_tera_watt_per_year",
-            "giga_joule_per_second",
-            "giga_watt",
-            "tera_joule_per_second",
-            "tera_watt",
-            "peta_joule_per_second",
-            "peta_watt",
-            "exa_joule_per_second",
-            "exa_watt",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -36197,31 +35036,6 @@ class SpecificInternalEnergy(SpecificEnergy):
 #   filename:  OSWb0250d3677f6592f9d4329c8b9d5f8d1.json
 
 
-class Count(Dimensionless):
-    """
-    "Count" is the value of a count of items.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "b0250d36-77f6-592f-9d43-29c8b9d5f8d1",
-            "title": "Count",
-            "title*": {"en": "Count"},
-            "description": '"Count" is the value of a count of items.',
-            "description*": {"en": '"Count" is the value of a count of items.'},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCountValue",
-            "@context": [
-                "/wiki/Category:OSWbcaa33bd770e53e09d5e6087d141648b?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb0250d3677f6592f9d4329c8b9d5f8d1"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWb04b04b17e565e948eaa8d84e2d76678.json
 
@@ -36430,85 +35244,8 @@ class HallCoefficient(QuantityValue):
 #   filename:  OSWb11e150b382c5481b59c763f0d4794fb.json
 
 
-class Mobility(QuantityValue):
-    """
-    "Mobility" characterizes how quickly a particle can move through a metal or semiconductor, when pulled by an electric field. The average drift speed imparted to a charged particle in a medium by an electric field, divided by the electric field strength.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "b11e150b-382c-5481-b59c-763f0d4794fb",
-            "title": "Mobility",
-            "title*": {"en": "Mobility", "de": "Beweglichkeit"},
-            "description": '"Mobility" characterizes how quickly a particle can move through a metal or semiconductor, when pulled by an electric field. The average drift speed imparted to a charged particle in a medium by an electric field, divided by the electric field strength.',
-            "description*": {
-                "en": '"Mobility" characterizes how quickly a particle can move through a metal or semiconductor, when pulled by an electric field. The average drift speed imparted to a charged particle in a medium by an electric field, divided by the electric field strength.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMobilityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb11e150b382c5481b59c763f0d4794fb"]
-    unit: MobilityUnit | None = Field(
-        MobilityUnit.meter_squared_per_second_per_volt,
-        options={"enum_titles": ["m²/(V·s)", "cm²/(V·s)"]},
-        title="MobilityUnit",
-        x_enum_varnames=[
-            "meter_squared_per_second_per_volt",
-            "centi_meter_squared_per_second_per_volt",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWb124402a1c76538b81dd41babc0cd7e2.json
-
-
-class TemperaturePerTime(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'TemperaturePerTime'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "b124402a-1c76-538b-81dd-41babc0cd7e2",
-            "title": "TemperaturePerTime",
-            "title*": {"en": "Temperature per Time"},
-            "description": "This is an autogenerated partial class definition of 'TemperaturePerTime'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasTemperaturePerTimeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb124402a1c76538b81dd41babc0cd7e2"]
-    unit: TemperaturePerTimeUnit | None = Field(
-        TemperaturePerTimeUnit.kelvin_per_second,
-        options={
-            "enum_titles": ["K/s", "°C/a", "K/h", "°C/h", "K/min", "°C/min", "°C/s"]
-        },
-        title="TemperaturePerTimeUnit",
-        x_enum_varnames=[
-            "kelvin_per_second",
-            "Celsius_per_year",
-            "kelvin_per_hour",
-            "Celsius_per_hour",
-            "kelvin_per_minute",
-            "Celsius_per_minute",
-            "Celsius_per_second",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -37000,6 +35737,10 @@ class ResistanceUnit(Enum):
     """
     Ω
     """
+    abohm = Unit.abohm.value
+    """
+    abΩ
+    """
     nano_ohm = Unit.nano_ohm.value
     """
     nΩ
@@ -37023,6 +35764,10 @@ class ResistanceUnit(Enum):
     giga_ohm = Unit.giga_ohm.value
     """
     GΩ
+    """
+    statohm = Unit.statohm.value
+    """
+    statΩ
     """
     tera_ohm = Unit.tera_ohm.value
     """
@@ -37057,16 +35802,31 @@ class Resistance(QuantityValue):
     type: list[str] | None = ["Category:OSWb3794ddaf0f551c1bccb9b12a0190888"]
     unit: ResistanceUnit | None = Field(
         ResistanceUnit.ohm,
-        options={"enum_titles": ["Ω", "nΩ", "μΩ", "mΩ", "kΩ", "MΩ", "GΩ", "TΩ"]},
+        options={
+            "enum_titles": [
+                "Ω",
+                "abΩ",
+                "nΩ",
+                "μΩ",
+                "mΩ",
+                "kΩ",
+                "MΩ",
+                "GΩ",
+                "statΩ",
+                "TΩ",
+            ]
+        },
         title="ResistanceUnit",
         x_enum_varnames=[
             "ohm",
+            "abohm",
             "nano_ohm",
             "micro_ohm",
             "milli_ohm",
             "kilo_ohm",
             "mega_ohm",
             "giga_ohm",
+            "statohm",
             "tera_ohm",
         ],
     )
@@ -37105,6 +35865,10 @@ class ElectricChargeUnit(Enum):
     """
     pC
     """
+    statcoulomb = Unit.statcoulomb.value
+    """
+    statC
+    """
     nano_coulomb = Unit.nano_coulomb.value
     """
     nC
@@ -37136,6 +35900,10 @@ class ElectricChargeUnit(Enum):
     hour_milli_ampere = Unit.hour_milli_ampere.value
     """
     mA·h
+    """
+    abcoulomb = Unit.abcoulomb.value
+    """
+    abC
     """
     deca_coulomb = Unit.deca_coulomb.value
     """
@@ -37223,6 +35991,7 @@ class ElectricCharge(QuantityValue):
                 "aC",
                 "fC",
                 "pC",
+                "statC",
                 "nC",
                 "μC",
                 "mA·s",
@@ -37231,6 +36000,7 @@ class ElectricCharge(QuantityValue):
                 "dC",
                 "A·s",
                 "mA·h",
+                "abC",
                 "daC",
                 "hC",
                 "kC",
@@ -37254,6 +36024,7 @@ class ElectricCharge(QuantityValue):
             "atto_coulomb",
             "femto_coulomb",
             "pico_coulomb",
+            "statcoulomb",
             "nano_coulomb",
             "micro_coulomb",
             "milli_ampere_second",
@@ -37262,6 +36033,7 @@ class ElectricCharge(QuantityValue):
             "deci_coulomb",
             "ampere_second",
             "hour_milli_ampere",
+            "abcoulomb",
             "deca_coulomb",
             "hecto_coulomb",
             "kilo_coulomb",
@@ -37509,33 +36281,6 @@ class PressureInRelationToVolumeFlowRate(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWb58cb5a4654f52e1804c74c035d21352.json
-
-
-class Pressure(ForcePerArea):
-    """
-    Pressure is an effect which occurs when a force is applied on a surface. Pressure is the amount of force acting on a unit area. Pressure is distinct from stress, as the former is the ratio of the component of force normal to a surface to the surface area. Stress is a tensor that relates the vector force to the vector area.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "b58cb5a4-654f-52e1-804c-74c035d21352",
-            "title": "Pressure",
-            "title*": {"en": "Pressure", "de": "Druck"},
-            "description": "Pressure is an effect which occurs when a force is applied on a surface. Pressure is the amount of force acting on a unit area. Pressure is distinct from stress, as the former is the ratio of the component of force normal to a surface to the surface area. Stress is a tensor that relates the vector force to the vector area.",
-            "description*": {
-                "en": "Pressure is an effect which occurs when a force is applied on a surface. Pressure is the amount of force acting on a unit area. Pressure is distinct from stress, as the former is the ratio of the component of force normal to a surface to the surface area. Stress is a tensor that relates the vector force to the vector area."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPressureValue",
-            "@context": [
-                "/wiki/Category:OSW2ff3a26daf13563481acc8b0ebc5b37f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb58cb5a4654f52e1804c74c035d21352"]
 
 
 # generated by datamodel-codegen:
@@ -37904,127 +36649,8 @@ class IonicStrength(QuantityValue):
 #   filename:  OSWb6c6e6288bd15d2e8d5fd85ce5bf2ab1.json
 
 
-class Curvature(InverseLength):
-    """
-    The canonical example of extrinsic curvature is that of a circle, which has curvature equal to the inverse of its radius everywhere. Smaller circles bend more sharply, and hence have higher curvature. The curvature of a smooth curve is defined as the curvature of its osculating circle at each point. The osculating circle of a sufficiently smooth plane curve at a given point on the curve is the circle whose center lies on the inner normal line and whose curvature is the same as that of the given curve at that point. This circle is tangent to the curve at the given point.
-    That is, given a point P on a smooth curve C, the curvature of C at P is defined to be 1/R where R is the radius of the osculating circle of C at P. The magnitude of curvature at points on physical curves can be measured in diopters (also spelled dioptre) — this is the convention in optics. [Wikipedia],
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "b6c6e628-8bd1-5d2e-8d5f-d85ce5bf2ab1",
-            "title": "Curvature",
-            "title*": {"en": "Curvature"},
-            "description": "The canonical example of extrinsic curvature is that of a circle, which has curvature equal to the inverse of its radius everywhere. Smaller circles bend more sharply, and hence have higher curvature. The curvature of a smooth curve is defined as the curvature of its osculating circle at each point. The osculating circle of a sufficiently smooth plane curve at a given point on the curve is the circle whose center lies on the inner normal line and whose curvature is the same as that of the given curve at that point. This circle is tangent to the curve at the given point.\nThat is, given a point P on a smooth curve C, the curvature of C at P is defined to be 1/R where R is the radius of the osculating circle of C at P. The magnitude of curvature at points on physical curves can be measured in diopters (also spelled dioptre) — this is the convention in optics. [Wikipedia],",
-            "description*": {
-                "en": "The canonical example of extrinsic curvature is that of a circle, which has curvature equal to the inverse of its radius everywhere. Smaller circles bend more sharply, and hence have higher curvature. The curvature of a smooth curve is defined as the curvature of its osculating circle at each point. The osculating circle of a sufficiently smooth plane curve at a given point on the curve is the circle whose center lies on the inner normal line and whose curvature is the same as that of the given curve at that point. This circle is tangent to the curve at the given point.\nThat is, given a point P on a smooth curve C, the curvature of C at P is defined to be 1/R where R is the radius of the osculating circle of C at P. The magnitude of curvature at points on physical curves can be measured in diopters (also spelled dioptre) — this is the convention in optics. [Wikipedia],"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCurvatureValue",
-            "@context": [
-                "/wiki/Category:OSW23837e2c50f05ba884682b08465bf173?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb6c6e6288bd15d2e8d5fd85ce5bf2ab1"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWb7248b1f04455ec99e6ff6e6b472d8de.json
-
-
-class ElectricCharge(QuantityValue):
-    """
-    "Electric Charge" is a fundamental conserved property of some subatomic particles, which determines their electromagnetic interaction. Electrically charged matter is influenced by, and produces, electromagnetic fields. The electric charge on a body may be positive or negative. Two positively charged bodies experience a mutual repulsive force, as do two negatively charged bodies. A positively charged body and a negatively charged body experience an attractive force. Electric charge is carried by discrete particles and can be positive or negative. The sign convention is such that the elementary electric charge $e$, that is, the charge of the proton, is positive. The SI derived unit of electric charge is the coulomb.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "b7248b1f-0445-5ec9-9e6f-f6e6b472d8de",
-            "title": "ElectricCharge",
-            "title*": {"en": "Electric charge", "de": "Elektrische Ladung"},
-            "description": '"Electric Charge" is a fundamental conserved property of some subatomic particles, which determines their electromagnetic interaction. Electrically charged matter is influenced by, and produces, electromagnetic fields. The electric charge on a body may be positive or negative. Two positively charged bodies experience a mutual repulsive force, as do two negatively charged bodies. A positively charged body and a negatively charged body experience an attractive force. Electric charge is carried by discrete particles and can be positive or negative. The sign convention is such that the elementary electric charge $e$, that is, the charge of the proton, is positive. The SI derived unit of electric charge is the coulomb.',
-            "description*": {
-                "en": '"Electric Charge" is a fundamental conserved property of some subatomic particles, which determines their electromagnetic interaction. Electrically charged matter is influenced by, and produces, electromagnetic fields. The electric charge on a body may be positive or negative. Two positively charged bodies experience a mutual repulsive force, as do two negatively charged bodies. A positively charged body and a negatively charged body experience an attractive force. Electric charge is carried by discrete particles and can be positive or negative. The sign convention is such that the elementary electric charge $e$, that is, the charge of the proton, is positive. The SI derived unit of electric charge is the coulomb.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasElectricChargeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb7248b1f04455ec99e6ff6e6b472d8de"]
-    unit: ElectricChargeUnit | None = Field(
-        ElectricChargeUnit.coulomb,
-        options={
-            "enum_titles": [
-                "C",
-                "yC",
-                "zC",
-                "e",
-                "aC",
-                "fC",
-                "pC",
-                "nC",
-                "μC",
-                "mA·s",
-                "mC",
-                "cC",
-                "dC",
-                "A·s",
-                "mA·h",
-                "daC",
-                "hC",
-                "kC",
-                "A·h",
-                "MC",
-                "kA·h",
-                "GC",
-                "TC",
-                "PC",
-                "EC",
-                "ZC",
-                "YC",
-            ]
-        },
-        title="ElectricChargeUnit",
-        x_enum_varnames=[
-            "coulomb",
-            "yocto_coulomb",
-            "zepto_coulomb",
-            "elementary_charge",
-            "atto_coulomb",
-            "femto_coulomb",
-            "pico_coulomb",
-            "nano_coulomb",
-            "micro_coulomb",
-            "milli_ampere_second",
-            "milli_coulomb",
-            "centi_coulomb",
-            "deci_coulomb",
-            "ampere_second",
-            "hour_milli_ampere",
-            "deca_coulomb",
-            "hecto_coulomb",
-            "kilo_coulomb",
-            "ampere_hour",
-            "mega_coulomb",
-            "hour_kilo_ampere",
-            "giga_coulomb",
-            "tera_coulomb",
-            "peta_coulomb",
-            "exa_coulomb",
-            "zetta_coulomb",
-            "yotta_coulomb",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -38181,83 +36807,6 @@ class MobilityRatio(QuantityValue):
 #   filename:  OSWb9612bfb909c5eab9e57e8d8a6c86082.json
 
 
-class MassPerArea(QuantityValue):
-    """
-    The area density (also known as areal density, surface density, or superficial density) of a two-dimensional object is calculated as the mass per unit area. The SI derived unit is: kilogram per square metre  ($kg \\cdot m^{-2}$).
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "b9612bfb-909c-5eab-9e57-e8d8a6c86082",
-            "title": "MassPerArea",
-            "title*": {"en": "Mass per Area"},
-            "description": "The area density (also known as areal density, surface density, or superficial density) of a two-dimensional object is calculated as the mass per unit area. The SI derived unit is: kilogram per square metre  ($kg \\cdot m^{-2}$).",
-            "description*": {
-                "en": "The area density (also known as areal density, surface density, or superficial density) of a two-dimensional object is calculated as the mass per unit area. The SI derived unit is: kilogram per square metre  ($kg \\cdot m^{-2}$)."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMassPerAreaValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb9612bfb909c5eab9e57e8d8a6c86082"]
-    unit: MassPerAreaUnit | None = Field(
-        MassPerAreaUnit.kilo_gram_per_meter_squared,
-        options={
-            "enum_titles": [
-                "kg/m²",
-                "mg/ha",
-                "ng/cm²",
-                "g/ha",
-                "kg/km²",
-                "mg/m²",
-                "μg/in²",
-                "μg/cm²",
-                "kg/ha",
-                "mg/dm²",
-                "g/m²",
-                "mg/cm²",
-                "g/ft²",
-                "Mg/ha",
-                "t/ha",
-                "g/in²",
-                "g/cm²",
-                "kg/ft²",
-                "g/mm²",
-                "kg/cm²",
-            ]
-        },
-        title="MassPerAreaUnit",
-        x_enum_varnames=[
-            "kilo_gram_per_meter_squared",
-            "milli_gram_per_hectare",
-            "nano_gram_per_centi_meter_squared",
-            "gram_per_hectare",
-            "kilo_gram_per_kilo_meter_squared",
-            "milli_gram_per_meter_squared",
-            "micro_gram_per_inch_squared",
-            "micro_gram_per_centi_meter_squared",
-            "kilo_gram_per_hectare",
-            "milli_gram_per_deci_meter_squared",
-            "gram_per_meter_squared",
-            "milli_gram_per_centi_meter_squared",
-            "gram_per_foot_squared",
-            "mega_gram_per_hectare",
-            "metric_ton_per_hectare",
-            "gram_per_inch_squared",
-            "gram_per_centi_meter_squared",
-            "kilo_gram_per_foot_squared",
-            "gram_per_milli_meter_squared",
-            "kilo_gram_per_centi_meter_squared",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWb9a0d2848bdf58a0b25881447ff8513d.json
 
@@ -38336,31 +36885,6 @@ class ElectricSusceptibility(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWb9eb9b070fb3584cb6df0d0dda581fb6.json
-
-
-class MaxOperatingThrust(Thrust):
-    """
-    This is an autogenerated partial class definition of 'MaxOperatingThrust'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "b9eb9b07-0fb3-584c-b6df-0d0dda581fb6",
-            "title": "MaxOperatingThrust",
-            "title*": {"en": "Max Operating Thrust"},
-            "description": "This is an autogenerated partial class definition of 'MaxOperatingThrust'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMaxOperatingThrustValue",
-            "@context": [
-                "/wiki/Category:OSW7bf742d673495bb8bd77d1ea5295b2cd?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWb9eb9b070fb3584cb6df0d0dda581fb6"]
 
 
 # generated by datamodel-codegen:
@@ -38564,39 +37088,6 @@ class AuditoryThresholds(SoundPowerLevel):
 
 # generated by datamodel-codegen:
 #   filename:  OSWbb31e94e7ec453588382368a9a40c134.json
-
-
-class CanonicalPartitionFunction(QuantityValue):
-    """
-    A "Canonical Partition Function" applies to a canonical ensemble, in which the system is allowed to exchange heat with the environment at fixed temperature, volume, and number of particles.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "bb31e94e-7ec4-5358-8382-368a9a40c134",
-            "title": "CanonicalPartitionFunction",
-            "title*": {"en": "Canonical Partition Function"},
-            "description": 'A "Canonical Partition Function" applies to a canonical ensemble, in which the system is allowed to exchange heat with the environment at fixed temperature, volume, and number of particles.',
-            "description*": {
-                "en": 'A "Canonical Partition Function" applies to a canonical ensemble, in which the system is allowed to exchange heat with the environment at fixed temperature, volume, and number of particles.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCanonicalPartitionFunctionValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWbb31e94e7ec453588382368a9a40c134"]
-    unit: CanonicalPartitionFunctionUnit | None = Field(
-        CanonicalPartitionFunctionUnit.unitless,
-        options={"enum_titles": ["一"]},
-        title="CanonicalPartitionFunctionUnit",
-        x_enum_varnames=["unitless"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -38863,65 +37354,6 @@ class ElectricChargePerAmountOfSubstance(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWbcaa33bd770e53e09d5e6087d141648b.json
-
-
-class Dimensionless(QuantityValue):
-    """
-    In dimensional analysis, a dimensionless quantity or quantity of dimension one is a quantity without an associated physical dimension. It is thus a "pure" number, and as such always has a dimension of 1. Dimensionless quantities are widely used in mathematics, physics, engineering, economics, and in everyday life (such as in counting). Numerous well-known quantities, such as $\\pi$, $\\epsilon$, and $\\psi$, are dimensionless. By contrast, non-dimensionless quantities are measured in units of length, area, time, etc. Dimensionless quantities are often defined as products or ratios of quantities that are not dimensionless, but whose dimensions cancel out when their powers are multiplied.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "bcaa33bd-770e-53e0-9d5e-6087d141648b",
-            "title": "Dimensionless",
-            "title*": {"en": "Dimensionless"},
-            "description": 'In dimensional analysis, a dimensionless quantity or quantity of dimension one is a quantity without an associated physical dimension. It is thus a "pure" number, and as such always has a dimension of 1. Dimensionless quantities are widely used in mathematics, physics, engineering, economics, and in everyday life (such as in counting). Numerous well-known quantities, such as $\\pi$, $\\epsilon$, and $\\psi$, are dimensionless. By contrast, non-dimensionless quantities are measured in units of length, area, time, etc. Dimensionless quantities are often defined as products or ratios of quantities that are not dimensionless, but whose dimensions cancel out when their powers are multiplied.',
-            "description*": {
-                "en": 'In dimensional analysis, a dimensionless quantity or quantity of dimension one is a quantity without an associated physical dimension. It is thus a "pure" number, and as such always has a dimension of 1. Dimensionless quantities are widely used in mathematics, physics, engineering, economics, and in everyday life (such as in counting). Numerous well-known quantities, such as $\\pi$, $\\epsilon$, and $\\psi$, are dimensionless. By contrast, non-dimensionless quantities are measured in units of length, area, time, etc. Dimensionless quantities are often defined as products or ratios of quantities that are not dimensionless, but whose dimensions cancel out when their powers are multiplied.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasDimensionlessValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWbcaa33bd770e53e09d5e6087d141648b"]
-    unit: DimensionlessUnit | None = Field(
-        DimensionlessUnit.dimensionless,
-        options={
-            "enum_titles": [
-                "#",
-                "Np",
-                "dec",
-                "octave",
-                "COUNT",
-                "bp",
-                "flight",
-                "heartbeat",
-                "χ",
-                "一",
-                "Gbp",
-            ]
-        },
-        title="DimensionlessUnit",
-        x_enum_varnames=[
-            "dimensionless",
-            "neper",
-            "dec",
-            "octave",
-            "COUNT",
-            "point",
-            "flight",
-            "heartbeat",
-            "unknown",
-            "unitless",
-            "giga_point",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -39317,6 +37749,10 @@ class OrderOfReflection(QuantityValue):
 
 
 class SpecificAcousticImpedanceUnit(Enum):
+    rayl = Unit.rayl.value
+    """
+    rayl
+    """
     newton_second_per_meter_cubed = Unit.newton_second_per_meter_cubed.value
     """
     N·s/m³
@@ -39353,10 +37789,11 @@ class SpecificAcousticImpedance(QuantityValue):
 
     type: list[str] | None = ["Category:OSWc00b3d7abb405127b2b492f5bda88d14"]
     unit: SpecificAcousticImpedanceUnit | None = Field(
-        SpecificAcousticImpedanceUnit.newton_second_per_meter_cubed,
-        options={"enum_titles": ["N·s/m³", "kg/(m²·s)"]},
+        SpecificAcousticImpedanceUnit.rayl,
+        options={"enum_titles": ["rayl", "N·s/m³", "kg/(m²·s)"]},
         title="SpecificAcousticImpedanceUnit",
         x_enum_varnames=[
+            "rayl",
             "newton_second_per_meter_cubed",
             "kilo_gram_per_meter_squared_per_second",
         ],
@@ -39450,31 +37887,6 @@ class DragForce(Force):
 #   filename:  OSWc0856531473456db89ce4276f30ca062.json
 
 
-class CenterOfGravityInTheYAxis(Length):
-    """
-    This is an autogenerated partial class definition of 'CenterOfGravityInTheYAxis'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "c0856531-4734-56db-89ce-4276f30ca062",
-            "title": "CenterOfGravityInTheYAxis",
-            "title*": {"en": "Center of Gravity in the Y axis"},
-            "description": "This is an autogenerated partial class definition of 'CenterOfGravityInTheYAxis'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasCenterOfGravityInTheYAxisValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc0856531473456db89ce4276f30ca062"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWc0f0bce2b2765c13898ecb55bde6cd0f.json
 
@@ -39510,33 +37922,6 @@ class AcceptorIonizationEnergy(IonizationEnergy):
 #   filename:  OSWc0f9f761f30d5a1baf90b44ed6eef37d.json
 
 
-class IonConcentration(Concentration):
-    """
-    "Ion Concentration" is the moles of ions per volume of solution.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "c0f9f761-f30d-5a1b-af90-b44ed6eef37d",
-            "title": "IonConcentration",
-            "title*": {"en": "Ion Concentration"},
-            "description": '"Ion Concentration" is the moles of ions per volume of solution.',
-            "description*": {
-                "en": '"Ion Concentration" is the moles of ions per volume of solution.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasIonConcentrationValue",
-            "@context": [
-                "/wiki/Category:OSW4ce5add385d2545ab8ab50e4b222dab4?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc0f9f761f30d5a1baf90b44ed6eef37d"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWc11d565a6b4950c9be08c3ba7b9a106c.json
 
@@ -39568,41 +37953,6 @@ class FissionFuelUtilizationFactor(Dimensionless):
 
 # generated by datamodel-codegen:
 #   filename:  OSWc16b766eaf3e547da6407e8eee408e7c.json
-
-
-class EnergyPerTemperature(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'EnergyPerTemperature'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "c16b766e-af3e-547d-a640-7e8eee408e7c",
-            "title": "EnergyPerTemperature",
-            "title*": {"en": "Energy per temperature"},
-            "description": "This is an autogenerated partial class definition of 'EnergyPerTemperature'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasEnergyPerTemperatureValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc16b766eaf3e547da6407e8eee408e7c"]
-    unit: EnergyPerTemperatureUnit | None = Field(
-        EnergyPerTemperatureUnit.joule_per_kelvin,
-        options={"enum_titles": ["J/K", "kJ/K", "MJ/K"]},
-        title="EnergyPerTemperatureUnit",
-        x_enum_varnames=[
-            "joule_per_kelvin",
-            "kilo_joule_per_kelvin",
-            "mega_joule_per_kelvin",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -39965,91 +38315,6 @@ class EquilibriumConstantOnConcentrationBasis(EquilibriumConstant):
 #   filename:  OSWc543ebb853385a1a9382f57faad6170d.json
 
 
-class Frequency(QuantityValue):
-    """
-    "Frequency" is the number of occurrences of a repeating event per unit time. The repetition of the events may be periodic (that is. the length of time between event repetitions is fixed) or aperiodic (i.e. the length of time between event repetitions varies). Therefore, we distinguish between periodic and aperiodic frequencies. In the SI system, periodic frequency is measured in hertz (Hz) or multiples of hertz, while aperiodic frequency is measured in becquerel (Bq).  In spectroscopy, $\\nu$ is mostly used. Light passing through different media keeps its frequency, but not its wavelength or wavenumber.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "c543ebb8-5338-5a1a-9382-f57faad6170d",
-            "title": "Frequency",
-            "title*": {"en": "Frequency", "de": "Frequenz"},
-            "description": '"Frequency" is the number of occurrences of a repeating event per unit time. The repetition of the events may be periodic (that is. the length of time between event repetitions is fixed) or aperiodic (i.e. the length of time between event repetitions varies). Therefore, we distinguish between periodic and aperiodic frequencies. In the SI system, periodic frequency is measured in hertz (Hz) or multiples of hertz, while aperiodic frequency is measured in becquerel (Bq).  In spectroscopy, $\\nu$ is mostly used. Light passing through different media keeps its frequency, but not its wavelength or wavenumber.',
-            "description*": {
-                "en": '"Frequency" is the number of occurrences of a repeating event per unit time. The repetition of the events may be periodic (that is. the length of time between event repetitions is fixed) or aperiodic (i.e. the length of time between event repetitions varies). Therefore, we distinguish between periodic and aperiodic frequencies. In the SI system, periodic frequency is measured in hertz (Hz) or multiples of hertz, while aperiodic frequency is measured in becquerel (Bq).  In spectroscopy, $\\nu$ is mostly used. Light passing through different media keeps its frequency, but not its wavelength or wavenumber.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasFrequencyValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc543ebb853385a1a9382f57faad6170d"]
-    unit: FrequencyUnit | None = Field(
-        FrequencyUnit.per_second,
-        options={
-            "enum_titles": [
-                "/s",
-                "nBq",
-                "/a",
-                "/mo",
-                "μBq",
-                "/wk",
-                "/d",
-                "/h",
-                "mBq",
-                "mHz",
-                "/min",
-                "Bq",
-                "Hz",
-                "/ms",
-                "kBq",
-                "kHz",
-                "MBq",
-                "MHz",
-                "GBq",
-                "GHz",
-                "TBq",
-                "THz",
-                "PBq",
-                "PHz",
-            ]
-        },
-        title="FrequencyUnit",
-        x_enum_varnames=[
-            "per_second",
-            "nano_becquerel",
-            "per_year",
-            "per_month",
-            "micro_becquerel",
-            "per_week",
-            "per_day",
-            "per_hour",
-            "milli_becquerel",
-            "milli_hertz",
-            "per_minute",
-            "becquerel",
-            "hertz",
-            "per_milli_second",
-            "kilo_becquerel",
-            "kilo_hertz",
-            "mega_becquerel",
-            "mega_hertz",
-            "giga_becquerel",
-            "giga_hertz",
-            "tera_becquerel",
-            "tera_hertz",
-            "peta_becquerel",
-            "peta_hertz",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWc56f5d63f59d527e9a105d4c7edda71e.json
 
@@ -40143,6 +38408,10 @@ class AreaPerLength(QuantityValue):
 
 
 class InverseSquareTimeUnit(Enum):
+    radian_per_second_squared = Unit.radian_per_second_squared.value
+    """
+    rad/s²
+    """
     per_second_squared = Unit.per_second_squared.value
     """
     /s²
@@ -40173,10 +38442,10 @@ class InverseSquareTime(QuantityValue):
 
     type: list[str] | None = ["Category:OSWd33f5020bd93583b807f360af0e833ca"]
     unit: InverseSquareTimeUnit | None = Field(
-        InverseSquareTimeUnit.per_second_squared,
-        options={"enum_titles": ["/s²"]},
+        InverseSquareTimeUnit.radian_per_second_squared,
+        options={"enum_titles": ["rad/s²", "/s²"]},
         title="InverseSquareTimeUnit",
-        x_enum_varnames=["per_second_squared"],
+        x_enum_varnames=["radian_per_second_squared", "per_second_squared"],
     )
 
 
@@ -40457,97 +38726,6 @@ class CartesianCoordinates(Length):
 #   filename:  OSWc87ddd4a7d1159f0a75b686a61ef4e8e.json
 
 
-class Energy(QuantityValue):
-    """
-    Energy is the quantity characterizing the ability of a system to do work.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "c87ddd4a-7d11-59f0-a75b-686a61ef4e8e",
-            "title": "Energy",
-            "title*": {"en": "Energy", "de": "Energie"},
-            "description": "Energy is the quantity characterizing the ability of a system to do work.",
-            "description*": {
-                "en": "Energy is the quantity characterizing the ability of a system to do work."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasEnergyValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc87ddd4a7d1159f0a75b686a61ef4e8e"]
-    unit: EnergyUnit | None = Field(
-        EnergyUnit.joule,
-        options={
-            "enum_titles": [
-                "J",
-                "eV",
-                "aJ",
-                "Ha",
-                "keV",
-                "fJ",
-                "MeV",
-                "pJ",
-                "GeV",
-                "nJ",
-                "μJ",
-                "mJ",
-                "W·s",
-                "kJ",
-                "VA·h",
-                "W·h",
-                "MJ",
-                "kVA·h",
-                "kW·h",
-                "GJ",
-                "MVA·h",
-                "MW·h",
-                "TJ",
-                "GW·h",
-                "PJ",
-                "TW·h",
-                "EJ",
-            ]
-        },
-        title="EnergyUnit",
-        x_enum_varnames=[
-            "joule",
-            "electron_volt",
-            "atto_joule",
-            "Ha",
-            "kilo_electron_volt",
-            "femto_joule",
-            "mega_electron_volt",
-            "pico_joule",
-            "giga_electron_volt",
-            "nano_joule",
-            "micro_joule",
-            "milli_joule",
-            "second_watt",
-            "kilo_joule",
-            "hour_volt_ampere",
-            "hour_watt",
-            "mega_joule",
-            "hour_kilo_volt_ampere",
-            "hour_kilo_watt",
-            "giga_joule",
-            "hour_mega_volt_ampere",
-            "hour_mega_watt",
-            "tera_joule",
-            "giga_watt_hour",
-            "peta_joule",
-            "hour_tera_watt",
-            "exa_joule",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWc8acb208c98359d282bf6f2a59af4e15.json
 
@@ -40612,31 +38790,6 @@ class LuminousEmmitance(LuminousFluxPerArea):
 
 # generated by datamodel-codegen:
 #   filename:  OSWc92f6543cf0b54d0a5082ef1e67267ad.json
-
-
-class VacuumThrust(Thrust):
-    """
-    This is an autogenerated partial class definition of 'VacuumThrust'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "c92f6543-cf0b-54d0-a508-2ef1e67267ad",
-            "title": "VacuumThrust",
-            "title*": {"en": "Vacuum Thrust"},
-            "description": "This is an autogenerated partial class definition of 'VacuumThrust'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasVacuumThrustValue",
-            "@context": [
-                "/wiki/Category:OSW7bf742d673495bb8bd77d1ea5295b2cd?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWc92f6543cf0b54d0a5082ef1e67267ad"]
 
 
 # generated by datamodel-codegen:
@@ -41433,7 +39586,11 @@ class ElectricConductivityUnit(Enum):
     """
     pS/m
     """
-    statmho = Unit.statmho.value
+    statmho = "Item:OSW77d4b1042f5d5da49ea7a32d7f72560b"
+    """
+    statS
+    """
+    statmho_1 = Unit.statmho.value
     """
     stat℧
     """
@@ -41477,6 +39634,10 @@ class ElectricConductivityUnit(Enum):
     """
     MS/m
     """
+    absiemens = Unit.absiemens.value
+    """
+    aS
+    """
 
 
 class ElectricConductivity(QuantityValue):
@@ -41516,6 +39677,7 @@ class ElectricConductivity(QuantityValue):
             "enum_titles": [
                 "S/m",
                 "pS/m",
+                "statS",
                 "stat℧",
                 "nS/m",
                 "nS/cm",
@@ -41527,12 +39689,14 @@ class ElectricConductivity(QuantityValue):
                 "S/cm",
                 "kS/m",
                 "MS/m",
+                "aS",
             ]
         },
         title="ElectricConductivityUnit",
         x_enum_varnames=[
             "siemens_per_meter",
             "pico_siemens_per_meter",
+            "statmho",
             "statmho",
             "nano_siemens_per_meter",
             "nano_siemens_per_centi_meter",
@@ -41544,6 +39708,7 @@ class ElectricConductivity(QuantityValue):
             "siemens_per_centi_meter",
             "kilo_siemens_per_meter",
             "mega_siemens_per_meter",
+            "absiemens",
         ],
     )
 
@@ -41590,6 +39755,10 @@ class LuminousIntensityUnit(Enum):
     """
     mcd
     """
+    candlepower = Unit.candlepower.value
+    """
+    cp
+    """
     kilo_candela = Unit.kilo_candela.value
     """
     kcd
@@ -41623,9 +39792,9 @@ class LuminousIntensity(QuantityValue):
     type: list[str] | None = ["Category:OSWcd5084e98d8a541eb5d121ae983fad3d"]
     unit: LuminousIntensityUnit | None = Field(
         LuminousIntensityUnit.candela,
-        options={"enum_titles": ["cd", "mcd", "kcd"]},
+        options={"enum_titles": ["cd", "mcd", "cp", "kcd"]},
         title="LuminousIntensityUnit",
-        x_enum_varnames=["candela", "millicandela", "kilo_candela"],
+        x_enum_varnames=["candela", "millicandela", "candlepower", "kilo_candela"],
     )
 
 
@@ -41889,67 +40058,6 @@ class SerumOrPlasmaLevel(AmountOfSubstancePerVolume):
 #   filename:  OSWce9a8c0dfd2159b2a628364ae9fbe9f3.json
 
 
-class EnergyPerElectricCharge(QuantityValue):
-    """
-    Voltage is a representation of the electric potential energy per unit charge. If a unit of electrical charge were placed in a location, the voltage indicates the potential energy of it at that point. In other words, it is a measurement of the energy contained within an electric field, or an electric circuit, at a given point. Voltage is a scalar quantity. The SI unit of voltage is the volt, such that $1 volt = 1 joule/coulomb$.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "ce9a8c0d-fd21-59b2-a628-364ae9fbe9f3",
-            "title": "EnergyPerElectricCharge",
-            "title*": {"en": "Energy per electric charge"},
-            "description": "Voltage is a representation of the electric potential energy per unit charge. If a unit of electrical charge were placed in a location, the voltage indicates the potential energy of it at that point. In other words, it is a measurement of the energy contained within an electric field, or an electric circuit, at a given point. Voltage is a scalar quantity. The SI unit of voltage is the volt, such that $1 volt = 1 joule/coulomb$.",
-            "description*": {
-                "en": "Voltage is a representation of the electric potential energy per unit charge. If a unit of electrical charge were placed in a location, the voltage indicates the potential energy of it at that point. In other words, it is a measurement of the energy contained within an electric field, or an electric circuit, at a given point. Voltage is a scalar quantity. The SI unit of voltage is the volt, such that $1 volt = 1 joule/coulomb$."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasEnergyPerElectricChargeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWce9a8c0dfd2159b2a628364ae9fbe9f3"]
-    unit: EnergyPerElectricChargeUnit | None = Field(
-        EnergyPerElectricChargeUnit.volt,
-        options={
-            "enum_titles": [
-                "V",
-                "fV",
-                "pV",
-                "nV",
-                "μV",
-                "mV",
-                "kV",
-                "MV",
-                "GV",
-                "TV",
-                "PV",
-                "EV",
-            ]
-        },
-        title="EnergyPerElectricChargeUnit",
-        x_enum_varnames=[
-            "volt",
-            "femto_volt",
-            "pico_volt",
-            "nano_volt",
-            "micro_volt",
-            "milli_volt",
-            "kilo_volt",
-            "mega_volt",
-            "giga_volt",
-            "tera_volt",
-            "peta_volt",
-            "exa_volt",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWcebde8e38e9c5492ace1a90e9d48a097.json
 
@@ -42085,61 +40193,6 @@ class FundamentalLatticeVector(LatticeVector):
 
 # generated by datamodel-codegen:
 #   filename:  OSWcfa8c1748f3b586e9a0304ab1e2dbc41.json
-
-
-class PlaneAngle(QuantityValue):
-    """
-    An angle formed by two straight lines (in the same plane) angle - the space between two lines or planes that intersect; the inclination of one line to another; measured in degrees or radians
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "cfa8c174-8f3b-586e-9a03-04ab1e2dbc41",
-            "title": "PlaneAngle",
-            "title*": {"en": "Plane angle", "de": "Ebener Winkel"},
-            "description": "An angle formed by two straight lines (in the same plane) angle - the space between two lines or planes that intersect; the inclination of one line to another; measured in degrees or radians",
-            "description*": {
-                "en": "An angle formed by two straight lines (in the same plane) angle - the space between two lines or planes that intersect; the inclination of one line to another; measured in degrees or radians"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPlaneAngleValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWcfa8c1748f3b586e9a0304ab1e2dbc41"]
-    unit: PlaneAngleUnit | None = Field(
-        PlaneAngleUnit.radian,
-        options={
-            "enum_titles": [
-                "rad",
-                "μrad",
-                "'",
-                "mil{NATO}",
-                "mrad",
-                "gon",
-                "grad",
-                "°",
-                "rev",
-            ]
-        },
-        title="PlaneAngleUnit",
-        x_enum_varnames=[
-            "radian",
-            "micro_radian",
-            "minute",
-            "mil_NATO",
-            "milli_radian",
-            "grade",
-            "grade",
-            "degree",
-            "rev",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -42301,47 +40354,6 @@ class LinearCompressibility(QuantityValue):
 
 
 # generated by datamodel-codegen:
-#   filename:  OSWd1fc5c3fcd5f59e386f401c22d343569.json
-
-
-class InstantaneousPower(ElectricPower):
-    """
-    For a two-terminal element or a two-terminal circuit with terminals A and B,
-       $\\textit{Instantaneous Power}$ is the product of the voltage $u_{AB}$ between the terminals and the electric current i in the element or circuit:
-      $$p = u_{AB} \\cdot i$$
-      Where $u_{AB}$ is the line integral of the electric field strength from A to B,
-        and where the electric current in the element or circuit is taken positive if its direction is from A to B and negative in the opposite case.
-      $$$$
-      For an n-terminal circuit, it is the sum of the instantaneous powers relative to the n - 1 pairs of terminals when one of the terminals is chosen as a common terminal for the pairs.
-      $$$$
-      For a polyphase element, it is the sum of the instantaneous powers in all phase elements of a polyphase element.
-      $$$$
-      For a polyphase line consisting of m line conductors and one neutral conductor, it is the sum of the m instantaneous powers expressed for each line conductor by the product of the polyphase line-to-neutral voltage and the corresponding line current.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "d1fc5c3f-cd5f-59e3-86f4-01c22d343569",
-            "title": "InstantaneousPower",
-            "title*": {"en": "Instantaneous Power"},
-            "description": "For a two-terminal element or a two-terminal circuit with terminals A and B, \n   $\\textit{Instantaneous Power}$ is the product of the voltage $u_{AB}$ between the terminals and the electric current i in the element or circuit: \n  $$p = u_{AB} \\cdot i$$\n  Where $u_{AB}$ is the line integral of the electric field strength from A to B,\n    and where the electric current in the element or circuit is taken positive if its direction is from A to B and negative in the opposite case. \n  $$$$\n  For an n-terminal circuit, it is the sum of the instantaneous powers relative to the n - 1 pairs of terminals when one of the terminals is chosen as a common terminal for the pairs. \n  $$$$\n  For a polyphase element, it is the sum of the instantaneous powers in all phase elements of a polyphase element.  \n  $$$$\n  For a polyphase line consisting of m line conductors and one neutral conductor, it is the sum of the m instantaneous powers expressed for each line conductor by the product of the polyphase line-to-neutral voltage and the corresponding line current.",
-            "description*": {
-                "en": "For a two-terminal element or a two-terminal circuit with terminals A and B, \n   $\\textit{Instantaneous Power}$ is the product of the voltage $u_{AB}$ between the terminals and the electric current i in the element or circuit: \n  $$p = u_{AB} \\cdot i$$\n  Where $u_{AB}$ is the line integral of the electric field strength from A to B,\n    and where the electric current in the element or circuit is taken positive if its direction is from A to B and negative in the opposite case. \n  $$$$\n  For an n-terminal circuit, it is the sum of the instantaneous powers relative to the n - 1 pairs of terminals when one of the terminals is chosen as a common terminal for the pairs. \n  $$$$\n  For a polyphase element, it is the sum of the instantaneous powers in all phase elements of a polyphase element.  \n  $$$$\n  For a polyphase line consisting of m line conductors and one neutral conductor, it is the sum of the m instantaneous powers expressed for each line conductor by the product of the polyphase line-to-neutral voltage and the corresponding line current."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInstantaneousPowerValue",
-            "@context": [
-                "/wiki/Category:OSW06164d3febb95a42add7826696cc5387?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWd1fc5c3fcd5f59e386f401c22d343569"]
-
-
-# generated by datamodel-codegen:
 #   filename:  OSWd28e781886de5a3fbab07eefc7bb9aa2.json
 
 
@@ -42402,37 +40414,6 @@ class LengthTemperature(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWd33f5020bd93583b807f360af0e833ca.json
-
-
-class InverseSquareTime(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'InverseSquareTime'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "d33f5020-bd93-583b-807f-360af0e833ca",
-            "title": "InverseSquareTime",
-            "title*": {"en": "Inverse Square Time"},
-            "description": "This is an autogenerated partial class definition of 'InverseSquareTime'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInverseSquareTimeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWd33f5020bd93583b807f360af0e833ca"]
-    unit: InverseSquareTimeUnit | None = Field(
-        InverseSquareTimeUnit.per_second_squared,
-        options={"enum_titles": ["/s²"]},
-        title="InverseSquareTimeUnit",
-        x_enum_varnames=["per_second_squared"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -42957,33 +40938,6 @@ class NominalAscentPropellantMass(Mass):
 #   filename:  OSWd60aaf9b746a594a83805f0f0ae921ff.json
 
 
-class PositionVector(Length):
-    """
-    A "Position Vector", also known as location vector or radius vector, is a Euclidean vector which represents the position of a point P in space in relation to an arbitrary reference origin O.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "d60aaf9b-746a-594a-8380-5f0f0ae921ff",
-            "title": "PositionVector",
-            "title*": {"en": "Position Vector"},
-            "description": 'A "Position Vector", also known as location vector or radius vector, is a Euclidean vector which represents the position of a point P in space in relation to an arbitrary reference origin O.',
-            "description*": {
-                "en": 'A "Position Vector", also known as location vector or radius vector, is a Euclidean vector which represents the position of a point P in space in relation to an arbitrary reference origin O.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasPositionVectorValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWd60aaf9b746a594a83805f0f0ae921ff"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWd648b91cc3585f4cb1299ebb6b148dc4.json
 
@@ -43238,39 +41192,6 @@ class Acidity(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWd76028b659105d139a01faedd83fefbd.json
-
-
-class AngularVelocity(QuantityValue):
-    """
-    The change of angle per unit time; specifically, in celestial mechanics, the change in angle of the radius vector per unit time.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "d76028b6-5910-5d13-9a01-faedd83fefbd",
-            "title": "AngularVelocity",
-            "title*": {"en": "Angular velocity", "de": "Winkelgeschwindigkeit"},
-            "description": "The change of angle per unit time; specifically, in celestial mechanics, the change in angle of the radius vector per unit time.",
-            "description*": {
-                "en": "The change of angle per unit time; specifically, in celestial mechanics, the change in angle of the radius vector per unit time."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAngularVelocityValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWd76028b659105d139a01faedd83fefbd"]
-    unit: AngularVelocityUnit | None = Field(
-        AngularVelocityUnit.radian_per_second,
-        options={"enum_titles": ["rad/s", "rad/h", "rad/min"]},
-        title="AngularVelocityUnit",
-        x_enum_varnames=["radian_per_second", "radian_per_hour", "radian_per_minute"],
-    )
 
 
 # generated by datamodel-codegen:
@@ -43539,33 +41460,6 @@ class TotalLinearStoppingPower(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWda012dbe914456a09af4429dce5dcc49.json
-
-
-class SpinQuantumNumber(QuantumNumber):
-    """
-    The "Spin Quantum Number"  describes the spin (intrinsic angular momentum) of the electron within that orbital, and gives the projection of the spin angular momentum S along the specified axis
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "da012dbe-9144-56a0-9af4-429dce5dcc49",
-            "title": "SpinQuantumNumber",
-            "title*": {"en": "Spin Quantum Number"},
-            "description": 'The "Spin Quantum Number"  describes the spin (intrinsic angular momentum) of the electron within that orbital, and gives the projection of the spin angular momentum S along the specified axis',
-            "description*": {
-                "en": 'The "Spin Quantum Number"  describes the spin (intrinsic angular momentum) of the electron within that orbital, and gives the projection of the spin angular momentum S along the specified axis'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasSpinQuantumNumberValue",
-            "@context": [
-                "/wiki/Category:OSWa35c06b30b7750c49dd53768ffd9e756?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWda012dbe914456a09af4429dce5dcc49"]
 
 
 # generated by datamodel-codegen:
@@ -43923,43 +41817,6 @@ class Piece(Count):
 
 # generated by datamodel-codegen:
 #   filename:  OSWdc5df784e44e5802beda722786fd75bf.json
-
-
-class InverseVolume(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'InverseVolume'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "dc5df784-e44e-5802-beda-722786fd75bf",
-            "title": "InverseVolume",
-            "title*": {"en": "Inverse Volume"},
-            "description": "This is an autogenerated partial class definition of 'InverseVolume'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasInverseVolumeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWdc5df784e44e5802beda722786fd75bf"]
-    unit: InverseVolumeUnit | None = Field(
-        InverseVolumeUnit.per_meter_cubed,
-        options={"enum_titles": ["/m³", "/L", "/cm³", "/mL", "/mm³"]},
-        title="InverseVolumeUnit",
-        x_enum_varnames=[
-            "per_meter_cubed",
-            "per_liter",
-            "per_centi_meter_cubed",
-            "per_milli_liter",
-            "per_milli_meter_cubed",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -44575,6 +42432,10 @@ class ElectricDipoleMomentUnit(Enum):
     """
     C·m
     """
+    debye = "Item:OSW196be62ae9d6519da359fb56a71b0ef0"
+    """
+    D
+    """
 
 
 class ElectricDipoleMoment(QuantityValue):
@@ -44607,9 +42468,9 @@ class ElectricDipoleMoment(QuantityValue):
     type: list[str] | None = ["Category:OSWe21f6c5e4c5e5b5b9f86920aec0eaae7"]
     unit: ElectricDipoleMomentUnit | None = Field(
         ElectricDipoleMomentUnit.coulomb_meter,
-        options={"enum_titles": ["C·m"]},
+        options={"enum_titles": ["C·m", "D"]},
         title="ElectricDipoleMomentUnit",
-        x_enum_varnames=["coulomb_meter"],
+        x_enum_varnames=["coulomb_meter", "debye"],
     )
 
 
@@ -45027,33 +42888,6 @@ class ThermodynamicEnergy(Energy):
 #   filename:  OSWe5e3a7fe15ab5beaa32db082ed17e1d5.json
 
 
-class Reflectance(DimensionlessRatio):
-    """
-    Reflectance generally refers to the fraction of incident power that is reflected at an interface, while the term "reflection coefficient" is used for the fraction of electric field reflected. Reflectance is always a real number between zero and 1.0.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "e5e3a7fe-15ab-5bea-a32d-b082ed17e1d5",
-            "title": "Reflectance",
-            "title*": {"en": "Reflectance"},
-            "description": 'Reflectance generally refers to the fraction of incident power that is reflected at an interface, while the term "reflection coefficient" is used for the fraction of electric field reflected. Reflectance is always a real number between zero and 1.0.',
-            "description*": {
-                "en": 'Reflectance generally refers to the fraction of incident power that is reflected at an interface, while the term "reflection coefficient" is used for the fraction of electric field reflected. Reflectance is always a real number between zero and 1.0.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasReflectanceValue",
-            "@context": [
-                "/wiki/Category:OSW67faac860ed758758aa4484387e5d5c9?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWe5e3a7fe15ab5beaa32db082ed17e1d5"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWe6037d9f43ba5a3680d56b8d7bfc3268.json
 
@@ -45347,6 +43181,10 @@ class ElectricPotentialUnit(Enum):
     """
     nV
     """
+    abvolt = Unit.abvolt.value
+    """
+    abV
+    """
     micro_volt = Unit.micro_volt.value
     """
     μV
@@ -45354,6 +43192,10 @@ class ElectricPotentialUnit(Enum):
     milli_volt = Unit.milli_volt.value
     """
     mV
+    """
+    statvolt = Unit.statvolt.value
+    """
+    statV
     """
     kilo_volt = Unit.kilo_volt.value
     """
@@ -45414,8 +43256,10 @@ class ElectricPotential(QuantityValue):
                 "fV",
                 "pV",
                 "nV",
+                "abV",
                 "μV",
                 "mV",
+                "statV",
                 "kV",
                 "MV",
                 "GV",
@@ -45430,8 +43274,10 @@ class ElectricPotential(QuantityValue):
             "femto_volt",
             "pico_volt",
             "nano_volt",
+            "abvolt",
             "micro_volt",
             "milli_volt",
+            "statvolt",
             "kilo_volt",
             "mega_volt",
             "giga_volt",
@@ -45444,33 +43290,6 @@ class ElectricPotential(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWe8d1194aeb2e5b9f877867eab5c9cae9.json
-
-
-class Incidence(Frequency):
-    """
-    In epidemiology, incidence is a measure of the probability of occurrence of a given medical condition in a population within a specified period of time.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "e8d1194a-eb2e-5b9f-8778-67eab5c9cae9",
-            "title": "Incidence",
-            "title*": {"en": "Incidence"},
-            "description": "In epidemiology, incidence is a measure of the probability of occurrence of a given medical condition in a population within a specified period of time.",
-            "description*": {
-                "en": "In epidemiology, incidence is a measure of the probability of occurrence of a given medical condition in a population within a specified period of time."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasIncidenceValue",
-            "@context": [
-                "/wiki/Category:OSWc543ebb853385a1a9382f57faad6170d?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWe8d1194aeb2e5b9f877867eab5c9cae9"]
 
 
 # generated by datamodel-codegen:
@@ -45529,105 +43348,8 @@ class Compressibility(QuantityValue):
 #   filename:  OSWe9be062de2d15d10891397a18212f920.json
 
 
-class Mass(QuantityValue):
-    """
-    In physics, mass, more specifically inertial mass, can be defined as a quantitative measure of an object's resistance to acceleration. The SI unit of mass is the kilogram ($kg$)
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "e9be062d-e2d1-5d10-8913-97a18212f920",
-            "title": "Mass",
-            "title*": {"en": "Mass", "de": "Masse"},
-            "description": "In physics, mass, more specifically inertial mass, can be defined as a quantitative measure of an object's resistance to acceleration. The SI unit of mass is the kilogram ($kg$)",
-            "description*": {
-                "en": "In physics, mass, more specifically inertial mass, can be defined as a quantitative measure of an object's resistance to acceleration. The SI unit of mass is the kilogram ($kg$)"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMassValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWe9be062de2d15d10891397a18212f920"]
-    unit: MassUnit | None = Field(
-        MassUnit.kilo_gram,
-        options={
-            "enum_titles": [
-                "kg",
-                "fg",
-                "pg",
-                "ng",
-                "μg",
-                "mg",
-                "cg",
-                "dg",
-                "g",
-                "dag",
-                "hg",
-                "dt",
-                "Mg",
-                "t",
-                "kt",
-                "Mt",
-            ]
-        },
-        title="MassUnit",
-        x_enum_varnames=[
-            "kilo_gram",
-            "femto_gram",
-            "pico_gram",
-            "nano_gram",
-            "micro_gram",
-            "milli_gram",
-            "centi_gram",
-            "deci_gram",
-            "gram",
-            "deca_gram",
-            "hecto_gram",
-            "deci_metric_ton",
-            "mega_gram",
-            "metric_ton",
-            "knot",
-            "mega_metric_ton",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWea12214400965c818daf0b53062ccf4a.json
-
-
-class MassEquivalent(Mass):
-    """
-    "Mass Equivalent" is the mass of a substance that reacts with (or is equivalent to) an arbitrary mass of
-    another substance in a given chemical reaction.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "ea122144-0096-5c81-8daf-0b53062ccf4a",
-            "title": "MassEquivalent",
-            "title*": {"en": "Mass Equivalent"},
-            "description": '"Mass Equivalent" is the mass of a substance that reacts with (or is equivalent to) an arbitrary mass of \nanother substance in a given chemical reaction.',
-            "description*": {
-                "en": '"Mass Equivalent" is the mass of a substance that reacts with (or is equivalent to) an arbitrary mass of \nanother substance in a given chemical reaction.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMassEquivalentValue",
-            "@context": [
-                "/wiki/Category:OSWe9be062de2d15d10891397a18212f920?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWea12214400965c818daf0b53062ccf4a"]
 
 
 # generated by datamodel-codegen:
@@ -46016,42 +43738,6 @@ class AmountOfSubstanceOfConcentration(Concentration):
 #   filename:  OSWec4a0bb9cee155e3a79994b906fbd3a7.json
 
 
-class ReactionRateConstant(QuantityValue):
-    """
-    A quantity kind that is a proportionality constant that quantifies the relationship between the molar concentrations of the reactants and the rate of a second order chemical reaction.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "ec4a0bb9-cee1-55e3-a799-94b906fbd3a7",
-            "title": "ReactionRateConstant",
-            "title*": {"en": "Reaction Rate Constant"},
-            "description": "A quantity kind that is a proportionality constant that quantifies the relationship between the molar concentrations of the reactants and the rate of a second order chemical reaction.",
-            "description*": {
-                "en": "A quantity kind that is a proportionality constant that quantifies the relationship between the molar concentrations of the reactants and the rate of a second order chemical reaction."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasReactionRateConstantValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWec4a0bb9cee155e3a79994b906fbd3a7"]
-    unit: ReactionRateConstantUnit | None = Field(
-        ReactionRateConstantUnit.meter_cubed_per_mole_per_second,
-        options={"enum_titles": ["m³/(mol·s)", "cm³/(mol·s)"]},
-        title="ReactionRateConstantUnit",
-        x_enum_varnames=[
-            "meter_cubed_per_mole_per_second",
-            "centi_meter_cubed_per_mole_per_second",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWed059354cf7c596ea0b5428168ff59fc.json
 
@@ -46105,6 +43791,10 @@ class ViscosityUnit(Enum):
     """
     Pa·s
     """
+    micro_poise = Unit.micro_poise.value
+    """
+    μP
+    """
     gram_per_hour_per_meter = Unit.gram_per_hour_per_meter.value
     """
     g/(m·h)
@@ -46112,6 +43802,10 @@ class ViscosityUnit(Enum):
     kilo_gram_per_hour_per_meter = Unit.kilo_gram_per_hour_per_meter.value
     """
     kg/(m·h)
+    """
+    centi_poise = Unit.centi_poise.value
+    """
+    cP
     """
     gram_per_meter_per_second = Unit.gram_per_meter_per_second.value
     """
@@ -46121,13 +43815,25 @@ class ViscosityUnit(Enum):
     """
     mPa·s
     """
+    poise = Unit.poise.value
+    """
+    P
+    """
     gram_per_centi_meter_per_second = Unit.gram_per_centi_meter_per_second.value
     """
     g/(cm·s)
     """
+    deca_poise = Unit.deca_poise.value
+    """
+    daP
+    """
     kilo_gram_per_meter_per_second = Unit.kilo_gram_per_meter_per_second.value
     """
     kg/(m·s)
+    """
+    kilo_poise = Unit.kilo_poise.value
+    """
+    kP
     """
 
 
@@ -46161,23 +43867,33 @@ class Viscosity(QuantityValue):
         options={
             "enum_titles": [
                 "Pa·s",
+                "μP",
                 "g/(m·h)",
                 "kg/(m·h)",
+                "cP",
                 "g/(m·s)",
                 "mPa·s",
+                "P",
                 "g/(cm·s)",
+                "daP",
                 "kg/(m·s)",
+                "kP",
             ]
         },
         title="ViscosityUnit",
         x_enum_varnames=[
             "pascal_second",
+            "micro_poise",
             "gram_per_hour_per_meter",
             "kilo_gram_per_hour_per_meter",
+            "centi_poise",
             "gram_per_meter_per_second",
             "milli_pascal_second",
+            "poise",
             "gram_per_centi_meter_per_second",
+            "deca_poise",
             "kilo_gram_per_meter_per_second",
+            "kilo_poise",
         ],
     )
 
@@ -46244,67 +43960,6 @@ class EffectiveExhaustvelocity(Velocity):
 
 # generated by datamodel-codegen:
 #   filename:  OSWee9c7e5c343e542cb5a8b4648315902f.json
-
-
-class Length(QuantityValue):
-    """
-    In geometric measurements, length most commonly refers to the est dimension of an object. In some contexts, the term "length" is reserved for a certain dimension of an object along which the length is measured.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "ee9c7e5c-343e-542c-b5a8-b4648315902f",
-            "title": "Length",
-            "title*": {"en": "Length", "de": "Länge"},
-            "description": 'In geometric measurements, length most commonly refers to the est dimension of an object. In some contexts, the term "length" is reserved for a certain dimension of an object along which the length is measured.',
-            "description*": {
-                "en": 'In geometric measurements, length most commonly refers to the est dimension of an object. In some contexts, the term "length" is reserved for a certain dimension of an object along which the length is measured.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLengthValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWee9c7e5c343e542cb5a8b4648315902f"]
-    unit: LengthUnit | None = Field(
-        LengthUnit.meter,
-        options={
-            "enum_titles": [
-                "m",
-                "fm",
-                "pm",
-                "nm",
-                "μm",
-                "mm",
-                "cm",
-                "dm",
-                "dam",
-                "hm",
-                "km",
-                "AU",
-            ]
-        },
-        title="LengthUnit",
-        x_enum_varnames=[
-            "meter",
-            "fermi",
-            "pico_meter",
-            "nano_meter",
-            "micro_meter",
-            "milli_meter",
-            "centi_meter",
-            "deci_meter",
-            "deca_meter",
-            "hecto_meter",
-            "kilo_meter",
-            "astronomical_unit",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -46552,65 +44207,6 @@ class ElectricChargeVolumeDensity(QuantityValue):
 
 # generated by datamodel-codegen:
 #   filename:  OSWefff8e22b4d65024bd044362634938e1.json
-
-
-class AmountOfSubstancePerMass(QuantityValue):
-    """
-    This is an autogenerated partial class definition of 'AmountOfSubstancePerMass'
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "efff8e22-b4d6-5024-bd04-4362634938e1",
-            "title": "AmountOfSubstancePerMass",
-            "title*": {"en": "Amount of Substance per Mass"},
-            "description": "This is an autogenerated partial class definition of 'AmountOfSubstancePerMass'",
-            "description*": {},
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasAmountOfSubstancePerMassValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWefff8e22b4d65024bd044362634938e1"]
-    unit: AmountOfSubstancePerMassUnit | None = Field(
-        AmountOfSubstancePerMassUnit.mole_per_kilo_gram,
-        options={
-            "enum_titles": [
-                "mol/kg",
-                "fmol/kg",
-                "pmol/kg",
-                "nmol/kg",
-                "nmol/g",
-                "μmol/kg",
-                "mmol/kg",
-                "μmol/g",
-                "cmol/kg",
-                "mmol/g",
-                "kmol/kg",
-                "mol/g",
-            ]
-        },
-        title="AmountOfSubstancePerMassUnit",
-        x_enum_varnames=[
-            "mole_per_kilo_gram",
-            "femto_mole_per_kilo_gram",
-            "pico_mole_per_kilo_gram",
-            "nano_mole_per_kilo_gram",
-            "nano_mole_per_gram",
-            "micro_mole_per_kilo_gram",
-            "milli_mole_per_kilo_gram",
-            "micro_mole_per_gram",
-            "centi_mole_per_kilo_gram",
-            "milli_mole_per_gram",
-            "kilo_mole_per_kilo_gram",
-            "mole_per_gram",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -46993,79 +44589,6 @@ class ElectricCurrentPerAngle(QuantityValue):
 #   filename:  OSWf5c54cd70ddf5ff3b1ef1aee6ae8f0cb.json
 
 
-class Volume(QuantityValue):
-    """
-    The volume of a solid object is the three-dimensional concept of how much space it occupies, often quantified numerically. One-dimensional figures (such as lines) and two-dimensional shapes (such as squares) are assigned zero volume in the three-dimensional space.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "f5c54cd7-0ddf-5ff3-b1ef-1aee6ae8f0cb",
-            "title": "Volume",
-            "title*": {"en": "Volume"},
-            "description": "The volume of a solid object is the three-dimensional concept of how much space it occupies, often quantified numerically. One-dimensional figures (such as lines) and two-dimensional shapes (such as squares) are assigned zero volume in the three-dimensional space.",
-            "description*": {
-                "en": "The volume of a solid object is the three-dimensional concept of how much space it occupies, often quantified numerically. One-dimensional figures (such as lines) and two-dimensional shapes (such as squares) are assigned zero volume in the three-dimensional space."
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasVolumeValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWf5c54cd70ddf5ff3b1ef1aee6ae8f0cb"]
-    unit: VolumeUnit | None = Field(
-        VolumeUnit.kilo_liter,
-        options={
-            "enum_titles": [
-                "kL",
-                "fL",
-                "μm³",
-                "pL",
-                "nL",
-                "mm³",
-                "μL",
-                "cm³",
-                "mL",
-                "cL",
-                "dL",
-                "L",
-                "dm³",
-                "daL",
-                "hL",
-                "m³",
-                "ML",
-                "dam³",
-            ]
-        },
-        title="VolumeUnit",
-        x_enum_varnames=[
-            "kilo_liter",
-            "femto_liter",
-            "micro_meter_cubed",
-            "pico_liter",
-            "nano_liter",
-            "milli_meter_cubed",
-            "micro_liter",
-            "centi_meter_cubed",
-            "milli_liter",
-            "centi_liter",
-            "deci_liter",
-            "liter",
-            "deci_meter_cubed",
-            "deca_liter",
-            "hecto_liter",
-            "meter_cubed",
-            "mega_liter",
-            "deca_meter_cubed",
-        ],
-    )
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWf5c5b968f6125fab80cfdbc0a74706fa.json
 
@@ -47271,34 +44794,6 @@ class Width(Length):
 
 # generated by datamodel-codegen:
 #   filename:  OSWf9c536c2ed285ff4827652539e5e0152.json
-
-
-class MolarEquivalent(AmountOfSubstance):
-    """
-    "Molar Equivalent" is the amount of a substance that reacts with (or is equivalent to) an arbitrary amount (typically one mole) of
-    another substance in a given chemical reaction.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "f9c536c2-ed28-5ff4-8276-52539e5e0152",
-            "title": "MolarEquivalent",
-            "title*": {"en": "Molar Equivalent"},
-            "description": '"Molar Equivalent" is the amount of a substance that reacts with (or is equivalent to) an arbitrary amount (typically one mole) of \nanother substance in a given chemical reaction.',
-            "description*": {
-                "en": '"Molar Equivalent" is the amount of a substance that reacts with (or is equivalent to) an arbitrary amount (typically one mole) of \nanother substance in a given chemical reaction.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMolarEquivalentValue",
-            "@context": [
-                "/wiki/Category:OSW2f222621d774517193dc5eab674e3721?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWf9c536c2ed285ff4827652539e5e0152"]
 
 
 # generated by datamodel-codegen:
@@ -47588,6 +45083,10 @@ class LuminanceUnit(Enum):
     """
     cd/m²
     """
+    stilb = Unit.stilb.value
+    """
+    sb
+    """
 
 
 class Luminance(QuantityValue):
@@ -47617,9 +45116,9 @@ class Luminance(QuantityValue):
     type: list[str] | None = ["Category:OSWfad284976682566cab9ebd9d6bd15711"]
     unit: LuminanceUnit | None = Field(
         LuminanceUnit.candela_per_meter_squared,
-        options={"enum_titles": ["cd/m²"]},
+        options={"enum_titles": ["cd/m²", "sb"]},
         title="LuminanceUnit",
-        x_enum_varnames=["candela_per_meter_squared"],
+        x_enum_varnames=["candela_per_meter_squared", "stilb"],
     )
 
 
@@ -48845,102 +46344,8 @@ class Volume1(QuantityValue):
     )
 
 
-class Volume(Volume1):
-    """
-    "Volume" is the quantity of three-dimensional space enclosed by some closed boundary, for example, the space that a substance (solid, liquid, gas, or plasma) or shape occupies or contains.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "fed64b81-0634-552b-b200-c195ab1017be",
-            "title": "Volume",
-            "title*": {"en": "Volume", "de": "Volumen"},
-            "description": '"Volume" is the quantity of three-dimensional space enclosed by some closed boundary, for example, the space that a substance (solid, liquid, gas, or plasma) or shape occupies or contains.',
-            "description*": {
-                "en": '"Volume" is the quantity of three-dimensional space enclosed by some closed boundary, for example, the space that a substance (solid, liquid, gas, or plasma) or shape occupies or contains.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasVolumeValue",
-            "@context": [
-                "/wiki/Category:OSWf5c54cd70ddf5ff3b1ef1aee6ae8f0cb?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWfed64b810634552bb200c195ab1017be"]
-
-
 # generated by datamodel-codegen:
 #   filename:  OSWfeea42441eab5f6598b36cda1157f75f.json
-
-
-class MassRatio(QuantityValue):
-    """
-    In aerospace engineering, mass ratio is a measure of the efficiency of a rocket. It describes how much more massive the vehicle is with propellant than without; that is, it is the ratio of the rocket's wet mass (vehicle plus contents plus propellant) to its dry mass (vehicle plus contents)
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWc7f9aec4f71f4346b6031f96d7e46bd7",
-            "uuid": "feea4244-1eab-5f65-98b3-6cda1157f75f",
-            "title": "MassRatio",
-            "title*": {"en": "Mass Ratio"},
-            "description": "In aerospace engineering, mass ratio is a measure of the efficiency of a rocket. It describes how much more massive the vehicle is with propellant than without; that is, it is the ratio of the rocket's wet mass (vehicle plus contents plus propellant) to its dry mass (vehicle plus contents)",
-            "description*": {
-                "en": "In aerospace engineering, mass ratio is a measure of the efficiency of a rocket. It describes how much more massive the vehicle is with propellant than without; that is, it is the ratio of the rocket's wet mass (vehicle plus contents plus propellant) to its dry mass (vehicle plus contents)"
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasMassRatioValue",
-            "@context": [
-                "/wiki/Category:OSW4082937906634af992cf9a1b18d772cf?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWfeea42441eab5f6598b36cda1157f75f"]
-    unit: MassRatioUnit | None = Field(
-        MassRatioUnit.g_per_g,
-        options={
-            "enum_titles": [
-                "g/g",
-                "fg/kg",
-                "pg/kg",
-                "ng/kg",
-                "pg/g",
-                "pg/mg",
-                "μg/kg",
-                "mg/kg",
-                "ng/mg",
-                "μg/g",
-                "g/kg",
-                "mg/g",
-                "μg/mg",
-                "g/hg",
-                "kg/kg",
-            ]
-        },
-        title="MassRatioUnit",
-        x_enum_varnames=[
-            "g_per_g",
-            "femto_gram_per_kilo_gram",
-            "pico_gram_per_kilo_gram",
-            "nano_gram_per_kilo_gram",
-            "pico_gram_per_gram",
-            "pico_gram_per_milli_gram",
-            "micro_gram_per_kilo_gram",
-            "milli_gram_per_kilo_gram",
-            "nano_gram_per_milli_gram",
-            "micro_gram_per_gram",
-            "gram_per_kilo_gram",
-            "milli_gram_per_gram",
-            "micro_gram_per_milli_gram",
-            "gram_per_hecto_gram",
-            "kg_per_kg",
-        ],
-    )
 
 
 # generated by datamodel-codegen:
@@ -49080,34 +46485,3 @@ class Spin(AngularMomentum):
 
 # generated by datamodel-codegen:
 #   filename:  OSWff95a9d808375e7c9631c797e43546cd.json
-
-
-class LatticeVector(Length):
-    """
-    "Lattice Vector" is a translation vector that maps the crystal lattice on itself.
-    """
-
-    class Config:
-        schema_extra = {
-            "$comment": "Autogenerated section - do not edit. Generated from Category:OSWffe74f291d354037b318c422591c5023 Category:OSWac07a46c2cf14f3daec503136861f5ab",
-            "uuid": "ff95a9d8-0837-5e7c-9631-c797e43546cd",
-            "title": "LatticeVector",
-            "title*": {"en": "Lattice Vector"},
-            "description": '"Lattice Vector" is a translation vector that maps the crystal lattice on itself.',
-            "description*": {
-                "en": '"Lattice Vector" is a translation vector that maps the crystal lattice on itself.'
-            },
-            "defaultProperties": ["type"],
-            "x-smw-quantity-property": "Property:HasLatticeVectorValue",
-            "@context": [
-                "/wiki/Category:OSWee9c7e5c343e542cb5a8b4648315902f?action=raw&slot=jsonschema",
-                {},
-            ],
-            "$defs": {},
-        }
-
-    type: list[str] | None = ["Category:OSWff95a9d808375e7c9631c797e43546cd"]
-
-
-FundamentalQuantityValueType.update_forward_refs()
-QuantityValueType.update_forward_refs()

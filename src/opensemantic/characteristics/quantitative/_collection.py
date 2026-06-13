@@ -2560,3 +2560,242 @@ class Unit(UnitEnum):
     )
     watt_per_meter_squared_per_pascal = "Item:OSWa553473ceb6957438779040c3e07c200"
     percent = "Item:OSW5d2e595005cc569ab40c8563754ba3db"
+    PSU = "Item:OSW00eed9635eca5eef9894228af82353f9"
+    grain = "Item:OSWf2e4af5e184b50bcae5678ea6036a2dc"
+    vacuum_permittivity = "Item:OSW8dc4de2004255bc38980207113b22989"
+    Sh = "Item:OSW5e51e7e7d12e5210847e42c0d11b2e7a"
+    E = "Item:OSW5062e3d445a255bdb044faeb256ec128"
+    nano_technical_atmosphere = "Item:OSW230bc714e6c55494ac23d85926e8fe90"
+    one = "Item:OSW3853b1d8f529526aa4b8c55abc49336a"
+    unknown_1 = "Item:OSWeaf4fef0eec25f09b6d851cd90f571a3"
+    ban = "Item:OSW90fc1f5ce97459cfb9a49a8138e227a3"
+    Hart = "Item:OSW4d83811aa2a05dd481cc4e3f9ece8ea3"
+    to_the_10 = "Item:OSW3fe98ced7a08525e93dd60201ed47ea8"
+    to_the_100 = "Item:OSWe3b622e664405858a4044aa3a8a8d93d"
+    to_the_1000 = "Item:OSW0170312b2e4352b493be69bb48b11742"
+    kilo_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSWb4021832fe825121b4e30daa1066c358"
+    )
+    kibi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSWe954cf76c871550f8f436a90f9a83509"
+    )
+    to_the_1000000 = "Item:OSW3a9bea3b18f5506a8418aa39773c2bf0"
+    mega_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW03722cae42d852ab9874a208e5ec2847"
+    )
+    mebi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW632880c1e12c52b28bc94d7e0f2a6379"
+    )
+    to_the_1000000000 = "Item:OSW9543cd3509115877b2f59b60ebe7dd2b"
+    giga_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSWf1746e667f715cd7a957a20e1d513695"
+    )
+    gibi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW507dff1d36015eb79b0eee5b54bf5629"
+    )
+    to_the_1000000000000 = "Item:OSW56ce4da919785d1587d59b204b469b3c"
+    tera_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW0d3db45c1d36550e8139e6a7766eb121"
+    )
+    tebi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW1663bbf8c4eb54dfaa1e70ee6d0ee6d1"
+    )
+    pebi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW0d22d4287d9b558186a986a2ca889bee"
+    )
+    peta_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSWae14374eb37752fdb774f4b2fff5cc17"
+    )
+    exbi_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW2d52b3ff69fb5bcfa458ecf93b15445c"
+    )
+    exa_byte = (
+        "Item:OSWfef0c07075cc531c9b4a3938821e5079#OSW562ff5e00d235f1ba9c7a625806be057"
+    )
+    calorie = "Item:OSWa10ab59b3558540b9216812a03241e22"
+    cal_to_the_15_degree_celsius = "Item:OSW18eab2bcd1575213839be236edbf82d6"
+    international_calorie = "Item:OSWc14beede94eb5e7981a635d0b14fbe1c"
+    mean_calorie = "Item:OSW883d9784e2e85c0f89f46005cacfe4a7"
+    kilo_calorie = (
+        "Item:OSWa10ab59b3558540b9216812a03241e22#OSW3dbfa0781597595bac216bcedd9508d9"
+    )
+    kilo_international_calorie = (
+        "Item:OSWc14beede94eb5e7981a635d0b14fbe1c#OSW02fb85aba449513c92a030722b540d4b"
+    )
+    metric_ton_per_force_pound = "Item:OSWd2c8accde73353f4b916d478f0f657ff"
+    quad = "Item:OSW81fa41f795f45c50a2fd671b17a7dcba"
+    micro_henry_per_kilo_ohm = (
+        "Item:OSW8751fff4e67d5a9b944e323159eb0dad#OSWdd1328a6f280577c866b63c5e9eb7d53"
+    )
+    milli_henry_per_kilo_ohm = (
+        "Item:OSW8751fff4e67d5a9b944e323159eb0dad#OSW91f2217a1e5e58bb84644588308ec27b"
+    )
+    micro_henry_per_ohm = (
+        "Item:OSW8751fff4e67d5a9b944e323159eb0dad#OSW14b5b614d6eb5e949713232e9d79b744"
+    )
+    henry_per_kilo_ohm = (
+        "Item:OSW8751fff4e67d5a9b944e323159eb0dad#OSWf02ec24730135b3c84a28a362576cd24"
+    )
+    milli_henry_per_ohm = (
+        "Item:OSW8751fff4e67d5a9b944e323159eb0dad#OSW6df9229649a65017822675d67c415c23"
+    )
+    henry_per_ohm = "Item:OSW8751fff4e67d5a9b944e323159eb0dad"
+    micro_bar = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSW9ec301c16d345beeb00df3edfaa791fb"
+    )
+    micro_standard_atmosphere = (
+        "Item:OSWf3df7559397e55aa9006e3e1e5bc68b9#OSWd5e58ef36326542ba2245104886b0883"
+    )
+    milli_bar = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSW9ebd04e2e60051c682fce5c4c696194f"
+    )
+    mbar_abs = (
+        "Item:OSW0489626a4cd15b65b8ae4541a0a8bbdc#OSWdea4cb3bc9b55d169545c5e0a42f81ec"
+    )
+    centi_bar = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSW276ae35c97f05a829443b38c0120d134"
+    )
+    technical_atmosphere = "Item:OSW220eff637bd45734a08a6a88385d6ae2"
+    bar = "Item:OSWad94dc4bfea45e20a8234c7487634c99"
+    bar_absolute = "Item:OSW0489626a4cd15b65b8ae4541a0a8bbdc"
+    standard_atmosphere = "Item:OSWf3df7559397e55aa9006e3e1e5bc68b9"
+    dirac_constant = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSWd9906a26879a560f9eb44b405a09440c"
+    )
+    kilo_bar = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSWe160f83a9ebd5f51ae17bc3e1f18da17"
+    )
+    mega_bar = (
+        "Item:OSWad94dc4bfea45e20a8234c7487634c99#OSWc787e32e220555a4aded13f0b4f2b0ee"
+    )
+    statampere = "Item:OSW5e5f547ac4115d07baa3f45c9673989f"
+    biot = "Item:OSW19d4212c82595558b911c13d64896a57"
+    abampere = "Item:OSWd31987380ef65a3587907c43e93d0cc3"
+    milli_newton_per_meter_1 = (
+        "Item:OSW0d4e5e11d53f5018a0b965373b55510d#OSWf299b56cb8175f83b089a378f9ff4193"
+    )
+    newton_per_meter_1 = "Item:OSW0d4e5e11d53f5018a0b965373b55510d"
+    kilo_newton_per_meter_1 = (
+        "Item:OSW0d4e5e11d53f5018a0b965373b55510d#OSWca3713c796a850e28929b34bfe347edb"
+    )
+    degree_Rankine = "Item:OSWc05278561b6f51a4afe7bf8efe85c473"
+    debye = "Item:OSW1b6a103ceff75552910ca26d32e0dd07"
+    radian_per_meter = "Item:OSW36316ec96974546b9cd3a5068a5f0cb4"
+    micro_n = (
+        "Item:OSW121f18c9513a53debddfc746be8c571e#OSWe1c8741a62445600936d5f0c8e651f2e"
+    )
+    siemens_1 = "Item:OSW121f18c9513a53debddfc746be8c571e"
+    phot = "Item:OSWbed1170537235cb98d9bb08e11e482e0"
+    becquerel_second_per_meter_cubed = "Item:OSW1efd1bc60d165d23a47da67b5afd8d53"
+    dyne = "Item:OSWade55059c34b52c184e058e8e2551b07"
+    pascal_second_per_meter = "Item:OSWa16942bc554b543bb9542f6c941cfe78"
+    radiation_absorbed_dose = "Item:OSW6b270053305955a89f37c50637fc7aeb"
+    dalton = "Item:OSW3120657825b851f7856bfec8259dac99"
+    carat = "Item:OSWc7ed820dc85852b6be50637e389a21ae"
+    troy_ounce = "Item:OSW83d430005c3f56ad9842634aa262ff6e"
+    troy_pound = "Item:OSW80d10f0e1fa151c3a50c2a931eaaa584"
+    pound = "Item:OSW0b5ec1be43b958a1b7a6004dfcb7e676"
+    klbm = (
+        "Item:OSW0b5ec1be43b958a1b7a6004dfcb7e676#OSW2ac97d60781b56e2b3c78b42cb14df05"
+    )
+    tn = "Item:OSWeb0dbb0c11f05650a6d3cb09e86103af"
+    ton = "Item:OSWfe3e343f1710509b9f8a99b1caacbbbf"
+    Mtn = "Item:OSWeb0dbb0c11f05650a6d3cb09e86103af#OSW3fc075ea4707563ead80dc5358aadb12"
+    newton_per_radian_1 = "Item:OSWdb56cd91482e56e78819b9b53a36e346"
+    newton_per_degree = "Item:OSWb6cd057594875dcab33a9f3fdd1ef440"
+    kilo_newton_per_degree = (
+        "Item:OSWb6cd057594875dcab33a9f3fdd1ef440#OSW1df81409b3fe54f688dd5fa9d87d8d39"
+    )
+    abvolt = "Item:OSW756f3b2262dc5e51bf1b99be63d0d22f"
+    statvolt = "Item:OSWec648af61d6659749aee3cd100d10fc5"
+    gamma = "Item:OSW0ab30ace4c8758c3b7e94d16d3336892"
+    abT = "Item:OSWd00685e2a5d45d5f95ac5068834214d1"
+    milli_molar_gas_constant = (
+        "Item:OSW24c69f74406f5ba5aef5e37f7534044c#OSWb698000787a9530fbf38d408a735d849"
+    )
+    molar_gas_constant = (
+        "Item:OSW24c69f74406f5ba5aef5e37f7534044c#OSW24c69f74406f5ba5aef5e37f7534044c"
+    )
+    kilo_molar_gas_constant = (
+        "Item:OSW24c69f74406f5ba5aef5e37f7534044c#OSW11becc291de559a48041ed5f8a1cf82a"
+    )
+    newton_per_kilo_gram = (
+        "Item:OSW34e9b9faef5e51d5baba67459d7295e2#OSW8ef77a27e94b5ccba0f3d69d8491e137"
+    )
+    newton_per_gram = "Item:OSW34e9b9faef5e51d5baba67459d7295e2"
+    electron_volt_per_kelvin = "Item:OSWf84723a0481159adbf37a2e215d45742"
+    sievert = (
+        "Item:OSW27d148717efb55bb988277dfbd136d6f#OSW27d148717efb55bb988277dfbd136d6f"
+    )
+    nano_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW3f640ac4a8225bfda56d9480d803e1d3"
+    )
+    nano_sievert = (
+        "Item:OSW27d148717efb55bb988277dfbd136d6f#OSWe405624f56cb58098c66e45a1e9dbf39"
+    )
+    micro_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW6e0ffe45c22c509b8beb8814fe6b5b93"
+    )
+    micro_sievert = (
+        "Item:OSW27d148717efb55bb988277dfbd136d6f#OSWbe7b1aeab128559185995f43b0448616"
+    )
+    milli_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW7cfb1c8eb59c5065814881811a44fa09"
+    )
+    milli_sievert = (
+        "Item:OSW27d148717efb55bb988277dfbd136d6f#OSW921781fc1d8d5753bb4e217fce342e3e"
+    )
+    centi_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW8b7ae98cbda95faf959c2e12b3e604e1"
+    )
+    rem = "Item:OSW788f178a9aeb551c9d65ca2301d77f78"
+    gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW9b727edc3b7a5d4f8ae4523e35d3d045"
+    )
+    kilo_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW3012a8eb40f05b6da339b57d0b6fa65d"
+    )
+    mega_gray = (
+        "Item:OSW9b727edc3b7a5d4f8ae4523e35d3d045#OSW152f4e5053ad5d16bb55108464b89263"
+    )
+    abhenry = "Item:OSWfc12b8aa861458e196528b09ec43a76c"
+    stathenry = "Item:OSW0f9432a8095854e7809a035308be7fbc"
+    statfarad = "Item:OSW19b2780fc9e453208461d0f02b53012b"
+    abfarad = "Item:OSW99c6644607c65f628236e9383b506717"
+    micro_curie = (
+        "Item:OSW0b04a0ae4aeb5931a51625700dc55f03#OSW5168dfad14d8503db834bbb34410a9ad"
+    )
+    milli_curie = (
+        "Item:OSW0b04a0ae4aeb5931a51625700dc55f03#OSWfe44466c64c85dc4af7ec8f1e8114a73"
+    )
+    curie = "Item:OSW0b04a0ae4aeb5931a51625700dc55f03"
+    kilo_curie = (
+        "Item:OSW0b04a0ae4aeb5931a51625700dc55f03#OSWea6782e622385316b2b7e2348dd09be0"
+    )
+    micro_poise = (
+        "Item:OSW453a0e790373569d9090299ca4c23254#OSW7b6f0482a9045a75a75be570b2b8655e"
+    )
+    centi_poise = (
+        "Item:OSW453a0e790373569d9090299ca4c23254#OSWc71f4c1a8cbc5ca785fbe42f364f4205"
+    )
+    poise = "Item:OSW453a0e790373569d9090299ca4c23254"
+    deca_poise = (
+        "Item:OSW453a0e790373569d9090299ca4c23254#OSWc29411f4e70e5c258457ebd07a7e5f8d"
+    )
+    kilo_poise = (
+        "Item:OSW453a0e790373569d9090299ca4c23254#OSWa1b873fe99a7503680206e2b55305f11"
+    )
+    clo_unit = "Item:OSW466083d9a99a5461951196fc61eba910"
+    maxwell = "Item:OSWe2839178c12656209340e3a495334fc2"
+    unit_pole = "Item:OSW68df32f5be96543c8ba7e44ee463d559"
+    k = "Item:OSW56cb00de0b945ec0b33280e0376b2c18"
+    abohm = "Item:OSWe0ae21dcfcaf5862849e3fa4af3bba9b"
+    statohm = "Item:OSW6acc9a75f0a25d63b3ff1734dfc1b057"
+    statcoulomb = "Item:OSWf634b73e674e5cc5a9b866cd4c03a6f0"
+    abcoulomb = "Item:OSWad5d9c5f75cc5c58b7c479d7ae6749e7"
+    rayl = "Item:OSWee18cfabe34058bab1733bfdba7003ab"
+    radian_per_second_squared = "Item:OSW3e32d5c05da65edda555930f2545430b"
+    statmho_1 = "Item:OSWcaa8107f73e65c64bd1a17c1ce175b86"
+    absiemens = "Item:OSW0ad7b62faa04540997ae86979ee04745"
+    candlepower = "Item:OSWa3fdeda173fa5b90a6245a7adf8c0ee1"
+    stilb = "Item:OSW49277fc9ea4b5a29b1a10023d96d59d5"
