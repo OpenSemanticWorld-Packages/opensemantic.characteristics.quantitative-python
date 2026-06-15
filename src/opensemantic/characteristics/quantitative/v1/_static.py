@@ -17,7 +17,6 @@ import pint
 import pint_pandas  # noqa: F401
 from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
 from pydantic.v1 import Field, create_model
-from pydantic.v1.fields import FieldInfo
 
 from opensemantic.characteristics.quantitative.v1._collection import Unit
 from opensemantic.characteristics.quantitative.v1._enum import UnitEnum, unit_registry
@@ -143,31 +142,29 @@ quantity_registry: Dict[EnumType, ModelMetaclass] = {}
 class QuantityValueMetaclass(ModelMetaclass):
     def __new__(cls, clsname, bases, attrs):
         class_instance = super().__new__(cls, clsname, bases, attrs)
-        # print(attrs["__qualname__"], attrs)
-        if "unit" in attrs and attrs["unit"] is not None:
-            # print(attrs["__annotations__"]["unit"].__dict__)#, attrs["unit"].__dict__)
-            # print(attrs["unit"].__dict__["__objclass__"])
-            # print(attrs["__annotations__"]["unit"].__args__[0])
-            # register the mapping between the unit enum and the quantity class
-
-            unit_field_type = None
-            # check if FieldInfo was used for annotation
-            if type(attrs["unit"]) is FieldInfo:
-                # handle type annotation str value "<classname> | None"
-                if isinstance(attrs["__annotations__"]["unit"], str):
-                    _types = [
-                        t.strip() for t in attrs["__annotations__"]["unit"].split("|")
-                    ]
-                else:
-                    _types = attrs["__annotations__"]["unit"].__args__
-                # select the first type != None
-                for _type in _types:
-                    if _type is not None and _type != "None":
-                        unit_field_type = _type
-                        break
+        # Register the mapping between the unit enum TYPE and the quantity
+        # class. Only the type annotation matters (it expresses the valid
+        # units); the default value is irrelevant. Parsing the annotation is
+        # robust to any field declaration - FieldInfo (Field(...)), a bare
+        # enum member, or a plain str default (from a default_unit override
+        # on a QuantityValueType subclass).
+        annotations = attrs.get("__annotations__", {})
+        if "unit" in attrs and attrs["unit"] is not None and "unit" in annotations:
+            unit_annotation = annotations["unit"]
+            # With `from __future__ import annotations` the annotation is a
+            # string like "TimeUnit | None"; otherwise a typing Union.
+            if isinstance(unit_annotation, str):
+                _types = [t.strip() for t in unit_annotation.split("|")]
             else:
-                unit_field_type = attrs["unit"].__dict__["__objclass__"]
-            quantity_registry[unit_field_type] = class_instance
+                _types = unit_annotation.__args__
+            # select the first type != None
+            unit_field_type = None
+            for _type in _types:
+                if _type is not None and _type != "None":
+                    unit_field_type = _type
+                    break
+            if unit_field_type is not None:
+                quantity_registry[unit_field_type] = class_instance
         return class_instance
 
 
