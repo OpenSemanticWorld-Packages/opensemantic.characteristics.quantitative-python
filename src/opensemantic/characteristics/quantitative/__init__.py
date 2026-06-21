@@ -11,8 +11,10 @@ finally:
 
 from opensemantic.characteristics.quantitative._model import *  # noqa
 
-# Delete names from the namespace that are imported by wildcard but are unwanted
-del Any, Field  # noqa
+# Delete names from the namespace that are imported by wildcard but are unwanted.
+# Tolerant of which typing/pydantic helpers a given generator version leaks.
+for _unwanted in ("Any", "Field"):  # noqa
+    globals().pop(_unwanted, None)
 from opensemantic.characteristics.quantitative._collection import Unit  # noqa
 from opensemantic.characteristics.quantitative._static import (  # noqa
     QuantityValue,

@@ -1,25 +1,41 @@
-"""Generate _collection.py from _model.py and update _model.py to use Unit.xxx.value.
+"""Post-process the generated _model.py: static wiring + _collection.py.
 
-Parses all FooUnit(Enum) classes in _model.py, extracts unit enum members,
-generates _collection.py with a single Unit(UnitEnum) class containing all
-unique values, and rewrites _model.py to reference Unit.xxx.value instead
-of hardcoded strings.
+The code generator emits plain output; two package-specific customisations are
+restored here on every regeneration (see apply_static_wiring):
 
-Applies to both v1 and v2 (root) pydantic versions.
+1. Swap stdlib `from enum import Enum` for the registry-backed `UnitEnum`, so
+   generated `class XxxUnit(Enum)` keep str members and register into
+   unit_registry.
+2. Inject the hand-written `QuantityValue` (metaclass + behaviour) as a base of
+   the generated `QuantityValue`, keeping its public name.
+
+Then, as before: parse all FooUnit(Enum) classes, generate _collection.py with a
+single Unit(UnitEnum) class of all unique values, and rewrite _model.py to
+reference Unit.xxx.value instead of hardcoded strings.
+
+Applies to both v1 and v2 (root) pydantic versions. Idempotent.
 
 Usage:
-    python scripts/generate_collection.py          # both v1 and v2
-    python scripts/generate_collection.py v1       # v1 only
-    python scripts/generate_collection.py v2       # v2 only
+    python scripts/post_process.py          # both v1 and v2
+    python scripts/post_process.py v1       # v1 only
+    python scripts/post_process.py v2       # v2 only
 """
 
 import re
 import sys
 from pathlib import Path
 
+import black
+import isort
+
 SRC = Path(__file__).resolve().parent.parent / (
     "src/opensemantic/characteristics/quantitative"
 )
+
+# Read the package's .isort.cfg so the import order written here equals what the
+# isort pre-commit hook produces - the hook is then a no-op and the order survives
+# commits. settings_path points at the package root (parent of scripts/).
+_ISORT_CONFIG = isort.Config(settings_path=str(Path(__file__).resolve().parent.parent))
 
 _V1_PKG = "opensemantic.characteristics.quantitative.v1"
 _V2_PKG = "opensemantic.characteristics.quantitative"
@@ -30,6 +46,7 @@ VERSIONS = {
         "collection": SRC / "v1" / "_collection.py",
         "import_enum": f"from {_V1_PKG}._enum import UnitEnum",
         "import_collection": f"from {_V1_PKG}._collection import Unit",
+        "import_qv": f"from {_V1_PKG}._static import QuantityValue as _QuantityValue",
         "anchor": f"from {_V1_PKG}._static import UnitEnum as Enum",
     },
     "v2": {
@@ -37,9 +54,58 @@ VERSIONS = {
         "collection": SRC / "_collection.py",
         "import_enum": f"from {_V2_PKG}._enum import UnitEnum",
         "import_collection": f"from {_V2_PKG}._collection import Unit",
+        "import_qv": f"from {_V2_PKG}._static import QuantityValue as _QuantityValue",
         "anchor": f"from {_V2_PKG}._static import UnitEnum as Enum",
     },
 }
+
+
+def apply_static_wiring(text: str, cfg: dict) -> str:
+    """Restore hand-maintained wiring the code generator does not emit.
+
+    1. Swap stdlib ``from enum import Enum`` for the registry-backed ``UnitEnum``
+       so generated ``class XxxUnit(Enum)`` keep str members and auto-register
+       into ``unit_registry``. This also creates the anchor ``rewrite_model``
+       inserts the ``Unit`` import after.
+    2. Inject the hand-written ``QuantityValue`` (metaclass + behaviour) as a base
+       of the generated ``QuantityValue``, keeping its public name so subclasses
+       and exports are unchanged.
+
+    Idempotent: each step is a no-op when its result is already present. The
+    presence checks key on the alias substrings (``UnitEnum as Enum``,
+    ``QuantityValue as _QuantityValue``) rather than whole import lines, so they
+    still match after isort regroups/combines the imports on a prior commit.
+    """
+    if "UnitEnum as Enum" not in text and "from enum import Enum" in text:
+        text = text.replace("from enum import Enum", cfg["anchor"], 1)
+
+    qv_import = cfg["import_qv"]
+    if "QuantityValue as _QuantityValue" not in text:
+        future = "from __future__ import annotations\n"
+        if future in text:
+            text = text.replace(future, future + qv_import + "\n", 1)
+        else:
+            text = qv_import + "\n" + text
+    text = text.replace(
+        "class QuantityValue(Characteristic):",
+        "class QuantityValue(Characteristic, _QuantityValue):",
+        1,
+    )
+
+    # The generated QuantityValue carries its own `unit: str | None` (from the
+    # Category schema) which, on the merged class, shadows the _static base's typed
+    # `unit: Optional[Unit]` and breaks from_pint/to_pint (a plain str has no
+    # `.name`). Retype it to a Unit member. Scope to the QuantityValue class block
+    # (up to the next top-level class) so it never reaches QuantityValueType /
+    # FundamentalQuantityValueType, and is idempotent on re-runs.
+    text = re.sub(
+        r"class QuantityValue\(Characteristic, _QuantityValue\):.*?(?=\nclass )",
+        lambda m: m.group(0).replace("unit: str | None", "unit: Unit | None", 1),
+        text,
+        count=1,
+        flags=re.DOTALL,
+    )
+    return text
 
 
 def parse_collection(text: str) -> dict[str, str]:
@@ -235,6 +301,10 @@ def process_version(version: str):
     print(f"[{version}] Processing {rel}")
     text = model_path.read_text(encoding="utf-8")
 
+    # 0. Restore static wiring (Enum -> UnitEnum, QuantityValue base) the
+    #    generator does not emit. Creates the anchor rewrite_model needs.
+    text = apply_static_wiring(text, cfg)
+
     # 1. Parse existing _collection.py (if any), then merge new hardcoded entries
     existing_units: dict[str, str] = {}
     if collection_path.exists():
@@ -258,8 +328,11 @@ def process_version(version: str):
     collection_path.write_text(collection_content, encoding="utf-8")
     print(f"[{version}] Wrote {collection_path.relative_to(SRC.parent)}")
 
-    # 3. Rewrite _model.py
+    # 3. Rewrite _model.py, then isort + black so the output matches the pre-commit
+    #    hooks (they become no-ops) - keeps the committed diff to real changes only.
     new_model = rewrite_model(text, all_units, cfg["import_collection"], cfg["anchor"])
+    new_model = isort.code(new_model, config=_ISORT_CONFIG)
+    new_model = black.format_str(new_model, mode=black.Mode())
     model_path.write_text(new_model, encoding="utf-8")
     print(f"[{version}] Rewrote {model_path.relative_to(SRC.parent)}")
 
