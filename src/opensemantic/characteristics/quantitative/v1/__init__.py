@@ -16,7 +16,7 @@ from opensemantic.characteristics.quantitative.v1._model import *  # noqa
 for _unwanted in ("Any", "Optional", "Field"):  # noqa
     globals().pop(_unwanted, None)
 from opensemantic.characteristics.quantitative.v1._collection import Unit  # noqa
-from opensemantic.characteristics.quantitative.v1._static import (  # noqa
-    QuantityValue,
-    TabularData,
-)
+
+# QuantityValue is the merged generated class (Characteristic + _static mixin)
+# exported by the wildcard above; only TabularData is _static-only.
+from opensemantic.characteristics.quantitative.v1._static import TabularData  # noqa
