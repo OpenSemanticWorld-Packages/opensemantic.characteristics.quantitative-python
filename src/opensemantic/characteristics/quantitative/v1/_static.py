@@ -424,14 +424,15 @@ class QuantityValue(OswBaseModel, metaclass=QuantityValueMetaclass):
                 )
 
         def class_logic(unit_class_):
-            if cls != QuantityValue:
+            if cls.__name__ != "QuantityValue":
                 # If the class is not the generic QuantityValue, it must be a subclass
-                #  of QuantityValue, so we can use it directly.
+                #  of QuantityValue, so we can use it directly. Match by name: the
+                #  public QuantityValue is the merged _model class, distinct from the
+                #  _static one referenced here.
                 quantity_class_ = cls
             elif unit_class_ == Unit:
-                # If the unit_class is the generic Unit, we can use the generic
-                #  QuantityValue class directly.
-                quantity_class_ = QuantityValue
+                # If the unit_class is the generic Unit, use the generic class as-is.
+                quantity_class_ = cls
             else:
                 # In any other case, we need to look up the quantity class in the
                 #  quantity_registry based on the unit_class.
