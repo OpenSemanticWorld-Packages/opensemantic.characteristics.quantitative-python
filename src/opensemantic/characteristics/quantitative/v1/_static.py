@@ -16,10 +16,11 @@ import pandas as pd
 import pint
 import pint_pandas  # noqa: F401
 from oold.model.v1 import LinkedBaseModelMetaClass as ModelMetaclass
-from pydantic.v1 import Field, create_model
+from pydantic.v1 import create_model
 
 from opensemantic.characteristics.quantitative.v1._collection import Unit
 from opensemantic.characteristics.quantitative.v1._enum import UnitEnum, unit_registry
+from opensemantic.core.v1 import Characteristic
 from opensemantic.v1 import OswBaseModel
 
 # import pint_pandas
@@ -101,39 +102,6 @@ def _normalize_pint_unit_symbol(raw: str) -> str:
     return unit_symbol
 
 
-class Characteristic(OswBaseModel):
-    """
-    Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics.
-    """  # noqa: E501
-
-    class Config:
-        schema_extra = {
-            "@context": [{"type": {"@id": "@type", "@type": "@id"}}],  # noqa: E501
-            "uuid": "93ccae36-2435-42ce-ac6c-951450a81d47",  # noqa: E501
-            "title": "Characteristic",  # noqa: E501
-            "title*": {"en": "Characteristic", "de": "Charakteristik"},  # noqa: E501
-            "description": "Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics. ",  # noqa: E501
-            "description*": {
-                "en": "Elementary building block for object data schemas. Can inherit, reuse and/or define custom properties from other Characteristcs. Properties can have literal values or other complex values (objects) described by other Characteristics. ",  # noqa: E501
-                "de": "Elementarer Baustein für Objekt-Datenschema. Kann Attribute von anderen Charakteristiken erben, übernehmen und/oder eigene definieren. Attribute können als Werte sowohl Literale als auch komplexe Objekte haben die von anderen Charakteristiken beschrieben werden.  ",  # noqa: E501
-            },
-        }
-
-    type: Optional[List[str]] = Field(
-        ["Category:OSW93ccae36243542ceac6c951450a81d47"],
-        min_items=1,
-        options={"hidden": True},
-        propertyOrder=-1010,
-        title="Types/Categories",
-        title_={"de": "Typen/Kategorien"},
-    )
-    # @classmethod
-    # def get_cls_iri(cls) -> str:
-    #    # return default
-    # should be optional:
-    # uuid: UUID = Field(default_factory=uuid4, options={"hidden": True}, title="UUID")
-
-
 ureg = pint.get_application_registry()
 
 quantity_registry: Dict[EnumType, ModelMetaclass] = {}
@@ -168,7 +136,7 @@ class QuantityValueMetaclass(ModelMetaclass):
         return class_instance
 
 
-class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
+class QuantityValue(OswBaseModel, metaclass=QuantityValueMetaclass):
     """
     A Quantity Value expresses the magnitude and kind of a quantity and is given by the product of a numerical value n and a unit of measure u (from qudt).
     """  # noqa: E501
@@ -192,20 +160,10 @@ class QuantityValue(Characteristic, metaclass=QuantityValueMetaclass):
         }
 
     type: Optional[Any] = ["Category:OSW4082937906634af992cf9a1b18d772cf"]
-    value: float = Field(
-        ...,
-        options={"grid_columns": 4},
-        title="value",
-        title_={"en": "Value", "de": "Wert"},
-    )
+    value: float
     # unit: Optional[UnitEnum] = Field(
     # unit: Optional[Union[UnitEnum, Unit]] = Field(
-    unit: Optional[Unit] = Field(
-        None,
-        options={"grid_columns": 4},
-        title="unit",
-        title_={"en": "Unit", "de": "Einheit"},
-    )
+    unit: Optional[Unit] = None
 
     # @validator("unit", pre=True)
     @classmethod
