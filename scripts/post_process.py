@@ -21,12 +21,14 @@ Usage:
     python scripts/post_process.py v2       # v2 only
 """
 
+import math
 import re
 import sys
 from pathlib import Path
 
 import black
 import isort
+import pint
 
 SRC = Path(__file__).resolve().parent.parent / (
     "src/opensemantic/characteristics/quantitative"
@@ -44,6 +46,9 @@ VERSIONS = {
     "v1": {
         "model": SRC / "v1" / "_model.py",
         "collection": SRC / "v1" / "_collection.py",
+        # shared, version-independent (dim -> unit member name); v1 and v2 import
+        # the same top-level _dimensions.py
+        "dimensions": SRC / "_dimensions.py",
         "import_enum": f"from {_V1_PKG}._enum import UnitEnum",
         "import_collection": f"from {_V1_PKG}._collection import Unit",
         "import_qv": f"from {_V1_PKG}._static import QuantityValue as _QuantityValue",
@@ -52,6 +57,7 @@ VERSIONS = {
     "v2": {
         "model": SRC / "_model.py",
         "collection": SRC / "_collection.py",
+        "dimensions": SRC / "_dimensions.py",
         "import_enum": f"from {_V2_PKG}._enum import UnitEnum",
         "import_collection": f"from {_V2_PKG}._collection import Unit",
         "import_qv": f"from {_V2_PKG}._static import QuantityValue as _QuantityValue",
@@ -78,6 +84,17 @@ def apply_static_wiring(text: str, cfg: dict) -> str:
     """
     if "UnitEnum as Enum" not in text and "from enum import Enum" in text:
         text = text.replace("from enum import Enum", cfg["anchor"], 1)
+
+    # Unit import - added after __future__, independent of the Enum-alias anchor,
+    # so it works whether the Enum->UnitEnum swap was done above or by the
+    # generator (v0.4.2+ does a per-class swap and leaves no alias). Idempotent.
+    import_collection = cfg["import_collection"]
+    if import_collection not in text:
+        future = "from __future__ import annotations\n"
+        if future in text:
+            text = text.replace(future, future + import_collection + "\n", 1)
+        else:
+            text = import_collection + "\n" + text
 
     qv_import = cfg["import_qv"]
     if "QuantityValue as _QuantityValue" not in text:
@@ -211,6 +228,113 @@ def generate_collection(all_units: dict[str, str], import_enum: str) -> str:
     return "\n".join(lines)
 
 
+# SI prefixes - mirrors QuantityValue.get_pint_ureg_compatible_str so member
+# names map to the same pint unit strings used at runtime.
+_PINT_PREFIXES = [
+    "quetta",
+    "ronna",
+    "yotta",
+    "zetta",
+    "exa",
+    "peta",
+    "tera",
+    "giga",
+    "mega",
+    "kilo",
+    "hecto",
+    "deca",
+    "deci",
+    "centi",
+    "milli",
+    "micro",
+    "nano",
+    "pico",
+    "femto",
+    "atto",
+    "zepto",
+    "yocto",
+    "ronto",
+    "quecto",
+]
+
+# Curated tiebreak: for a dimensionality with several SI-coherent members, the
+# member listed earliest here wins (otherwise the shortest member name does).
+_DIM_PREFERENCE = ("joule", "watt", "ohm", "coulomb", "volt", "ampere", "second")
+
+
+def _member_to_pint_name(member: str) -> str:
+    """Convert a unit enum member name to a pint-parseable unit string.
+
+    Mirrors QuantityValue.get_pint_ureg_compatible_str so the dimensionality
+    computed here matches what from_pint sees at runtime.
+    """
+    name = member.replace("_", " ")
+    for prefix in _PINT_PREFIXES:
+        name = name.replace(prefix + " ", prefix)
+    name = name.strip(" ")
+    if name.split(" ")[0] == "per":
+        name = name.replace("per", "1 /")
+    name = name.lower()
+    if name == "number":
+        name = "dimensionless"
+    return name
+
+
+def generate_dimensions(all_units: dict[str, str]) -> dict[str, str]:
+    """Map each pint dimensionality string to a representative coherent member.
+
+    from_pint uses this as a fallback: when a quantity's exact unit symbol is not
+    in unit_registry, its dimensionality resolves to a representative named unit
+    (e.g. power -> watt) which round-trips. Only SI-coherent units (magnitude 1
+    in base units) are candidates; ties are broken by _DIM_PREFERENCE then the
+    shortest member name. Members pint cannot parse are skipped.
+    """
+    ureg = pint.get_application_registry()
+    candidates: dict[str, list[tuple[str, bool]]] = {}
+    for member in all_units:
+        try:
+            quantity = ureg(_member_to_pint_name(member))
+            base = quantity.to_base_units()
+        except Exception:
+            continue
+        coherent = math.isclose(base.magnitude, 1.0, rel_tol=1e-9, abs_tol=1e-12)
+        dim = str(quantity.dimensionality) or "dimensionless"
+        candidates.setdefault(dim, []).append((member, coherent))
+
+    def _rank(item: tuple[str, bool]):
+        member, coherent = item
+        pref = (
+            _DIM_PREFERENCE.index(member)
+            if member in _DIM_PREFERENCE
+            else len(_DIM_PREFERENCE)
+        )
+        # SI-coherent units win; then curated preference; then simplest name. A
+        # non-coherent member is a last-resort representative for dimensionalities
+        # that have no coherent member (e.g. statcoulomb, exotic compound units).
+        return (0 if coherent else 1, pref, member.count("_"), len(member), member)
+
+    return {dim: sorted(items, key=_rank)[0][0] for dim, items in candidates.items()}
+
+
+def generate_dimensions_module(dim_to_unit: dict[str, str]) -> str:
+    """Build the content of _dimensions.py."""
+    lines = [
+        '"""Generated by scripts/post_process.py - do not edit by hand.',
+        "",
+        "Maps a pint dimensionality string to a representative SI-coherent unit",
+        "member name. QuantityValue.from_pint uses this as a fallback for units",
+        "whose exact symbol is not in unit_registry (e.g. derived units like watt).",
+        '"""',
+        "",
+        "DIMENSION_TO_UNIT = {",
+    ]
+    for dim, member in sorted(dim_to_unit.items()):
+        lines.append(f"    {dim!r}: {member!r},")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def rewrite_model(
     text: str,
     all_units: dict[str, str],
@@ -327,6 +451,19 @@ def process_version(version: str):
     collection_content = generate_collection(all_units, cfg["import_enum"])
     collection_path.write_text(collection_content, encoding="utf-8")
     print(f"[{version}] Wrote {collection_path.relative_to(SRC.parent)}")
+
+    # 2b. Generate _dimensions.py (dimensionality -> representative unit member),
+    #     used by from_pint as a fallback for unregistered/derived unit symbols.
+    dim_to_unit = generate_dimensions(all_units)
+    dimensions_path = cfg["dimensions"]
+    dim_module = black.format_str(
+        generate_dimensions_module(dim_to_unit), mode=black.Mode()
+    )
+    dimensions_path.write_text(dim_module, encoding="utf-8")
+    print(
+        f"[{version}] Wrote {dimensions_path.relative_to(SRC.parent)} "
+        f"({len(dim_to_unit)} dimensionalities)"
+    )
 
     # 3. Rewrite _model.py, then isort + black so the output matches the pre-commit
     #    hooks (they become no-ops) - keeps the committed diff to real changes only.

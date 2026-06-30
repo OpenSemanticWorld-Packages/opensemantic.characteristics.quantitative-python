@@ -84,6 +84,7 @@ def test_full_inventory_test(q_module, static_module):
     warning_count = 0
     critical_warning_count = 0
     error_count = 0
+    keyerror_count = 0
     success_count = 0
     qu_reg = {}
     # build a list of all UnitEnums per QuantityValue class
@@ -129,6 +130,7 @@ def test_full_inventory_test(q_module, static_module):
                         print(f"Error: Missing unit {u} in pint")
                     elif isinstance(e, KeyError):
                         print(f"Error: Missing unit {u} in unit_registry")
+                        keyerror_count += 1
                     else:
                         print(f"Error {e.__class__}: {q1}")
                     error_count += 1
@@ -136,8 +138,17 @@ def test_full_inventory_test(q_module, static_module):
         (
             f"{success_count} successful, "
             f"{error_count} errors and {warning_count} warnings "
-            f"({critical_warning_count} critical)"
+            f"({critical_warning_count} critical), "
+            f"{keyerror_count} unit_registry misses"
         )
+    )
+    # Gate: from_pint must resolve every unit whose symbol pint can parse - via
+    # the dimensionality fallback (DIMENSION_TO_UNIT) when the exact symbol is
+    # not registered. The only tolerated round-trip errors are units pint itself
+    # does not know (UndefinedUnitError); a unit_registry KeyError is a regression.
+    assert keyerror_count == 0, (
+        f"{keyerror_count} round-trip(s) failed with a unit_registry KeyError; "
+        f"the dimensionality fallback should resolve these"
     )
 
 

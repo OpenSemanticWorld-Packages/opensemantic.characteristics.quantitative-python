@@ -54,6 +54,35 @@ print(l1.to_json())
 # {'type': ['Category:OSWee9c7e5c...'], 'value': 1.0, 'unit': 'Item:OSWf101d25e...'}
 ```
 
+### Round-tripping derived units
+
+`from_pint` recovers a typed `QuantityValue` even when the exact unit symbol is
+not in the registry - e.g. derived units (`watt`, `joule`, `ohm`) or composed
+results such as `volt * ampere`. When the symbol is unknown it falls back to the
+quantity's **dimensionality**, mapping it to a representative SI-coherent unit via
+`DIMENSION_TO_UNIT` (generated into `_dimensions.py` by `scripts/post_process.py`):
+
+```python
+from opensemantic.characteristics.quantitative import (
+    Voltage, VoltageUnit, ElectricCurrent, ElectricCurrentUnit, Power,
+)
+
+power = Voltage(value=3.7, unit=VoltageUnit.volt) * ElectricCurrent(
+    value=2.0, unit=ElectricCurrentUnit.ampere
+)
+assert isinstance(power, Power)  # volt * ampere -> watt
+```
+
+### Compact export
+
+`exclude_defaults=True` omits values left at their default (e.g. the default
+unit) for a minimal, portable representation:
+
+```python
+length = Length(value=1.0, unit=LengthUnit.meter)
+print(length.to_json(exclude_defaults=True))  # {'value': 1.0}
+```
+
 See [`examples/`](examples/) for more, including tabular data with pandas and a tensile test analysis.
 
 ## TODO: Unit Name Conflicts in `_collection.py`
@@ -86,114 +115,18 @@ These likely stem from upstream QUDT modeling where the same unit name maps to d
 ## Status
 
 <details>
-<summary>pint roundtrip test (v2): 1831 successful, 299 errors and 54 warnings (33 critical)</summary>
+<summary>pint round-trip (full inventory): 0 unit_registry misses</summary>
 
-```
-Error: Missing unit LengthUnit.astronomical_unit in pint
-Error: Missing unit DimensionlessUnit.dec in pint
-Error: Missing unit DimensionlessUnit.COUNT in unit_registry
-Error: Missing unit DimensionlessUnit.flight in pint
-Error: Missing unit DimensionlessUnit.heartbeat in pint
-Error: Missing unit DimensionlessUnit.unknown in pint
-Error: Missing unit DimensionlessUnit.unitless in pint
-Error: Missing unit EnergyUnit.electron_volt in pint
-Error: Missing unit EnergyUnit.kilo_electron_volt in pint
-Error: Missing unit EnergyUnit.mega_electron_volt in pint
-Error: Missing unit EnergyUnit.giga_electron_volt in pint
-Error: Missing unit EnergyUnit.hour_volt_ampere in unit_registry
-Error: Missing unit EnergyUnit.hour_kilo_volt_ampere in unit_registry
-Error: Missing unit EnergyUnit.hour_kilo_watt in unit_registry
-Error: Missing unit EnergyUnit.hour_mega_volt_ampere in unit_registry
-Error: Missing unit EnergyUnit.hour_mega_watt in unit_registry
-Error: Missing unit EnergyUnit.hour_tera_watt in unit_registry
-Error: Missing unit GeneralizedCoordinateUnit.unitless in pint
-Error: Missing unit TimeUnit.min_sidereal in pint
-Error: Missing unit TimeUnit.h_sidereal in pint
-Error: Missing unit TimeUnit.day_sidereal in pint
-Error: Missing unit TimeUnit.tropical_year in pint
-Error: Missing unit TimeUnit.a_sidereal in pint
-Error: Missing unit AbsorptanceUnit.unitless in pint
-Error: Missing unit PowerUnit.liter_mega_pascal_per_second in unit_registry
-Error: Missing unit PowerUnit.hour_tera_watt_per_year in unit_registry
-Error: Missing unit ReactivityUnit.unitless in pint
-Error: Missing unit IsentropicExponentUnit.unitless in pint
-Error: Missing unit DensityUnit.metric_ton_per_meter_cubed in pint
-Error: Missing unit LeakageFactorUnit.unitless in pint
-Error: Missing unit ChromaticityUnit.unitless in pint
-Error: Missing unit InverseEnergyUnit.per_hour_per_volt_ampere in pint
-Error: Missing unit InverseEnergyUnit.per_hour_per_kilo_volt_ampere in pint
-Error: Missing unit MassPerAreaTimeUnit.micro_g_per_cm_squared_wk in pint
-Error: Missing unit MassPerAreaTimeUnit.metric_ton_per_hectare_per_year in pint
-Error: Missing unit PlaneAngleUnit.mil_NATO in pint
-Error: Missing unit PlaneAngleUnit.rev in pint
-Error: Missing unit AngularMomentumUnit.electron_volt_second in pint
-Error: Missing unit ConductivityVarianceUnit.micro_siemens_squared_per_centi_meter_squared in unit_registry
-Error: Missing unit NeutronYieldPerFissionUnit.unitless in pint
-Error: Missing unit AngularImpulseUnit.electron_volt_second in pint
-Error: Missing unit MassUnit.deci_metric_ton in pint
-Error: Missing unit MassUnit.metric_ton in pint
-Error: Missing unit MassUnit.mega_metric_ton in pint
-Error: Missing unit StatisticalWeightUnit.unitless in pint
-Error: Missing unit ShortRangeOrderParameterUnit.unitless in pint
-Error: Missing unit ThermalUtilizationFactorUnit.unitless in pint
-Error: Missing unit PowerFactorUnit.unitless in pint
-Error: Missing unit PowerPerElectricChargeUnit.volt_per_micro_second in unit_registry
-Error: Missing unit PowerPerAreaQuarticTemperatureUnit.watt_per_kelvin_to_the_fourth_per_meter_squared in pint
-Error: Missing unit StandardAbsoluteActivityUnit.unitless in pint
-Error: Missing unit MagneticAreaMomentUnit.electron_volt_per_tesla in pint
-Error: Missing unit ResistivityUnit.meter_nano_ohm in unit_registry
-Error: Missing unit ResistivityUnit.meter_micro_ohm in unit_registry
-Error: Missing unit ResistivityUnit.meter_milli_ohm in unit_registry
-Error: Missing unit ResistivityUnit.centi_meter_ohm in unit_registry
-Error: Missing unit ResistivityUnit.kilo_meter_mega_ohm in unit_registry
-Error: Missing unit DatasetOfBitsUnit.kibi_barn in pint
-Error: Missing unit DatasetOfBitsUnit.mebi_barn in pint
-Error: Missing unit DatasetOfBitsUnit.gigabit in unit_registry
-Error: Missing unit DatasetOfBitsUnit.gibi_barn in pint
-Error: Missing unit DatasetOfBitsUnit.tebi_barn in pint
-Error: Missing unit DatasetOfBitsUnit.pebi_barn in pint
-Error: Missing unit DatasetOfBitsUnit.exbi_barn in pint
-Error: Missing unit ElectricChargePerMassUnit.milli_coulomb_per_kilo_gram in unit_registry
-Error: Missing unit ElectricChargePerMassUnit.coulomb_per_kilo_gram in unit_registry
-Error: Missing unit WarpingConstantUnit.meter_to_the_sixth in pint
-Error: Missing unit WarpingConstantUnit.centi_meter_to_the_sixth in pint
-Error: Missing unit AbsorbedDoseRateUnit.watt_per_kilo_gram in unit_registry
-Error: Missing unit PowerPerAreaUnit.joule_per_centi_meter_squared_per_day in unit_registry
-Critical Warning: HydraulicPermeability and Area have the same unit HydraulicPermeabilityUnit.deci_meter_squared
-Critical Warning: SectionModulus and Volume1 have the same unit SectionModulusUnit.deci_meter_cubed
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.pico_gram_per_milli_liter
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.nano_gram_per_milli_liter
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.gram_per_deci_meter_cubed
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.milli_gram_per_milli_liter
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.gram_per_centi_meter_cubed
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.gram_per_milli_liter
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.kilo_gram_per_deci_meter_cubed
-Critical Warning: NuclearQuadrupoleMoment and Area have the same unit NuclearQuadrupoleMomentUnit.deci_meter_squared
-Critical Warning: BloodGlucoseLevelByMass and Density have the same unit BloodGlucoseLevelByMassUnit.pico_gram_per_milli_liter
-Critical Warning: BloodGlucoseLevelByMass and Density have the same unit BloodGlucoseLevelByMassUnit.nano_gram_per_milli_liter
-Critical Warning: BloodGlucoseLevelByMass and Density have the same unit BloodGlucoseLevelByMassUnit.milli_gram_per_milli_liter
-Critical Warning: BloodGlucoseLevelByMass and Density have the same unit BloodGlucoseLevelByMassUnit.gram_per_milli_liter
-Critical Warning: MassDensity and Density have the same unit MassDensityUnit.metric_ton_per_meter_cubed
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.pico_gram_per_milli_liter
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.nano_gram_per_milli_liter
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.gram_per_deci_meter_cubed
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.milli_gram_per_milli_liter
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.gram_per_centi_meter_cubed
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.gram_per_milli_liter
-Critical Warning: MassConcentration and Density have the same unit MassConcentrationUnit.kilo_gram_per_deci_meter_cubed
-Critical Warning: MassConcentrationOfWater and Density have the same unit MassConcentrationOfWaterUnit.gram_per_deci_meter_cubed
-Critical Warning: MassConcentrationOfWater and Density have the same unit MassConcentrationOfWaterUnit.gram_per_centi_meter_cubed
-Critical Warning: MassConcentrationOfWater and Density have the same unit MassConcentrationOfWaterUnit.kilo_gram_per_deci_meter_cubed
-Critical Warning: MassConcentrationOfWaterVapour and Density have the same unit MassConcentrationOfWaterVapourUnit.gram_per_deci_meter_cubed
-Critical Warning: MassConcentrationOfWaterVapour and Density have the same unit MassConcentrationOfWaterVapourUnit.gram_per_centi_meter_cubed
-Critical Warning: MassConcentrationOfWaterVapour and Density have the same unit MassConcentrationOfWaterVapourUnit.kilo_gram_per_deci_meter_cubed
-Critical Warning: MeanMassRange and BodyMassIndex have the same unit MeanMassRangeUnit.milli_gram_per_deci_meter_squared
-Critical Warning: SurfaceDensity and BodyMassIndex have the same unit SurfaceDensityUnit.milli_gram_per_deci_meter_squared
-Critical Warning: MassPerArea and BodyMassIndex have the same unit MassPerAreaUnit.milli_gram_per_deci_meter_squared
-Critical Warning: IonicStrength and AmountOfSubstancePerMass have the same unit IonicStrengthUnit.micro_mole_per_kilo_gram
-Critical Warning: ElectricChargeVolumeDensity and ElectricChargeDensity have the same unit ElectricChargeVolumeDensityUnit.coulomb_per_centi_meter_cubed
-Critical Warning: ElectricChargeVolumeDensity and ElectricChargeDensity have the same unit ElectricChargeVolumeDensityUnit.coulomb_per_milli_meter_cubed
-```
+`tests/conversion_test.py::test_full_inventory_test` round-trips every
+`QuantityValue` x unit through `to_pint()` / `from_pint()` and now asserts
+**zero `unit_registry` misses** (v2: 2089 ok / 282 errors; v1: 3181 ok / 442
+errors). `from_pint` resolves every unit whose symbol pint can parse - derived
+units fall back to the dimensionality map in `_dimensions.py`. The remaining
+errors are all `UndefinedUnitError` (units pint itself does not define, e.g.
+`astronomical_unit`, `electron_volt`, `metric_ton`, sidereal time units); the
+critical warnings are units shared by several quantities of the same
+dimensionality (value + unit still round-trip, but the class may resolve to a
+sibling).
 
 </details>
 
