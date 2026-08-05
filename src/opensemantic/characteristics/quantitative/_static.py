@@ -8,6 +8,7 @@ else:
     # Python < 3.11
     from enum import EnumMeta as EnumType
 
+import math
 import re
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, overload
 
@@ -519,10 +520,35 @@ class QuantityValue(OswBaseModel, metaclass=QuantityValueMetaclass):
                 return by_dimensionality(quantity)
 
     def to_base(self) -> "QuantityValue":
-        """Converts the QuantityValue to its base unit."""
+        """Converts the QuantityValue to its base unit.
+
+        pint resolves a base unit by dimensionality, which can yield a
+        composed alias rather than the named unit the class declares, e.g.
+        kilo_gram_per_meter_per_second_squared instead of pascal. The declared
+        default - on a fundamental quantity, or inherited from it by a subclass
+        like Pressure - is the canonical spelling of that base unit, so prefer
+        it. Serializing with exclude_defaults can then omit the unit entirely.
+
+        Only the label is canonicalized: the default replaces the pint result
+        when it represents the very same magnitude. A default that is not the
+        base unit (MagnetomotiveForce declares ampere_turn, whose base is
+        ampere) is left alone.
+        """
         pint_quantity = self.to_pint().to_base_units()
-        return QuantityValue.from_pint(
+        result = QuantityValue.from_pint(
             pint_quantity, simplify=False, quantity_type=self.__class__)
+
+        field = type(self).model_fields.get("unit")
+        default = field.default if field is not None else None
+        if default is None or result.unit == default:
+            return result
+        try:
+            as_default = self.to_unit(default)
+        except Exception:
+            return result
+        if math.isclose(as_default.value, result.value, rel_tol=1e-12):
+            return as_default
+        return result
 
     def to_unit(self, unit: Union[UnitEnum, str]) -> "QuantityValue":
         """Converts the QuantityValue to the specified unit."""
