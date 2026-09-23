@@ -2799,3 +2799,29 @@ class Unit(UnitEnum):
     absiemens = "Item:OSW0ad7b62faa04540997ae86979ee04745"
     candlepower = "Item:OSWa3fdeda173fa5b90a6245a7adf8c0ee1"
     stilb = "Item:OSW49277fc9ea4b5a29b1a10023d96d59d5"
+    meter_squared_pascal_per_second = "Item:OSWb7b787bd3a0d5ae799b406b295dfab11"
+    liter_milli_bar_per_meter_per_second = (
+        "Item:OSWb7b787bd3a0d5ae799b406b295dfab11#OSWa6d0f427e67c52e7ac88f946d459c187"
+    )
+    liter_milli_bar_per_second = (
+        "Item:OSW1efecafe44b95da780efdf41e5a534ef#OSWf5a99a04709f5d2e9185b178ab3dddb0"
+    )
+    bar_liter_per_second = "Item:OSW1efecafe44b95da780efdf41e5a534ef"
+    liter_per_meter_per_second = (
+        "Item:OSW20b837bfd2fa5c3abc86347ce702f27c#OSW4259dafa5bd4563c994d7f9cd363227b"
+    )
+    liter_milli_bar_per_meter_squared_per_second = (
+        "Item:OSWa79b08201daa51a6aea179fcbd04b811#OSWb830573e0b275dfeb0bae0b439ebd6e0"
+    )
+    watt_per_kelvin_per_meter_per_pascal = "Item:OSW8ea9b462eb0d5f5a94dbb7d4147db62b"
+    milli_watt_per_kelvin_per_meter_per_milli_bar = (
+        "Item:OSW8ea9b462eb0d5f5a94dbb7d4147db62b#OSW26152ef8201a5558855b82ac0cd63850"
+    )
+    meter_squared_per_pascal_per_second = "Item:OSWe9f7d88c779452d2a2f7313535f7858a"
+    liter_per_meter_per_milli_bar_per_second = (
+        "Item:OSWe9f7d88c779452d2a2f7313535f7858a#OSW63e5e3a215fd5b339858f5795389bc85"
+    )
+    milli_watt_per_kelvin_per_meter = (
+        "Item:OSW2b8517640ac75611a57b26b56bd5124c#OSW69d3550a7a495fdf86e01e3c0496ee4b"
+    )
+    thomson = "Item:OSWc9f8dd261ad550509c31e34640d4d4d5"
