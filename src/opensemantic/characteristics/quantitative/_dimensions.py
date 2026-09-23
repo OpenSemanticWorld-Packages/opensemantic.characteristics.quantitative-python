@@ -116,6 +116,7 @@ DIMENSION_TO_UNIT = {
     "[mass] * [length] ** 2 / [time] ** 3 / [current] / [temperature]": "volt_per_kelvin",
     "[mass] * [length] ** 2 / [time] ** 3 / [temperature]": "watt_per_kelvin",
     "[mass] * [length] ** 2 / [time] ** 4 / [current]": "volt_per_second",
+    "[mass] * [length] ** 2 / [time] ** 4 / [temperature]": "watt_per_kelvin_per_second",
     "[mass] * [length] ** 2 / [time] / [substance]": "joule_second_per_mole",
     "[mass] * [length] ** 3 / [time] ** 2": "kilo_newton_meter_squared",
     "[mass] * [length] ** 3 / [time] ** 2 / [substance]": "joule_meter_per_mole",

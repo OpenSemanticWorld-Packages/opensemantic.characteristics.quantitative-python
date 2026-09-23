@@ -2825,3 +2825,7 @@ class Unit(UnitEnum):
         "Item:OSW2b8517640ac75611a57b26b56bd5124c#OSW69d3550a7a495fdf86e01e3c0496ee4b"
     )
     thomson = "Item:OSWc9f8dd261ad550509c31e34640d4d4d5"
+    watt_per_kelvin_per_second = "Item:OSW4f99615d3a9548ee86ebc03c4bdf48fe"
+    watt_per_hour_per_kelvin = (
+        "Item:OSW4f99615d3a9548ee86ebc03c4bdf48fe#OSW44c4358c57664a728e2d7ecb60736a09"
+    )
