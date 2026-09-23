@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pydantic.v1 import Field
 
-from opensemantic.characteristics.quantitative._enum import UnitEnum
 from opensemantic.characteristics.quantitative.v1._collection import Unit
+from opensemantic.characteristics.quantitative.v1._enum import UnitEnum
 from opensemantic.characteristics.quantitative.v1._static import (
     QuantityValue as _QuantityValue,
 )
