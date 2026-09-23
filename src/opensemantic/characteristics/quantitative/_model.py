@@ -4,10 +4,10 @@ from pydantic import ConfigDict, Field
 
 from opensemantic import OswBaseModel
 from opensemantic.characteristics.quantitative._collection import Unit
+from opensemantic.characteristics.quantitative._enum import UnitEnum
 from opensemantic.characteristics.quantitative._static import (
     QuantityValue as _QuantityValue,
 )
-from opensemantic.characteristics.quantitative._static import UnitEnum as Enum
 from opensemantic.core import (
     Action,
     Characteristic,
@@ -267,7 +267,7 @@ class FundamentalQuantityValueType(CharacteristicType):
 #   filename:  OSW002d158549e955bea02a7c957b139a60.json
 
 
-class SoundPressureLevelUnit(Enum):
+class SoundPressureLevelUnit(UnitEnum):
     bel = Unit.bel.value
     """
     B
@@ -317,7 +317,7 @@ class SoundPressureLevel(QuantityValue):
 #   filename:  OSW00432537c21f566792bfeea72ed63b6f.json
 
 
-class EnergyPerAreaUnit(Enum):
+class EnergyPerAreaUnit(UnitEnum):
     kilo_gram_per_second_squared = Unit.kilo_gram_per_second_squared.value
     """
     kg/s²
@@ -510,7 +510,7 @@ class StrainEnergyReleaseRate(EnergyPerArea):
 #   filename:  OSW00ae7010dd635404bd82873cfd7a3254.json
 
 
-class LengthUnit(Enum):
+class LengthUnit(UnitEnum):
     meter = Unit.meter.value
     """
     m
@@ -653,7 +653,7 @@ class PathLength(Length):
 #   filename:  OSW00c10a2500cf59fdbfaf48764629b35d.json
 
 
-class DimensionlessUnit(Enum):
+class DimensionlessUnit(UnitEnum):
     dimensionless = Unit.dimensionless.value
     """
     #
@@ -1138,7 +1138,7 @@ class FlightPathAngle(Angle):
 #   filename:  OSW00dbaeb24c2952cd9ad29928be2f1b83.json
 
 
-class MolarFluxDensityUnit(Enum):
+class MolarFluxDensityUnit(UnitEnum):
     mole_per_meter_squared_per_second = Unit.mole_per_meter_squared_per_second.value
     """
     mol/(m²·s)
@@ -1236,7 +1236,7 @@ class MolarFluxDensity(QuantityValue):
 #   filename:  OSW00fcca05152e5a99b66844586776938b.json
 
 
-class EnergyUnit(Enum):
+class EnergyUnit(UnitEnum):
     joule = Unit.joule.value
     """
     J
@@ -1517,7 +1517,7 @@ class NuclearEnergy(Energy):
 #   filename:  OSW0121ff06c71851eb9f630271e5f52e4a.json
 
 
-class GeneralizedCoordinateUnit(Enum):
+class GeneralizedCoordinateUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -1563,7 +1563,7 @@ class GeneralizedCoordinate(QuantityValue):
 #   filename:  OSW015e42239c0f5ff38b65340955c12f80.json
 
 
-class VolumePerTimeUnit(Enum):
+class VolumePerTimeUnit(UnitEnum):
     meter_cubed_per_second = Unit.meter_cubed_per_second.value
     """
     m³/s
@@ -1739,7 +1739,7 @@ class VolumePerTime(QuantityValue):
 #   filename:  OSW01c55f7ea3ee516a8b469146bd45b3b6.json
 
 
-class ElectricCurrentPhasorUnit(Enum):
+class ElectricCurrentPhasorUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -1857,7 +1857,7 @@ class ElectricCurrentPhasor(QuantityValue):
 #   filename:  OSW01d40c436663572d80de0e503436a120.json
 
 
-class ReciprocalMassUnit(Enum):
+class ReciprocalMassUnit(UnitEnum):
     per_kilo_gram = Unit.per_kilo_gram.value
     """
     /kg
@@ -1909,7 +1909,7 @@ class ReciprocalMass(QuantityValue):
 #   filename:  OSW022058c6b4a3517cb9d5a00efac71e12.json
 
 
-class AreaUnit(Enum):
+class AreaUnit(UnitEnum):
     meter_squared = Unit.meter_squared.value
     """
     m²
@@ -2042,7 +2042,7 @@ class CartesianArea(Area):
 #   filename:  OSW023d5e3256055be3a9350a1c4f1a3ba3.json
 
 
-class PhaseCoefficientUnit(Enum):
+class PhaseCoefficientUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -2182,7 +2182,7 @@ class NozzleThroatDiameter(Length):
 #   filename:  OSW02ed3a478531578b90f11bcaefa3f86c.json
 
 
-class TimeUnit(Enum):
+class TimeUnit(UnitEnum):
     second = Unit.second.value
     """
     s
@@ -2427,7 +2427,7 @@ class WebTime(Time):
 #   filename:  OSW0301595d3ef35fcb98b63e87d8b3d34c.json
 
 
-class ForcePerAreaUnit(Enum):
+class ForcePerAreaUnit(UnitEnum):
     pascal = Unit.pascal.value
     """
     Pa
@@ -2720,7 +2720,7 @@ class LengthRatio(DimensionlessRatio):
 #   filename:  OSW03376cde4b36580a9a9f6290fb6340af.json
 
 
-class InverseAmountOfSubstanceUnit(Enum):
+class InverseAmountOfSubstanceUnit(UnitEnum):
     per_mole = Unit.per_mole.value
     """
     /mol
@@ -2764,7 +2764,7 @@ class InverseAmountOfSubstance(QuantityValue):
 #   filename:  OSW03fe5609198b578db061a3dbdf3c720b.json
 
 
-class ElectricCurrentUnit(Enum):
+class ElectricCurrentUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -2927,7 +2927,7 @@ class IonCurrent(ElectricCurrent):
 #   filename:  OSW0437421a9b3155abbe845b718b2e9417.json
 
 
-class AbsorptanceUnit(Enum):
+class AbsorptanceUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -2973,7 +2973,7 @@ class Absorptance(QuantityValue):
 #   filename:  OSW0459ceb071255f8c8bba85be19091874.json
 
 
-class ForcePerLengthUnit(Enum):
+class ForcePerLengthUnit(UnitEnum):
     newton_per_meter = "Item:OSW9137313140045506900306df5eadafcc"
     """
     N/m
@@ -3219,7 +3219,7 @@ class PhononMeanFreePath(Length):
 #   filename:  OSW06018a46bc2e5b34bab4cc7e8d71bf87.json
 
 
-class InverseTemperatureUnit(Enum):
+class InverseTemperatureUnit(UnitEnum):
     per_kelvin = Unit.per_kelvin.value
     """
     /K
@@ -3267,7 +3267,7 @@ class InverseTemperature(QuantityValue):
 #   filename:  OSW06164d3febb95a42add7826696cc5387.json
 
 
-class PowerUnit(Enum):
+class PowerUnit(UnitEnum):
     watt = Unit.watt.value
     """
     W
@@ -3544,7 +3544,7 @@ class ElectricPower(Power):
 #   filename:  OSW06321a3ed4165337a8fc380a77a64e09.json
 
 
-class VelocityUnit(Enum):
+class VelocityUnit(UnitEnum):
     meter_per_second = Unit.meter_per_second.value
     """
     m/s
@@ -3761,7 +3761,7 @@ class CharacteristicVelocity(Velocity):
 #   filename:  OSW0636217dea7f58bc8aef7b819f1adbec.json
 
 
-class ReactivityUnit(Enum):
+class ReactivityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -3838,7 +3838,7 @@ class Gain(DimensionlessRatio):
 #   filename:  OSW0690877ab08b57b2b8b2939e940e02ea.json
 
 
-class IsentropicExponentUnit(Enum):
+class IsentropicExponentUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -3921,7 +3921,7 @@ class PermittivityRatio(DimensionlessRatio):
 #   filename:  OSW083bc85446db574690adc35135516c66.json
 
 
-class LinearElectricCurrentDensityUnit(Enum):
+class LinearElectricCurrentDensityUnit(UnitEnum):
     ampere_per_meter = Unit.ampere_per_meter.value
     """
     A/m
@@ -4068,7 +4068,7 @@ class AuxillaryMagneticField(MagneticFieldStrength):
 #   filename:  OSW0964da9ef1d95299897148151a660792.json
 
 
-class MassRatioUnit(Enum):
+class MassRatioUnit(UnitEnum):
     g_per_g = Unit.g_per_g.value
     """
     g/g
@@ -4229,7 +4229,7 @@ class SingleStageLauncherMassRatio(MassRatio):
 #   filename:  OSW0a1c176c39c85b16858e4439af7f4e80.json
 
 
-class VolumeUnit(Enum):
+class VolumeUnit(UnitEnum):
     kilo_liter = Unit.kilo_liter.value
     """
     kL
@@ -4503,7 +4503,7 @@ class ChargeNumber(Dimensionless):
 #   filename:  OSW0ae584a5bdf95705a72f864c11e61486.json
 
 
-class DensityUnit(Enum):
+class DensityUnit(UnitEnum):
     gram_per_liter = Unit.gram_per_liter.value
     """
     g/L
@@ -4752,7 +4752,7 @@ class DensityOfTheExhaustGases(Density):
 #   filename:  OSW0b0a36330fb35c46b17979e278ed3242.json
 
 
-class TemperatureUnit(Enum):
+class TemperatureUnit(UnitEnum):
     kelvin = Unit.kelvin.value
     """
     K
@@ -4917,7 +4917,7 @@ class DiffusionArea(Area):
 #   filename:  OSW0bca40ca00e05ec4aab8e33e1a4acf8f.json
 
 
-class InverseLengthUnit(Enum):
+class InverseLengthUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -5093,7 +5093,7 @@ class LinearStrain(LengthRatio):
 #   filename:  OSW0d18f34df5565fd198476c561e5d6810.json
 
 
-class LeakageFactorUnit(Enum):
+class LeakageFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -5139,7 +5139,7 @@ class LeakageFactor(QuantityValue):
 #   filename:  OSW0d78a2e66cc95cef98d0e88f14d5bdaa.json
 
 
-class ChromaticityUnit(Enum):
+class ChromaticityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -5185,7 +5185,7 @@ class Chromaticity(QuantityValue):
 #   filename:  OSW0da38e7b53f15e1788cc4bbfbc4c6842.json
 
 
-class InverseEnergyUnit(Enum):
+class InverseEnergyUnit(UnitEnum):
     per_hour_per_volt_ampere = Unit.per_hour_per_volt_ampere.value
     """
     /(VA·h)
@@ -5267,7 +5267,7 @@ class PotentialEnergy(Energy):
 #   filename:  OSW0dca3665339d53b2aeb2c152dc1ff577.json
 
 
-class AngularReciprocalLatticeVectorUnit(Enum):
+class AngularReciprocalLatticeVectorUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -5378,7 +5378,7 @@ class DutyCycle(DimensionlessRatio):
 #   filename:  OSW0e1e7031084d5e20b42b5ceba993d916.json
 
 
-class ConductanceUnit(Enum):
+class ConductanceUnit(UnitEnum):
     siemens = Unit.siemens.value
     """
     S
@@ -5484,7 +5484,7 @@ class Conductance(QuantityValue):
 #   filename:  OSW0e2b889bd54e5b7da3c2e14c3c4b39ab.json
 
 
-class ElectromagneticWavePhaseSpeedUnit(Enum):
+class ElectromagneticWavePhaseSpeedUnit(UnitEnum):
     meter_per_second = Unit.meter_per_second.value
     """
     m/s
@@ -5578,7 +5578,7 @@ class ElectromagneticWavePhaseSpeed(QuantityValue):
 #   filename:  OSW0e767858fc7a5df0a3be780057b78446.json
 
 
-class LuminousFluxPerAreaUnit(Enum):
+class LuminousFluxPerAreaUnit(UnitEnum):
     lux = Unit.lux.value
     """
     lx
@@ -5659,7 +5659,7 @@ class Illuminance(LuminousFluxPerArea):
 #   filename:  OSW0e8c5f1a905350ccbc8145c63ae0d57c.json
 
 
-class InverseVolumeUnit(Enum):
+class InverseVolumeUnit(UnitEnum):
     per_meter_cubed = Unit.per_meter_cubed.value
     """
     /m³
@@ -5757,7 +5757,7 @@ class IonConcentration(InverseVolume):
 #   filename:  OSW0eab93f86d9359bcbdfa90d6af162d71.json
 
 
-class ElectricFieldUnit(Enum):
+class ElectricFieldUnit(UnitEnum):
     volt_per_meter = Unit.volt_per_meter.value
     """
     V/m
@@ -5891,7 +5891,7 @@ class RfPowerLevel(SignalStrength):
 #   filename:  OSW0ead3c6cf6115beeb175b122432d24a7.json
 
 
-class AttenuationCoefficientUnit(Enum):
+class AttenuationCoefficientUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -6002,7 +6002,7 @@ class TemperatureDifference(Temperature):
 #   filename:  OSW0ed75cfa55dc55adbbbecbf4e22744c0.json
 
 
-class ForceUnit(Enum):
+class ForceUnit(UnitEnum):
     newton = Unit.newton.value
     """
     N
@@ -6166,7 +6166,7 @@ class LandauGinzburgNumber(DimensionlessRatio):
 #   filename:  OSW0f23b91fa3605c65a1e002e9a2fa0f10.json
 
 
-class BloodGlucoseLevelUnit(Enum):
+class BloodGlucoseLevelUnit(UnitEnum):
     milli_mole_per_liter = Unit.milli_mole_per_liter.value
     """
     mmol/L
@@ -6271,7 +6271,7 @@ class BloodGlucoseLevel(QuantityValue):
 #   filename:  OSW0f5611df8241549893b5bd0a8e137680.json
 
 
-class ParticleFluenceUnit(Enum):
+class ParticleFluenceUnit(UnitEnum):
     per_meter_squared = Unit.per_meter_squared.value
     """
     m^-2
@@ -6329,7 +6329,7 @@ class ParticleFluence(QuantityValue):
 #   filename:  OSW0f7b761273895e3886f0584b3b8197b1.json
 
 
-class PermeabilityUnit(Enum):
+class PermeabilityUnit(UnitEnum):
     henry_per_meter = Unit.henry_per_meter.value
     """
     H/m
@@ -6385,7 +6385,7 @@ class Permeability(QuantityValue):
 #   filename:  OSW0f94186c90c85d2699585af6b6985d2c.json
 
 
-class InverseLengthTemperatureUnit(Enum):
+class InverseLengthTemperatureUnit(UnitEnum):
     per_kelvin_per_meter = Unit.per_kelvin_per_meter.value
     """
     /(m·K)
@@ -6491,7 +6491,7 @@ class HeatCapacityRatio(DimensionlessRatio):
 #   filename:  OSW1122e0bc34a9581faea31f6967f701d6.json
 
 
-class MassPerAreaTimeUnit(Enum):
+class MassPerAreaTimeUnit(UnitEnum):
     pascal_second_per_meter = Unit.pascal_second_per_meter.value
     """
     Pa·s/m
@@ -6706,7 +6706,7 @@ class AcousticImpediance(MassPerAreaTime):
 #   filename:  OSW116611f951695317bee0d3df1d1796be.json
 
 
-class PlaneAngleUnit(Enum):
+class PlaneAngleUnit(UnitEnum):
     radiation_absorbed_dose = Unit.radian.value
     """
     rad
@@ -6833,7 +6833,7 @@ class CompoundPlaneAngle(PlaneAngle):
 #   filename:  OSW1199859d969959cf9609fefc5c904183.json
 
 
-class LinearIonizationUnit(Enum):
+class LinearIonizationUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -6913,7 +6913,7 @@ class LinearIonization(QuantityValue):
 #   filename:  OSW11c230fdfd065eee822d39afdc9fba80.json
 
 
-class AngularMomentumUnit(Enum):
+class AngularMomentumUnit(UnitEnum):
     joule_second = Unit.joule_second.value
     """
     J·s
@@ -6988,7 +6988,7 @@ class AngularMomentum(QuantityValue):
 #   filename:  OSW11d1e28ece2152e3868f438d4eb40a11.json
 
 
-class FrequencyUnit(Enum):
+class FrequencyUnit(UnitEnum):
     per_second = Unit.per_second.value
     """
     /s
@@ -7232,7 +7232,7 @@ class FailureRate(Incidence):
 #   filename:  OSW1213d5928a7956749688545e9526d6e3.json
 
 
-class ReactionRateConstantUnit(Enum):
+class ReactionRateConstantUnit(UnitEnum):
     meter_cubed_per_mole_per_second = Unit.meter_cubed_per_mole_per_second.value
     """
     m³/(mol·s)
@@ -7314,7 +7314,7 @@ class AtmosphericHydroxylationRate(ReactionRateConstant):
 #   filename:  OSW127208b423185244a4c8bab1cc789ff9.json
 
 
-class ConductivityVarianceUnit(Enum):
+class ConductivityVarianceUnit(UnitEnum):
     siemens_squared_per_meter_squared = Unit.siemens_squared_per_meter_squared.value
     """
     S²/m²
@@ -7371,7 +7371,7 @@ class ConductivityVariance(QuantityValue):
 #   filename:  OSW12b88b32ed2f58c5aa633841b687b985.json
 
 
-class SpecificHeatCapacityAtConstantPressureUnit(Enum):
+class SpecificHeatCapacityAtConstantPressureUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
     J/(kg·K)
@@ -7445,7 +7445,7 @@ class SpecificHeatCapacityAtConstantPressure(QuantityValue):
 #   filename:  OSW138c8a14248d5faab3b50dfe6656f4ac.json
 
 
-class NeutronYieldPerFissionUnit(Enum):
+class NeutronYieldPerFissionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -7520,7 +7520,7 @@ class TrueExhaustVelocity(Velocity):
 #   filename:  OSW140347dd94e6593aaea4daf9a1264a0a.json
 
 
-class AngularImpulseUnit(Enum):
+class AngularImpulseUnit(UnitEnum):
     joule_second = Unit.joule_second.value
     """
     J·s
@@ -7711,7 +7711,7 @@ class VolumeStrain(Strain):
 #   filename:  OSW15273de40c545109b5f30c7672e9b514.json
 
 
-class LinearAttenuationCoefficientUnit(Enum):
+class LinearAttenuationCoefficientUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -7822,7 +7822,7 @@ class ActiveEnergy(Energy):
 #   filename:  OSW159c2d66d13552c494a94a5e544de0a6.json
 
 
-class MassUnit(Enum):
+class MassUnit(UnitEnum):
     kilo_gram = Unit.kilo_gram.value
     """
     kg
@@ -8082,7 +8082,7 @@ class NuclearRadius(Length):
 #   filename:  OSW15c4097ed256572c97e7a1dbbfb154dd.json
 
 
-class ForcePerAngleUnit(Enum):
+class ForcePerAngleUnit(UnitEnum):
     newton_per_radian = Unit.newton_per_radian.value
     """
     N/rad
@@ -8176,7 +8176,7 @@ class SurfaceTension(EnergyPerArea):
 #   filename:  OSW1634701efb425f1d8f32fe9ae216cef8.json
 
 
-class ConcentrationUnit(Enum):
+class ConcentrationUnit(UnitEnum):
     mole_per_meter_cubed = Unit.mole_per_meter_cubed.value
     """
     mol/m³
@@ -8321,7 +8321,7 @@ class EquivalentConcentration(Concentration):
 #   filename:  OSW1641d4424ea4543d853db7c3bc0b3ee7.json
 
 
-class StatisticalWeightUnit(Enum):
+class StatisticalWeightUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -8425,7 +8425,7 @@ class TotalAngularMomentumQuantumNumber(QuantumNumber):
 #   filename:  OSW1769676ffcbf589194751d0e0bb05902.json
 
 
-class RadiantEnergyDensityUnit(Enum):
+class RadiantEnergyDensityUnit(UnitEnum):
     joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
     """
     J/m³
@@ -8562,7 +8562,7 @@ class OctanolAirPartitionCoefficient(DimensionlessRatio):
 #   filename:  OSW18e8102a660f5d4eb91c9b70c3083a04.json
 
 
-class TorquePerLengthUnit(Enum):
+class TorquePerLengthUnit(UnitEnum):
     newton = "Item:OSW9ed7c23bcd215a00b2da55e18e9d1238"
     """
     N·m/m
@@ -8670,7 +8670,7 @@ class TotalCrossSection(CrossSection):
 #   filename:  OSW1999834eda4e5e4f89dc83c98c0bb609.json
 
 
-class HydraulicPermeabilityUnit(Enum):
+class HydraulicPermeabilityUnit(UnitEnum):
     meter_squared = Unit.meter_squared.value
     """
     m²
@@ -8770,7 +8770,7 @@ class HydraulicPermeability(QuantityValue):
 #   filename:  OSW19bdaead0e9852b68da79f45423f2b58.json
 
 
-class VoltageUnit(Enum):
+class VoltageUnit(UnitEnum):
     volt = Unit.volt.value
     """
     V
@@ -8901,7 +8901,7 @@ class Voltage(QuantityValue):
 #   filename:  OSW1a16494f861252618604afb4928a7256.json
 
 
-class LevelWidthUnit(Enum):
+class LevelWidthUnit(UnitEnum):
     joule = Unit.joule.value
     """
     J
@@ -9054,7 +9054,7 @@ class ResistanceRatio(DimensionlessRatio):
 #   filename:  OSW1aa2d583aaac5af29af356124b0dbc67.json
 
 
-class ShearModulusUnit(Enum):
+class ShearModulusUnit(UnitEnum):
     pascal = Unit.pascal.value
     """
     Pa
@@ -9154,7 +9154,7 @@ class ShearModulus(QuantityValue):
 #   filename:  OSW1ad6b428ff385d10b28bdc0221bf5b81.json
 
 
-class AreaThermalExpansionUnit(Enum):
+class AreaThermalExpansionUnit(UnitEnum):
     meter_squared_per_kelvin = Unit.meter_squared_per_kelvin.value
     """
     m²/K
@@ -9200,7 +9200,7 @@ class AreaThermalExpansion(QuantityValue):
 #   filename:  OSW1af3455d43265dfe891180395a823f33.json
 
 
-class ShortRangeOrderParameterUnit(Enum):
+class ShortRangeOrderParameterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -9312,7 +9312,7 @@ class Work(Energy):
 #   filename:  OSW1bfa314830e85a74ba42f89688132372.json
 
 
-class DiffusionCoefficientUnit(Enum):
+class DiffusionCoefficientUnit(UnitEnum):
     meter_squared_per_second = Unit.meter_squared_per_second.value
     """
     m²/s
@@ -9493,7 +9493,7 @@ class RadialDistance(Length):
 #   filename:  OSW1c930bb324ca5e5b84c25be2079b2d21.json
 
 
-class BulkModulusUnit(Enum):
+class BulkModulusUnit(UnitEnum):
     pascal = Unit.pascal.value
     """
     Pa
@@ -9593,7 +9593,7 @@ class BulkModulus(QuantityValue):
 #   filename:  OSW1ca66235cc625cc49bda2364b1233934.json
 
 
-class ThermalUtilizationFactorUnit(Enum):
+class ThermalUtilizationFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -9639,7 +9639,7 @@ class ThermalUtilizationFactor(QuantityValue):
 #   filename:  OSW1ccf7d20cba95e54a9c0b3f6c9ca2c6b.json
 
 
-class MolarFlowRateUnit(Enum):
+class MolarFlowRateUnit(UnitEnum):
     mole_per_second = Unit.mole_per_second.value
     """
     mol/s
@@ -9822,7 +9822,7 @@ class RelativeAtomicMass(DimensionlessRatio):
 #   filename:  OSW1eebb38959cb566bb791241f454de9ef.json
 
 
-class LineicMassUnit(Enum):
+class LineicMassUnit(UnitEnum):
     kilo_gram_per_meter = Unit.kilo_gram_per_meter.value
     """
     kg/m
@@ -9900,7 +9900,7 @@ class LineicMass(QuantityValue):
 #   filename:  OSW1f2d386a47e4522e99a01df0d0b4393d.json
 
 
-class MagneticFluxDensityUnit(Enum):
+class MagneticFluxDensityUnit(UnitEnum):
     tesla = Unit.tesla.value
     """
     T
@@ -10005,7 +10005,7 @@ class ThermodynamicCriticalMagneticFluxDensity(MagneticFluxDensity):
 #   filename:  OSW1f35ae0499035b23a508c8017306a1a8.json
 
 
-class ExpansionRatioUnit(Enum):
+class ExpansionRatioUnit(UnitEnum):
     per_kelvin = Unit.per_kelvin.value
     """
     /K
@@ -10213,7 +10213,7 @@ class AbsoluteActivity(InverseVolume):
 #   filename:  OSW21ec5968e3c2533d98f20564838541fa.json
 
 
-class MolarEnergyUnit(Enum):
+class MolarEnergyUnit(UnitEnum):
     joule_per_mole = Unit.joule_per_mole.value
     """
     J/mol
@@ -10319,7 +10319,7 @@ class EllipticalOrbitApogeeVelocity(VehicleVelocity):
 #   filename:  OSW22acaaf9b83e5160b8a29b1a4147e848.json
 
 
-class ThermalResistivityUnit(Enum):
+class ThermalResistivityUnit(UnitEnum):
     kelvin_meter_per_watt = Unit.kelvin_meter_per_watt.value
     """
     m·K/W
@@ -10431,7 +10431,7 @@ class HalfLife(Time):
 #   filename:  OSW22f40c87ac435474b8525e7268e7ca01.json
 
 
-class LinearMomentumUnit(Enum):
+class LinearMomentumUnit(UnitEnum):
     newton_second = Unit.newton_second.value
     """
     N·s
@@ -10513,7 +10513,7 @@ class LinearMomentum(QuantityValue):
 #   filename:  OSW22f7dff8a2615f6393ed23ec2ac8c95c.json
 
 
-class PowerFactorUnit(Enum):
+class PowerFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -10559,7 +10559,7 @@ class PowerFactor(QuantityValue):
 #   filename:  OSW22fde8ddb5d65be3bb5c153e43d3ae94.json
 
 
-class BurstFactorUnit(Enum):
+class BurstFactorUnit(UnitEnum):
     meter_squared_pascal_per_kilo_gram = Unit.meter_squared_pascal_per_kilo_gram.value
     """
     Pa·m²/kg
@@ -10621,7 +10621,7 @@ class BurstFactor(QuantityValue):
 #   filename:  OSW2341adcf1a54557f886137e4180398d9.json
 
 
-class PowerPerElectricChargeUnit(Enum):
+class PowerPerElectricChargeUnit(UnitEnum):
     volt_per_second = Unit.volt_per_second.value
     """
     V/s
@@ -10843,7 +10843,7 @@ class Diameter(Length):
 #   filename:  OSW2435e3d417be54418892bf902cfc939a.json
 
 
-class SpecificHeatCapacityUnit(Enum):
+class SpecificHeatCapacityUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
     J/(kg·K)
@@ -10954,7 +10954,7 @@ class ExhaustGasesSpecificHeat(SpecificHeatCapacity):
 #   filename:  OSW2455e65da40951d19c3570531c3e3bf1.json
 
 
-class PowerPerAreaQuarticTemperatureUnit(Enum):
+class PowerPerAreaQuarticTemperatureUnit(UnitEnum):
     watt_per_kelvin_to_the_fourth_per_meter_squared = (
         Unit.watt_per_kelvin_to_the_fourth_per_meter_squared.value
     )
@@ -11000,7 +11000,7 @@ class PowerPerAreaQuarticTemperature(QuantityValue):
 #   filename:  OSW24bf224c3e2a57b6a896f3cd3b9395b2.json
 
 
-class PhotonIntensityUnit(Enum):
+class PhotonIntensityUnit(UnitEnum):
     per_second_per_steradian = Unit.per_second_per_steradian.value
     """
     /(s·sr)
@@ -11044,7 +11044,7 @@ class PhotonIntensity(QuantityValue):
 #   filename:  OSW25452f4f1c1c5655a91d63cc59d90f5f.json
 
 
-class StandardAbsoluteActivityUnit(Enum):
+class StandardAbsoluteActivityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -11121,7 +11121,7 @@ class MolecularMass(Mass):
 #   filename:  OSW25caa8958ec05221a2bd22dbef7b9074.json
 
 
-class MagneticAreaMomentUnit(Enum):
+class MagneticAreaMomentUnit(UnitEnum):
     joule_per_tesla = Unit.joule_per_tesla.value
     """
     J/T
@@ -11179,7 +11179,7 @@ class MagneticAreaMoment(QuantityValue):
 #   filename:  OSW25cb564bcaed56bc84bcb4c518f7d8d8.json
 
 
-class ResistivityUnit(Enum):
+class ResistivityUnit(UnitEnum):
     meter_ohm = Unit.meter_ohm.value
     """
     Ω·m
@@ -11291,7 +11291,7 @@ class Resistivity(QuantityValue):
 #   filename:  OSW261c913da725592392a603767e4f9c32.json
 
 
-class TotalAtomicStoppingPowerUnit(Enum):
+class TotalAtomicStoppingPowerUnit(UnitEnum):
     joule_meter_squared = Unit.joule_meter_squared.value
     """
     J·m²
@@ -11400,7 +11400,7 @@ class PredictedMass(Mass):
 #   filename:  OSW26a49d82f0495a4dbc42d150cfb386a8.json
 
 
-class DatasetOfBitsUnit(Enum):
+class DatasetOfBitsUnit(UnitEnum):
     barn = Unit.barn.value
     """
     b
@@ -11522,7 +11522,7 @@ class DatasetOfBits(QuantityValue):
 #   filename:  OSW26ae18e11ed158dc9ea7e62d1d5ce92e.json
 
 
-class SpecificVolumeUnit(Enum):
+class SpecificVolumeUnit(UnitEnum):
     meter_cubed_per_kilo_gram = Unit.meter_cubed_per_kilo_gram.value
     """
     m³/kg
@@ -11634,7 +11634,7 @@ class SpecificVolume(QuantityValue):
 #   filename:  OSW27391d33725254a288fefb618be785f7.json
 
 
-class ElectricChargePerMassUnit(Enum):
+class ElectricChargePerMassUnit(UnitEnum):
     per_second_per_tesla = Unit.per_second_per_tesla.value
     """
     /(T·s)
@@ -11742,7 +11742,7 @@ class ElectricChargePerMass(QuantityValue):
 #   filename:  OSW276d05cf68e3550dab7184a47e560063.json
 
 
-class SquareTimeUnit(Enum):
+class SquareTimeUnit(UnitEnum):
     second_squared = Unit.second_squared.value
     """
     s²
@@ -11910,7 +11910,7 @@ class AverageEnergyLossPerElementaryChargeProduced(Energy):
 #   filename:  OSW298b2f8a4a0155aa951ae75231e4343f.json
 
 
-class WarpingConstantUnit(Enum):
+class WarpingConstantUnit(UnitEnum):
     meter_to_the_sixth = Unit.meter_to_the_sixth.value
     """
     m⁶
@@ -11960,7 +11960,7 @@ class WarpingConstant(QuantityValue):
 #   filename:  OSW29b1dc01984d568f84c03e03ed2ed731.json
 
 
-class SpeedUnit(Enum):
+class SpeedUnit(UnitEnum):
     meter_per_second = Unit.meter_per_second.value
     """
     m/s
@@ -12113,7 +12113,7 @@ class ConductionSpeed(Speed):
 #   filename:  OSW2a24ce5e8c585426b905fe16c38b632b.json
 
 
-class AbsorbedDoseRateUnit(Enum):
+class AbsorbedDoseRateUnit(UnitEnum):
     gray_per_second = Unit.gray_per_second.value
     """
     Gy/s
@@ -12287,7 +12287,7 @@ class BurgersVector(Length):
 #   filename:  OSW2aeee06f4fdf5b97bc4bb4c3893af100.json
 
 
-class SpecificModulusUnit(Enum):
+class SpecificModulusUnit(UnitEnum):
     meter_squared_per_second_squared = Unit.meter_squared_per_second_squared.value
     """
     m²/s²
@@ -12418,7 +12418,7 @@ class OverRangeDistance(Length):
 #   filename:  OSW2c27b4cb42c854299931e28ebd6a601b.json
 
 
-class AreaTemperatureUnit(Enum):
+class AreaTemperatureUnit(UnitEnum):
     kelvin_meter_squared = Unit.kelvin_meter_squared.value
     """
     m²·K
@@ -12491,7 +12491,7 @@ class ExitPlaneCrossSectionalArea(Area):
 #   filename:  OSW2c869e5a09fa5fdfb818543b40bacb08.json
 
 
-class PowerPerAreaUnit(Enum):
+class PowerPerAreaUnit(UnitEnum):
     watt_per_meter_squared = Unit.watt_per_meter_squared.value
     """
     W/m²
@@ -12630,7 +12630,7 @@ class Radiosity(PowerPerArea):
 #   filename:  OSW2d0da104d005586998d511764fbb2517.json
 
 
-class QuarticElectricDipoleMomentPerCubicEnergyUnit(Enum):
+class QuarticElectricDipoleMomentPerCubicEnergyUnit(UnitEnum):
     coulomb_to_the_fourth_meter_to_the_fourth_per_joule_cubed = (
         Unit.coulomb_to_the_fourth_meter_to_the_fourth_per_joule_cubed.value
     )
@@ -12734,7 +12734,7 @@ class Population(Count):
 #   filename:  OSW2d29c3f218f75d669b67f8008851f82e.json
 
 
-class PowerPerAreaAngleUnit(Enum):
+class PowerPerAreaAngleUnit(UnitEnum):
     watt_per_meter_squared_per_steradian = (
         Unit.watt_per_meter_squared_per_steradian.value
     )
@@ -12905,7 +12905,7 @@ class CenterOfGravityInTheXAxis(Length):
 #   filename:  OSW2e6d967356355a20b4f4e7c677c15a54.json
 
 
-class MeasurementUnitOfSpectralRadianceUnit(Enum):
+class MeasurementUnitOfSpectralRadianceUnit(UnitEnum):
     watt_per_meter_cubed = Unit.watt_per_meter_cubed.value
     """
     W/(m²·m)
@@ -13027,7 +13027,7 @@ class MeasurementUnitOfSpectralRadiance(QuantityValue):
 #   filename:  OSW2e8f37f6c34a5c0c86f4d680edc4c7f9.json
 
 
-class MadelungConstantUnit(Enum):
+class MadelungConstantUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -13073,7 +13073,7 @@ class MadelungConstant(QuantityValue):
 #   filename:  OSW2e958a0e653558a8abf2bd1fa3c6dd59.json
 
 
-class MomentOfInertiaUnit(Enum):
+class MomentOfInertiaUnit(UnitEnum):
     kilo_gram_meter_squared = Unit.kilo_gram_meter_squared.value
     """
     kg·m²
@@ -13136,7 +13136,7 @@ class MomentOfInertia(QuantityValue):
 #   filename:  OSW2ea2a195a92e5232854deeb78edf3b6f.json
 
 
-class EnergyPerElectricChargeUnit(Enum):
+class EnergyPerElectricChargeUnit(UnitEnum):
     volt = Unit.volt.value
     """
     V
@@ -13295,7 +13295,7 @@ class ElectromotiveForce(EnergyPerElectricCharge):
 #   filename:  OSW2f222621d774517193dc5eab674e3721.json
 
 
-class AmountOfSubstanceUnit(Enum):
+class AmountOfSubstanceUnit(UnitEnum):
     mole = Unit.mole.value
     """
     mol
@@ -13490,7 +13490,7 @@ class DistanceTraveledDuringABurn(Distance):
 #   filename:  OSW2f8fe69b4fc55c839e551a63b21bcfbf.json
 
 
-class ReactanceUnit(Enum):
+class ReactanceUnit(UnitEnum):
     ohm = Unit.ohm.value
     """
     Ω
@@ -13662,7 +13662,7 @@ class DynamicFrictionCoefficient(FrictionCoefficient):
 #   filename:  OSW2ff0e06e1f995bd082b2fb855c1b8963.json
 
 
-class InverseSquareEnergyUnit(Enum):
+class InverseSquareEnergyUnit(UnitEnum):
     per_joule_squared = Unit.per_joule_squared.value
     """
     /J²
@@ -13751,7 +13751,7 @@ class LossAngle(Angle):
 #   filename:  OSW305a18e416d6519e8683eaf9dfce1dec.json
 
 
-class MomentOfForceUnit(Enum):
+class MomentOfForceUnit(UnitEnum):
     meter_newton = Unit.meter_newton.value
     """
     N·m
@@ -13845,7 +13845,7 @@ class MomentOfForce(QuantityValue):
 #   filename:  OSW313d97b5a2685dd6866686c37b62a259.json
 
 
-class AngularMomentumPerAngleUnit(Enum):
+class AngularMomentumPerAngleUnit(UnitEnum):
     meter_newton_second_per_radian = Unit.meter_newton_second_per_radian.value
     """
     N·m·s/rad
@@ -13918,7 +13918,7 @@ class HeadEndPressure(Pressure):
 #   filename:  OSW31d75c6ae9295c32926357387234c870.json
 
 
-class WaterVapourDiffusionCoefficientUnit(Enum):
+class WaterVapourDiffusionCoefficientUnit(UnitEnum):
     kilo_gram_per_meter_per_pascal_per_second = (
         Unit.kilo_gram_per_meter_per_pascal_per_second.value
     )
@@ -13978,7 +13978,7 @@ class WaterVapourDiffusionCoefficient(QuantityValue):
 #   filename:  OSW31f4583f8b095de5be781a7ced0b8117.json
 
 
-class MassConcentrationRateOfChangeUnit(Enum):
+class MassConcentrationRateOfChangeUnit(UnitEnum):
     gram_per_day_per_liter = Unit.gram_per_day_per_liter.value
     """
     g/(L·d)
@@ -14060,7 +14060,7 @@ class IgnitionIntervalTime(Time):
 #   filename:  OSW3338e618aa71538b9c4c7013d0b81640.json
 
 
-class NapierianAbsorbanceUnit(Enum):
+class NapierianAbsorbanceUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -14106,7 +14106,7 @@ class NapierianAbsorbance(QuantityValue):
 #   filename:  OSW335aa823b1ee5c1d94a3e6540fe79cc7.json
 
 
-class DoseEquivalentQualityFactorUnit(Enum):
+class DoseEquivalentQualityFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -14183,7 +14183,7 @@ class WetBulbTemperature(Temperature):
 #   filename:  OSW345c17d806355007a59e9fc5146df63b.json
 
 
-class RadianceFactorUnit(Enum):
+class RadianceFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -14229,7 +14229,7 @@ class RadianceFactor(QuantityValue):
 #   filename:  OSW347462e67d905995af16f97dc7c9ef48.json
 
 
-class AccelerationUnit(Enum):
+class AccelerationUnit(UnitEnum):
     newton_per_kilo_gram = Unit.newton_per_kilo_gram.value
     """
     N/kg
@@ -14367,7 +14367,7 @@ class LengthForce(Work):
 #   filename:  OSW3601c7fff2f75532a538c5b82165a134.json
 
 
-class EnergyPerTemperatureUnit(Enum):
+class EnergyPerTemperatureUnit(UnitEnum):
     joule_per_kelvin = Unit.joule_per_kelvin.value
     """
     J/K
@@ -14517,7 +14517,7 @@ class AngularWavenumber(InverseLength):
 #   filename:  OSW373a1882b43756628a65a731497d5eee.json
 
 
-class ElectricChargePerAreaUnit(Enum):
+class ElectricChargePerAreaUnit(UnitEnum):
     coulomb_per_meter_squared = Unit.coulomb_per_meter_squared.value
     """
     C/m²
@@ -14661,7 +14661,7 @@ class MassOfSolidBooster(Mass):
 #   filename:  OSW38077176ba8a52f7a9f401d782b4ffa8.json
 
 
-class TorquePerAngleUnit(Enum):
+class TorquePerAngleUnit(UnitEnum):
     meter_newton_per_radian = Unit.meter_newton_per_radian.value
     """
     N·m/rad
@@ -14717,7 +14717,7 @@ class TorquePerAngle(QuantityValue):
 #   filename:  OSW3861c9ccb54a566789b4b9c93410b6e6.json
 
 
-class LorenzCoefficientUnit(Enum):
+class LorenzCoefficientUnit(UnitEnum):
     volt_squared_per_kelvin_squared = Unit.volt_squared_per_kelvin_squared.value
     """
     V²/K²
@@ -14857,7 +14857,7 @@ class MolarEquivalent(AmountOfSubstance):
 #   filename:  OSW39461742983959d797023ac052a90323.json
 
 
-class SoundReductionIndexUnit(Enum):
+class SoundReductionIndexUnit(UnitEnum):
     bel = Unit.bel.value
     """
     B
@@ -15054,7 +15054,7 @@ class MaximumExpectedOperatingThrust(MaxOperatingThrust):
 #   filename:  OSW3b186dbd80f75c3a82cd7418d4d3ea53.json
 
 
-class SpecificWeightUnit(Enum):
+class SpecificWeightUnit(UnitEnum):
     newton_per_meter_cubed = Unit.newton_per_meter_cubed.value
     """
     N/m³
@@ -15171,7 +15171,7 @@ class SlowingDownArea(Area):
 #   filename:  OSW3c3443b8e1395c6f986793f1d9f7d27a.json
 
 
-class IsothermalCompressibilityUnit(Enum):
+class IsothermalCompressibilityUnit(UnitEnum):
     per_pascal = Unit.per_pascal.value
     """
     /Pa
@@ -15315,7 +15315,7 @@ class IsothermalMoistureCapacity(SpecificVolume):
 #   filename:  OSW3d007b21655e5a689b8ad512f768cd37.json
 
 
-class TorqueUnit(Enum):
+class TorqueUnit(UnitEnum):
     meter_newton = Unit.meter_newton.value
     """
     N·m
@@ -15444,7 +15444,7 @@ class BendingMomentOfForce(Torque):
 #   filename:  OSW3d511591b978510a89d74daf2e709393.json
 
 
-class AverageLogarithmicEnergyDecrementUnit(Enum):
+class AverageLogarithmicEnergyDecrementUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -15552,7 +15552,7 @@ class DebyeAngularWavenumber(InverseLength):
 #   filename:  OSW3d8035cbaa265d40a8e6cb6317c72700.json
 
 
-class LengthTemperatureTimeUnit(Enum):
+class LengthTemperatureTimeUnit(UnitEnum):
     Celsius_meter_second = Unit.Celsius_meter_second.value
     """
     m·s·°C
@@ -15600,7 +15600,7 @@ class LengthTemperatureTime(QuantityValue):
 #   filename:  OSW3d95b4b9ccf1558c909b4e1ef2baf020.json
 
 
-class TotalIonizationUnit(Enum):
+class TotalIonizationUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -15646,7 +15646,7 @@ class TotalIonization(QuantityValue):
 #   filename:  OSW3db28177ab145fceab8085ac3b0c94d2.json
 
 
-class ForcePerElectricChargeUnit(Enum):
+class ForcePerElectricChargeUnit(UnitEnum):
     newton_per_coulomb = Unit.newton_per_coulomb.value
     """
     N/C
@@ -15785,7 +15785,7 @@ class ThermalUtilizationFactorForFission(Dimensionless):
 #   filename:  OSW3e38ca0ea54e5d02917c52434bcf41d6.json
 
 
-class ImpedanceUnit(Enum):
+class ImpedanceUnit(UnitEnum):
     ohm = Unit.ohm.value
     """
     Ω
@@ -15868,7 +15868,7 @@ class Impedance(QuantityValue):
 #   filename:  OSW3e3b614bb90a58aa89b5dcddd0045fe9.json
 
 
-class LuminousExposureUnit(Enum):
+class LuminousExposureUnit(UnitEnum):
     hour_lux = Unit.hour_lux.value
     """
     lx·h
@@ -15947,7 +15947,7 @@ class BucklingFactor(Dimensionless):
 #   filename:  OSW3f7f94e0ebca5ff2a0e5467635d13433.json
 
 
-class MassConcentrationOfWaterToDryMatterUnit(Enum):
+class MassConcentrationOfWaterToDryMatterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -15993,7 +15993,7 @@ class MassConcentrationOfWaterToDryMatter(QuantityValue):
 #   filename:  OSW3ff27728d12a51ff82c347ad28c0ab3a.json
 
 
-class ResonanceEscapeProbabilityUnit(Enum):
+class ResonanceEscapeProbabilityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -16039,7 +16039,7 @@ class ResonanceEscapeProbability(QuantityValue):
 #   filename:  OSW4028a89b345d5b9d93dcba07a853c334.json
 
 
-class LossFactorUnit(Enum):
+class LossFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -16116,7 +16116,7 @@ class EnergyContent(Energy):
 #   filename:  OSW4041cc5b57dc5efcbb9701f04e4a68ce.json
 
 
-class AmountOfSubstancePerMassUnit(Enum):
+class AmountOfSubstancePerMassUnit(UnitEnum):
     mole_per_kilo_gram = Unit.mole_per_kilo_gram.value
     """
     mol/kg
@@ -16259,7 +16259,7 @@ class MolalityOfSolute(AmountOfSubstancePerMass):
 #   filename:  OSW405e3d0a77f550a7bf632bb907ae9c47.json
 
 
-class SpecificEnergyUnit(Enum):
+class SpecificEnergyUnit(UnitEnum):
     sievert = Unit.sievert.value
     """
     Sv
@@ -16585,7 +16585,7 @@ class RelativeMolecularMass(DimensionlessRatio):
 #   filename:  OSW425d111a8a3f560eb83829730f7ad8a5.json
 
 
-class ReflectanceFactorUnit(Enum):
+class ReflectanceFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -16631,7 +16631,7 @@ class ReflectanceFactor(QuantityValue):
 #   filename:  OSW4270a516cdbe5466abeea6638b402fea.json
 
 
-class MassAbsorptionCoefficientUnit(Enum):
+class MassAbsorptionCoefficientUnit(UnitEnum):
     meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
     """
     m²/kg
@@ -16720,7 +16720,7 @@ class MagneticQuantumNumber(QuantumNumber):
 #   filename:  OSW428688cfd14256ef999765241fd57f9e.json
 
 
-class PolarisabilityUnit(Enum):
+class PolarisabilityUnit(UnitEnum):
     coulomb_squared_meter_squared_per_joule = (
         Unit.coulomb_squared_meter_squared_per_joule.value
     )
@@ -16775,7 +16775,7 @@ class Polarisability(QuantityValue):
 #   filename:  OSW4307744db9bb582aa546240504683af7.json
 
 
-class InversePermittivityUnit(Enum):
+class InversePermittivityUnit(UnitEnum):
     meter_per_farad = Unit.meter_per_farad.value
     """
     m/F
@@ -16819,7 +16819,7 @@ class InversePermittivity(QuantityValue):
 #   filename:  OSW4384c6d9e96657c0b4e77f665495be59.json
 
 
-class MultiplicationFactorUnit(Enum):
+class MultiplicationFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -16896,7 +16896,7 @@ class RestEnergy(Energy):
 #   filename:  OSW442f95e934355966b4f87f1d5ed06b13.json
 
 
-class ElectricCurrentPerTemperatureUnit(Enum):
+class ElectricCurrentPerTemperatureUnit(UnitEnum):
     ampere_per_Celsius = Unit.ampere_per_Celsius.value
     """
     A/°C
@@ -16942,7 +16942,7 @@ class ElectricCurrentPerTemperature(QuantityValue):
 #   filename:  OSW44724391f9b55593b81966f6cc575a02.json
 
 
-class BloodGlucoseLevelByMassUnit(Enum):
+class BloodGlucoseLevelByMassUnit(UnitEnum):
     gram_per_liter = Unit.gram_per_liter.value
     """
     g/L
@@ -17111,7 +17111,7 @@ class BloodGlucoseLevelByMass(QuantityValue):
 #   filename:  OSW44eec22e65f759d99d9efa4c5dc5b54f.json
 
 
-class ConductivityUnit(Enum):
+class ConductivityUnit(UnitEnum):
     siemens_per_meter = Unit.siemens_per_meter.value
     """
     S/m
@@ -17229,7 +17229,7 @@ class Conductivity(QuantityValue):
 #   filename:  OSW4500771e3381532098001c704d0b9cb1.json
 
 
-class SpecificHeatCapacityAtSaturationUnit(Enum):
+class SpecificHeatCapacityAtSaturationUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
     J/(kg·K)
@@ -17303,7 +17303,7 @@ class SpecificHeatCapacityAtSaturation(QuantityValue):
 #   filename:  OSW4508a29dc612592bb1820574a104a5bd.json
 
 
-class CanonicalPartitionFunctionUnit(Enum):
+class CanonicalPartitionFunctionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -17376,7 +17376,7 @@ class GrandCanonicalPartitionFunction(CanonicalPartitionFunction):
 #   filename:  OSW45b0b940dbc05b23872c5156073ef7c5.json
 
 
-class LethargyUnit(Enum):
+class LethargyUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -17484,7 +17484,7 @@ class PayloadRatio(DimensionlessRatio):
 #   filename:  OSW4631a0c82e5a5333b3a89b76ff2d0b54.json
 
 
-class ElectricChargeLinearDensityUnit(Enum):
+class ElectricChargeLinearDensityUnit(UnitEnum):
     coulomb_per_meter = Unit.coulomb_per_meter.value
     """
     C/m
@@ -17561,7 +17561,7 @@ class MeanLifetime(Time):
 #   filename:  OSW46cf5d4e08e25909a1bbad7563535a8e.json
 
 
-class CoefficientOfHeatTransferUnit(Enum):
+class CoefficientOfHeatTransferUnit(UnitEnum):
     watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
     """
     W/(m²·K)
@@ -17665,7 +17665,7 @@ class MeanLinearRange(Length):
 #   filename:  OSW4722a7e1f1215d96ba26aceaf6d96ceb.json
 
 
-class StructureFactorUnit(Enum):
+class StructureFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -17711,7 +17711,7 @@ class StructureFactor(QuantityValue):
 #   filename:  OSW475a9570e84c5fd886a8b6f889ed24ca.json
 
 
-class ElectricChargeLineDensityUnit(Enum):
+class ElectricChargeLineDensityUnit(UnitEnum):
     coulomb_per_meter = Unit.coulomb_per_meter.value
     """
     C/m
@@ -17757,7 +17757,7 @@ class ElectricChargeLineDensity(QuantityValue):
 #   filename:  OSW476da0b5702753d9b6f5b70f394fc641.json
 
 
-class LandeGFactorUnit(Enum):
+class LandeGFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -17832,7 +17832,7 @@ class InitialExpansionRatio(ExpansionRatio):
 #   filename:  OSW4804fb4f11345ebe99f0eaaabafc1c88.json
 
 
-class ModulusOfImpedanceUnit(Enum):
+class ModulusOfImpedanceUnit(UnitEnum):
     ohm = Unit.ohm.value
     """
     Ω
@@ -17917,7 +17917,7 @@ class ModulusOfImpedance(QuantityValue):
 #   filename:  OSW4838a6964ad458f685852d1a1a5a62ac.json
 
 
-class DisplacementCurrentDensityUnit(Enum):
+class DisplacementCurrentDensityUnit(UnitEnum):
     ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
     """
     A/m²
@@ -18074,7 +18074,7 @@ class ThermalEnergy(Energy):
 #   filename:  OSW48876c8c86ed54359467ec0874e92dae.json
 
 
-class MassFractionUnit(Enum):
+class MassFractionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -18151,7 +18151,7 @@ class DragCoefficient(Dimensionless):
 #   filename:  OSW48d809902b445a6ca8ecae9e3fdfbcf0.json
 
 
-class SpecificImpulseByWeightUnit(Enum):
+class SpecificImpulseByWeightUnit(UnitEnum):
     second = Unit.second.value
     """
     s
@@ -18395,7 +18395,7 @@ class PositiveDimensionlessRatio(DimensionlessRatio):
 #   filename:  OSW4a0860ff03e65af19b7c64e3b837fc81.json
 
 
-class MassFlowRateUnit(Enum):
+class MassFlowRateUnit(UnitEnum):
     kilo_gram_per_second = Unit.kilo_gram_per_second.value
     """
     kg/s
@@ -18573,7 +18573,7 @@ class MassFlowRate(QuantityValue):
 #   filename:  OSW4a357300c6655a1b9d5d739b6dffd1fe.json
 
 
-class DisplacementCurrentUnit(Enum):
+class DisplacementCurrentUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -18753,7 +18753,7 @@ class EffectiveMass(Mass):
 #   filename:  OSW4a6144833c7e51cd9ff42854dc9184f1.json
 
 
-class TemperatureVarianceUnit(Enum):
+class TemperatureVarianceUnit(UnitEnum):
     Celsius_squared = Unit.Celsius_squared.value
     """
     °C²
@@ -18828,7 +18828,7 @@ class ThermodynamicEntropy(EnergyPerTemperature):
 #   filename:  OSW4b028ad352e557d0b10e8ab1735f03c2.json
 
 
-class MagneticReluctivityUnit(Enum):
+class MagneticReluctivityUnit(UnitEnum):
     per_meter_per_tesla = Unit.per_meter_per_tesla.value
     """
     /(T·m)
@@ -18905,7 +18905,7 @@ class IonTransportNumber(DimensionlessRatio):
 #   filename:  OSW4b7dde3787455f5aa84d6783bda3971a.json
 
 
-class LengthMassUnit(Enum):
+class LengthMassUnit(UnitEnum):
     kilo_gram_meter = Unit.kilo_gram_meter.value
     """
     kg·m
@@ -18971,7 +18971,7 @@ class LengthMass(QuantityValue):
 #   filename:  OSW4c0612faa3265f14ab002fb063106af2.json
 
 
-class GeneralizedForceUnit(Enum):
+class GeneralizedForceUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -19017,7 +19017,7 @@ class GeneralizedForce(QuantityValue):
 #   filename:  OSW4c8a2aa1efad5db1a05f9ae73ee05fcf.json
 
 
-class ElectrolyticConductivityUnit(Enum):
+class ElectrolyticConductivityUnit(UnitEnum):
     siemens_per_meter = Unit.siemens_per_meter.value
     """
     S/m
@@ -19170,7 +19170,7 @@ class ThrustToWeightRatio(DimensionlessRatio):
 #   filename:  OSW4d26c25abed1595ebf6faebbb937aa29.json
 
 
-class AreaPerHeatingLoadUnit(Enum):
+class AreaPerHeatingLoadUnit(UnitEnum):
     meter_squared_per_watt = Unit.meter_squared_per_watt.value
     """
     m²/W
@@ -19285,7 +19285,7 @@ class PhaseDifference(Angle):
 #   filename:  OSW4e1cadc179b355b39ed40a4ea0c3ff5a.json
 
 
-class SpectralAngularCrossSectionUnit(Enum):
+class SpectralAngularCrossSectionUnit(UnitEnum):
     meter_squared_per_joule_per_steradian = (
         Unit.meter_squared_per_joule_per_steradian.value
     )
@@ -19333,7 +19333,7 @@ class SpectralAngularCrossSection(QuantityValue):
 #   filename:  OSW4e21f4a2c9065a73aebb426c037f5362.json
 
 
-class SoundExposureLevelUnit(Enum):
+class SoundExposureLevelUnit(UnitEnum):
     bel = Unit.bel.value
     """
     B
@@ -19383,7 +19383,7 @@ class SoundExposureLevel(QuantityValue):
 #   filename:  OSW4e658af1bb265ba78eb72669e48708e2.json
 
 
-class MagneticVectorPotentialUnit(Enum):
+class MagneticVectorPotentialUnit(UnitEnum):
     weber_per_meter = Unit.weber_per_meter.value
     """
     Wb/m
@@ -19523,7 +19523,7 @@ class ConductiveHeatTransferRate(HeatFlowRate):
 #   filename:  OSW4fcfc4adb6be5e7c97a128565fb91932.json
 
 
-class SoundVolumeVelocityUnit(Enum):
+class SoundVolumeVelocityUnit(UnitEnum):
     meter_cubed_per_second = Unit.meter_cubed_per_second.value
     """
     m³/s
@@ -19651,7 +19651,7 @@ class MigrationLength(Length):
 #   filename:  OSW5079df5bd9085725aebd171ce0f1bc1b.json
 
 
-class StressOpticCoefficientUnit(Enum):
+class StressOpticCoefficientUnit(UnitEnum):
     per_pascal = Unit.per_pascal.value
     """
     /Pa
@@ -19828,7 +19828,7 @@ class IonizationEnergy(Energy):
 #   filename:  OSW512cbc54b9a75f4abe8e66c48204ae0f.json
 
 
-class MassDensityUnit(Enum):
+class MassDensityUnit(UnitEnum):
     gram_per_liter = Unit.gram_per_liter.value
     """
     g/L
@@ -20048,7 +20048,7 @@ class MassDensity(QuantityValue):
 #   filename:  OSW518bf0736bae513a83f161f597ddc074.json
 
 
-class RecombinationCoefficientUnit(Enum):
+class RecombinationCoefficientUnit(UnitEnum):
     meter_cubed_per_second = Unit.meter_cubed_per_second.value
     """
     m³/s
@@ -20106,7 +20106,7 @@ class RecombinationCoefficient(QuantityValue):
 #   filename:  OSW51cb2a0565745eee958c6ede005561d8.json
 
 
-class InductanceUnit(Enum):
+class InductanceUnit(UnitEnum):
     henry = Unit.henry.value
     """
     H
@@ -20218,7 +20218,7 @@ class MutualInductance(Inductance):
 #   filename:  OSW527cea47c2575449a1a4f61349f12ee5.json
 
 
-class TotalCurrentUnit(Enum):
+class TotalCurrentUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -20522,7 +20522,7 @@ class CenterOfMassCom(PositionVector):
 #   filename:  OSW55e45a78a82854228a5ac2e6893d1d95.json
 
 
-class ThermalResistanceUnit(Enum):
+class ThermalResistanceUnit(UnitEnum):
     kelvin_per_watt = Unit.kelvin_per_watt.value
     """
     K/W
@@ -20568,7 +20568,7 @@ class ThermalResistance(QuantityValue):
 #   filename:  OSW55eac7b36313581b839d0bd4957f7788.json
 
 
-class AngularVelocityUnit(Enum):
+class AngularVelocityUnit(UnitEnum):
     radian_per_second = Unit.radian_per_second.value
     """
     rad/s
@@ -20744,7 +20744,7 @@ class HyperfineStructureQuantumNumber(QuantumNumber):
 #   filename:  OSW566209df483b57eea3885b18e0923a5c.json
 
 
-class GruneisenParameterUnit(Enum):
+class GruneisenParameterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -20821,7 +20821,7 @@ class ElectronAffinity(Energy):
 #   filename:  OSW56a827e5333052079e10f02eecf577ad.json
 
 
-class MolarAttenuationCoefficientUnit(Enum):
+class MolarAttenuationCoefficientUnit(UnitEnum):
     meter_squared_per_mole = Unit.meter_squared_per_mole.value
     """
     m²/mol
@@ -20995,7 +20995,7 @@ class MassNumber(Count):
 #   filename:  OSW57dc5920ca595bc5b7c1f41b0a79bad3.json
 
 
-class MolarMassUnit(Enum):
+class MolarMassUnit(UnitEnum):
     kilo_gram_per_mole = Unit.kilo_gram_per_mole.value
     """
     kg/mol
@@ -21233,7 +21233,7 @@ class ModulusOfRotationalSubgradeReaction(ForcePerAngle):
 #   filename:  OSW592625bd38e75a4e87d866ef370b8a6c.json
 
 
-class SpecificPowerUnit(Enum):
+class SpecificPowerUnit(UnitEnum):
     gray_per_second = Unit.gray_per_second.value
     """
     Gy/s
@@ -21405,7 +21405,7 @@ class ElectricDisplacementField(ElectricChargePerArea):
 #   filename:  OSW5adf01eb760653aaac5f14e4de35b391.json
 
 
-class RelativeMassRatioOfVapourUnit(Enum):
+class RelativeMassRatioOfVapourUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -21513,7 +21513,7 @@ class OrbitalAngularMomentumQuantumNumber(QuantumNumber):
 #   filename:  OSW5c809cc846485949a513c8bc406e7e70.json
 
 
-class LinearAbsorptionCoefficientUnit(Enum):
+class LinearAbsorptionCoefficientUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -21593,7 +21593,7 @@ class LinearAbsorptionCoefficient(QuantityValue):
 #   filename:  OSW5da8fef340735438a00b7c7c454f9018.json
 
 
-class DegreeOfDissociationUnit(Enum):
+class DegreeOfDissociationUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -21670,7 +21670,7 @@ class GroupSpeedOfSound(SpeedOfSound):
 #   filename:  OSW5df3876a59235801acdf9ee4970f8324.json
 
 
-class VolumetricFluxUnit(Enum):
+class VolumetricFluxUnit(UnitEnum):
     liter_per_meter_squared_per_minute = Unit.liter_per_meter_squared_per_minute.value
     """
     L/(m²·min)
@@ -21739,7 +21739,7 @@ class VolumetricFlux(QuantityValue):
 #   filename:  OSW5ea67a27968a5832bd98c38020c4bd6e.json
 
 
-class MolarConductivityUnit(Enum):
+class MolarConductivityUnit(UnitEnum):
     meter_squared_siemens_per_mole = Unit.meter_squared_siemens_per_mole.value
     """
     S·m²/mol
@@ -21816,7 +21816,7 @@ class ThermalExpansionCoefficient(ExpansionRatio):
 #   filename:  OSW5ff27cfddf435372a70be4040f61d68b.json
 
 
-class AngularFrequencyUnit(Enum):
+class AngularFrequencyUnit(UnitEnum):
     radian_per_second = Unit.radian_per_second.value
     """
     rad/s
@@ -21901,7 +21901,7 @@ class LarmorAngularFrequency(AngularFrequency):
 #   filename:  OSW5ffdbf4db0e95c7e8ce0298e48ee3197.json
 
 
-class ForcePerAreaTimeUnit(Enum):
+class ForcePerAreaTimeUnit(UnitEnum):
     pascal_per_second = Unit.pascal_per_second.value
     """
     Pa/s
@@ -21993,7 +21993,7 @@ class RadiativeHeatTransfer(HeatFlowRate):
 #   filename:  OSW607a4c4f2b4855899168d36755af9152.json
 
 
-class SecondAxialMomentOfAreaUnit(Enum):
+class SecondAxialMomentOfAreaUnit(UnitEnum):
     meter_to_the_fourth = Unit.meter_to_the_fourth.value
     """
     m⁴
@@ -22051,7 +22051,7 @@ class SecondAxialMomentOfArea(QuantityValue):
 #   filename:  OSW60f1d4c90b5d5f15a5c38d7741ba689e.json
 
 
-class ThermalConductivityUnit(Enum):
+class ThermalConductivityUnit(UnitEnum):
     watt_per_kelvin_per_meter = Unit.watt_per_kelvin_per_meter.value
     """
     W/(m·K)
@@ -22133,7 +22133,7 @@ class CombustionChamberTemperature(ThermodynamicTemperature):
 #   filename:  OSW61abf479e7935d3c941010403c265c05.json
 
 
-class MassFractionOfWaterUnit(Enum):
+class MassFractionOfWaterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -22241,7 +22241,7 @@ class RadiantFluenceRate(PowerPerArea):
 #   filename:  OSW62d08281552e55adacdc5be6123ac375.json
 
 
-class MassEnergyTransferCoefficientUnit(Enum):
+class MassEnergyTransferCoefficientUnit(UnitEnum):
     meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
     """
     m²/kg
@@ -22299,7 +22299,7 @@ class MassEnergyTransferCoefficient(QuantityValue):
 #   filename:  OSW62dc17a84c9e546a9139735645505a35.json
 
 
-class EnergyDensityUnit(Enum):
+class EnergyDensityUnit(UnitEnum):
     joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
     """
     J/m³
@@ -22537,7 +22537,7 @@ class LiftForce(Force):
 #   filename:  OSW64253eb92383544f9b7571c7e07cff76.json
 
 
-class LuminousEfficacyUnit(Enum):
+class LuminousEfficacyUnit(UnitEnum):
     lumen_per_watt = Unit.lumen_per_watt.value
     """
     lm/W
@@ -22614,7 +22614,7 @@ class VolumeFraction(DimensionlessRatio):
 #   filename:  OSW6431223a253052b98a72e63b4f62ca09.json
 
 
-class SectionModulusUnit(Enum):
+class SectionModulusUnit(UnitEnum):
     meter_cubed = Unit.meter_cubed.value
     """
     m³
@@ -22687,7 +22687,7 @@ class SectionModulus(QuantityValue):
 #   filename:  OSW64892b4f11e852b1873975a66e851abe.json
 
 
-class AreaPerTimeUnit(Enum):
+class AreaPerTimeUnit(UnitEnum):
     meter_squared_per_second = Unit.meter_squared_per_second.value
     """
     m²/s
@@ -22753,7 +22753,7 @@ class AreaPerTime(QuantityValue):
 #   filename:  OSW64d98c5ba2a75bf4afcb38b2ec0f76e1.json
 
 
-class StressIntensityFactorUnit(Enum):
+class StressIntensityFactorUnit(UnitEnum):
     meter_pascal = Unit.meter_pascal.value
     """
     Pa√m
@@ -22803,7 +22803,7 @@ class StressIntensityFactor(QuantityValue):
 #   filename:  OSW64f924217a41523d9fc5e51c4be68e08.json
 
 
-class SpecificSurfaceAreaUnit(Enum):
+class SpecificSurfaceAreaUnit(UnitEnum):
     meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
     """
     m²/kg
@@ -22861,7 +22861,7 @@ class SpecificSurfaceArea(QuantityValue):
 #   filename:  OSW651ad86866765ae79d2702fffa50f4d8.json
 
 
-class PeriodUnit(Enum):
+class PeriodUnit(UnitEnum):
     second = Unit.second.value
     """
     s
@@ -22996,7 +22996,7 @@ class MagnetizationField(ElectricCurrentPerLength):
 #   filename:  OSW66292bcdeac1546dbcc3007bcf3430d3.json
 
 
-class MassFractionOfDryMatterUnit(Enum):
+class MassFractionOfDryMatterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -23104,7 +23104,7 @@ class HorizontalVelocity(Velocity):
 #   filename:  OSW674cc9976cb75a02ad5c78a671459acd.json
 
 
-class ParticleFluenceRateUnit(Enum):
+class ParticleFluenceRateUnit(UnitEnum):
     per_meter_squared_per_second = Unit.per_meter_squared_per_second.value
     """
     /(m²·s)
@@ -23162,7 +23162,7 @@ class ParticleFluenceRate(QuantityValue):
 #   filename:  OSW676564fe1a3456cda95a12cec7c2ce9e.json
 
 
-class FluxUnit(Enum):
+class FluxUnit(UnitEnum):
     per_meter_squared_per_second = Unit.per_meter_squared_per_second.value
     """
     /(m²·s)
@@ -23258,7 +23258,7 @@ class DensityInCombustionChamber(MassDensity):
 #   filename:  OSW6847f51b03eb5ed6b4cda9e82af5e51a.json
 
 
-class MassTemperatureUnit(Enum):
+class MassTemperatureUnit(UnitEnum):
     kelvin_kilo_gram = Unit.kelvin_kilo_gram.value
     """
     kg·K
@@ -23306,7 +23306,7 @@ class MassTemperature(QuantityValue):
 #   filename:  OSW68d42f65000556188ac7c0d0421edfd4.json
 
 
-class RelativeMassDensityUnit(Enum):
+class RelativeMassDensityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -23383,7 +23383,7 @@ class SpecificGibbsEnergy(SpecificEnergy):
 #   filename:  OSW6904291c88ec50b3b1ac276f3ac61dcb.json
 
 
-class CostPerAreaUnit(Enum):
+class CostPerAreaUnit(UnitEnum):
     euro_per_m_squared = Unit.euro_per_m_squared.value
     """
     €/m²
@@ -23433,7 +23433,7 @@ class CostPerArea(QuantityValue):
 #   filename:  OSW692fa5ea3a1156a8b7a6332c9b1b1dce.json
 
 
-class MolarAngularMomentumUnit(Enum):
+class MolarAngularMomentumUnit(UnitEnum):
     joule_second_per_mole = Unit.joule_second_per_mole.value
     """
     J·s/mol
@@ -23508,7 +23508,7 @@ class ParticleCurrent(Frequency):
 #   filename:  OSW697915ca05ad53cc95b0f14a3fd3fe5d.json
 
 
-class ChemicalAffinityUnit(Enum):
+class ChemicalAffinityUnit(UnitEnum):
     joule_per_mole = Unit.joule_per_mole.value
     """
     J/mol
@@ -23593,7 +23593,7 @@ class MaximumBetaParticleEnergy(Energy):
 #   filename:  OSW6a2c83eb813354edace5e2d9ead479b9.json
 
 
-class ActionUnit(Enum):
+class ActionUnit(UnitEnum):
     joule_second = Unit.joule_second.value
     """
     J·s
@@ -23644,7 +23644,7 @@ class Action(QuantityValue):
 #   filename:  OSW6a7ba5aa1883572e808667e4e0f83ef8.json
 
 
-class MassAttenuationCoefficientUnit(Enum):
+class MassAttenuationCoefficientUnit(UnitEnum):
     meter_squared_per_kilo_gram = Unit.meter_squared_per_kilo_gram.value
     """
     m²/kg
@@ -23702,7 +23702,7 @@ class MassAttenuationCoefficient(QuantityValue):
 #   filename:  OSW6b1c18cb5a6e50519e026012231b9603.json
 
 
-class BodyMassIndexUnit(Enum):
+class BodyMassIndexUnit(UnitEnum):
     kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
     """
     kg/m²
@@ -23814,7 +23814,7 @@ class BodyMassIndex(QuantityValue):
 #   filename:  OSW6bad72aa82835ea49eea9bb061beae80.json
 
 
-class CapacitanceUnit(Enum):
+class CapacitanceUnit(UnitEnum):
     farad = Unit.farad.value
     """
     F
@@ -23980,7 +23980,7 @@ class NeutronNumber(Count):
 #   filename:  OSW6bd60a9ad5185c0db70de4eb4b727073.json
 
 
-class TemperatureGradientUnit(Enum):
+class TemperatureGradientUnit(UnitEnum):
     kelvin_per_meter = Unit.kelvin_per_meter.value
     """
     K/m
@@ -24065,7 +24065,7 @@ class ReactorTimeConstant(Time):
 #   filename:  OSW6d3afdeb72075dae90dbb01171c2d1db.json
 
 
-class CatalyticActivityConcentrationUnit(Enum):
+class CatalyticActivityConcentrationUnit(UnitEnum):
     milli_katal_per_liter = Unit.milli_katal_per_liter.value
     """
     mkat/L
@@ -24235,7 +24235,7 @@ class CatalyticActivityConcentration(QuantityValue):
 #   filename:  OSW6d902d567a1a5a89bde7cea878179186.json
 
 
-class MagneticDipoleMomentUnit(Enum):
+class MagneticDipoleMomentUnit(UnitEnum):
     meter_weber = Unit.meter_weber.value
     """
     Wb·m
@@ -24285,7 +24285,7 @@ class MagneticDipoleMoment(QuantityValue):
 #   filename:  OSW6d9120b2881350c08cd48854acbf1180.json
 
 
-class ElectricPotentialDifferenceUnit(Enum):
+class ElectricPotentialDifferenceUnit(UnitEnum):
     volt = Unit.volt.value
     """
     V
@@ -24418,7 +24418,7 @@ class ElectricPotentialDifference(QuantityValue):
 #   filename:  OSW6daf9ac4c6f859fbb5f6e241f1430f09.json
 
 
-class PhotosyntheticPhotonFluxUnit(Enum):
+class PhotosyntheticPhotonFluxUnit(UnitEnum):
     mole_per_second = Unit.mole_per_second.value
     """
     mol/s
@@ -24505,7 +24505,7 @@ class Turns(Count):
 #   filename:  OSW6dd896b08fd55c6a9ea1a7270bb59d48.json
 
 
-class AdmittanceUnit(Enum):
+class AdmittanceUnit(UnitEnum):
     siemens = Unit.siemens.value
     """
     S
@@ -24671,7 +24671,7 @@ class NozzleThroatPressure(Pressure):
 #   filename:  OSW6edd0e5986c85950824d854922387dc3.json
 
 
-class MolarMassVariationDueToPressureUnit(Enum):
+class MolarMassVariationDueToPressureUnit(UnitEnum):
     mole_per_kilo_gram_per_pascal = Unit.mole_per_kilo_gram_per_pascal.value
     """
     mol/(kg·Pa)
@@ -24724,7 +24724,7 @@ class MolarMassVariationDueToPressure(QuantityValue):
 #   filename:  OSW6f080218c095556da5479b9118e71589.json
 
 
-class FastFissionFactorUnit(Enum):
+class FastFissionFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -24770,7 +24770,7 @@ class FastFissionFactor(QuantityValue):
 #   filename:  OSW6f81fb79192f50e280ee1ff5dd724f01.json
 
 
-class TimeTemperatureUnit(Enum):
+class TimeTemperatureUnit(UnitEnum):
     kelvin_second = Unit.kelvin_second.value
     """
     K·s
@@ -24966,7 +24966,7 @@ class OpeningRatio(DimensionlessRatio):
 #   filename:  OSW71632403ff765a32b2e51f57d38fd64d.json
 
 
-class InverseTimeUnit(Enum):
+class InverseTimeUnit(UnitEnum):
     per_second = Unit.per_second.value
     """
     /s
@@ -25205,7 +25205,7 @@ class DecayConstant(InverseTime):
 #   filename:  OSW71dc7977cd3a539889a4af664c2e02da.json
 
 
-class MagneticFieldUnit(Enum):
+class MagneticFieldUnit(UnitEnum):
     tesla = Unit.tesla.value
     """
     T
@@ -25314,7 +25314,7 @@ class ThermalTransmittance(CoefficientOfHeatTransfer):
 #   filename:  OSW72e926f2d87e540c84ff1fa039adef5e.json
 
 
-class SlowingDownDensityUnit(Enum):
+class SlowingDownDensityUnit(UnitEnum):
     per_meter_cubed_per_second = Unit.per_meter_cubed_per_second.value
     """
     /(m³·s)
@@ -25389,7 +25389,7 @@ class BurnTime(Time):
 #   filename:  OSW731e73ec99455a1fbc5a6f5c4f67b422.json
 
 
-class PressureGradientUnit(Enum):
+class PressureGradientUnit(UnitEnum):
     pascal_per_meter = Unit.pascal_per_meter.value
     """
     Pa/m
@@ -25464,7 +25464,7 @@ class PressureGradient(QuantityValue):
 #   filename:  OSW73df0db8ab3656d7927bc38db277a50e.json
 
 
-class MassConcentrationOfWaterVapourUnit(Enum):
+class MassConcentrationOfWaterVapourUnit(UnitEnum):
     gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed.value
     """
     g/dm³
@@ -25570,7 +25570,7 @@ class MassConcentrationOfWaterVapour(QuantityValue):
 #   filename:  OSW74026893cf1a50c48b24be5ed1ffd6d2.json
 
 
-class SpecificHeatVolumeUnit(Enum):
+class SpecificHeatVolumeUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram_per_meter_cubed = (
         Unit.joule_per_kelvin_per_kilo_gram_per_meter_cubed.value
     )
@@ -25625,7 +25625,7 @@ class SpecificHeatVolume(QuantityValue):
 #   filename:  OSW7423002c2fd45809bfc0c4879b7d6f9c.json
 
 
-class SurfaceCoefficientOfHeatTransferUnit(Enum):
+class SurfaceCoefficientOfHeatTransferUnit(UnitEnum):
     watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
     """
     W/(m²·K)
@@ -25776,7 +25776,7 @@ class Stress(ForcePerArea):
 #   filename:  OSW759cf8e16f60598887292ea131ad71c2.json
 
 
-class ExposureRateUnit(Enum):
+class ExposureRateUnit(UnitEnum):
     coulomb_per_kilo_gram_per_second = Unit.coulomb_per_kilo_gram_per_second.value
     """
     C/(kg·s)
@@ -25891,7 +25891,7 @@ class EquilibriumPositionVectorOfIon(Length):
 #   filename:  OSW76131090bf885b3b93394f5f4574e1a1.json
 
 
-class SpecificImpulseUnit(Enum):
+class SpecificImpulseUnit(UnitEnum):
     second = Unit.second.value
     """
     s
@@ -26075,7 +26075,7 @@ class SpecificImpulse(QuantityValue):
 #   filename:  OSW76a6380b5209591dbb051af32a54fef0.json
 
 
-class ActivityCoefficientUnit(Enum):
+class ActivityCoefficientUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -26121,7 +26121,9 @@ class ActivityCoefficient(QuantityValue):
 #   filename:  OSW76c12a2cef85509fba12bf965efaef2f.json
 
 
-class MeasurementUnitForAQuantityApproximatelyProportionalToThermalInertiaUnit(Enum):
+class MeasurementUnitForAQuantityApproximatelyProportionalToThermalInertiaUnit(
+    UnitEnum
+):
     per_kelvin = Unit.per_kelvin.value
     """
     /K
@@ -26208,7 +26210,7 @@ class FermiEnergy(Energy):
 #   filename:  OSW773f040f505b58938f7ee54e1b7eb29f.json
 
 
-class ResidualResistivityUnit(Enum):
+class ResidualResistivityUnit(UnitEnum):
     meter_ohm = Unit.meter_ohm.value
     """
     Ω·m
@@ -26345,7 +26347,7 @@ class InternalEnergy(Energy):
 #   filename:  OSW7777e542c3385059bd70b9483a24baf3.json
 
 
-class MassRatioOfWaterVapourToDryGasUnit(Enum):
+class MassRatioOfWaterVapourToDryGasUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -26449,7 +26451,7 @@ class DynamicFriction(Friction):
 #   filename:  OSW77e2a32e5f30591eb679a048742743e1.json
 
 
-class CubicElectricDipoleMomentPerSquareEnergyUnit(Enum):
+class CubicElectricDipoleMomentPerSquareEnergyUnit(UnitEnum):
     coulomb_cubed_meter_per_joule_squared = (
         Unit.coulomb_cubed_meter_per_joule_squared.value
     )
@@ -26495,7 +26497,7 @@ class CubicElectricDipoleMomentPerSquareEnergy(QuantityValue):
 #   filename:  OSW77e8f77ce04f54e9a4f3d616427252b6.json
 
 
-class SpecificOpticalRotatoryPowerUnit(Enum):
+class SpecificOpticalRotatoryPowerUnit(UnitEnum):
     meter_squared_radian_per_kilo_gram = Unit.meter_squared_radian_per_kilo_gram.value
     """
     rad·m²/kg
@@ -26587,7 +26589,7 @@ class MacroscopicCrossSection(CrossSection):
 #   filename:  OSW78bb22c171075ca781ec3c9fff9991ea.json
 
 
-class MolarEntropyUnit(Enum):
+class MolarEntropyUnit(UnitEnum):
     joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole.value
     """
     J/(mol·K)
@@ -26788,7 +26790,7 @@ class RadiantEmmitance(PowerPerArea):
 #   filename:  OSW7b9c678b7f2d5b84bdfa0bf72f6d9ff2.json
 
 
-class DynamicViscosityUnit(Enum):
+class DynamicViscosityUnit(UnitEnum):
     pascal_second = Unit.pascal_second.value
     """
     Pa·s
@@ -27007,7 +27009,7 @@ class HelmholtzEnergy(Energy):
 #   filename:  OSW7d5aaca50d5d5e798ac29a9e209310cf.json
 
 
-class RelativePressureCoefficientUnit(Enum):
+class RelativePressureCoefficientUnit(UnitEnum):
     per_kelvin = Unit.per_kelvin.value
     """
     /K
@@ -27055,7 +27057,7 @@ class RelativePressureCoefficient(QuantityValue):
 #   filename:  OSW7d5feb9968315612a4cceccd238be582.json
 
 
-class TemperatureAmountOfSubstanceUnit(Enum):
+class TemperatureAmountOfSubstanceUnit(UnitEnum):
     kelvin_mole = Unit.kelvin_mole.value
     """
     mol·K
@@ -27103,7 +27105,7 @@ class TemperatureAmountOfSubstance(QuantityValue):
 #   filename:  OSW7d63568fd3d854268aba399d60e611ef.json
 
 
-class MagneticMomentUnit(Enum):
+class MagneticMomentUnit(UnitEnum):
     joule_per_tesla = Unit.joule_per_tesla.value
     """
     J/T
@@ -27283,7 +27285,7 @@ class ElectronRadius(Length):
 #   filename:  OSW7e9c76bc94c25dc8929bc8fe039ecf8f.json
 
 
-class NuclearQuadrupoleMomentUnit(Enum):
+class NuclearQuadrupoleMomentUnit(UnitEnum):
     meter_squared = Unit.meter_squared.value
     """
     m²
@@ -27454,7 +27456,7 @@ class MechanicalEnergy(Energy):
 #   filename:  OSW7f56c0dadee65455b206ddbb22bb84f8.json
 
 
-class SoundPowerLevelUnit(Enum):
+class SoundPowerLevelUnit(UnitEnum):
     bel = Unit.bel.value
     """
     B
@@ -27508,7 +27510,7 @@ class SoundPowerLevel(QuantityValue):
 #   filename:  OSW7fdace54bea65a29af32ab2124bc8087.json
 
 
-class ElectricQuadrupoleMomentUnit(Enum):
+class ElectricQuadrupoleMomentUnit(UnitEnum):
     coulomb_meter_squared = Unit.coulomb_meter_squared.value
     """
     C·m²
@@ -27557,7 +27559,7 @@ class ElectricQuadrupoleMoment(QuantityValue):
 #   filename:  OSW801c52067ff25e99b4c896d99f25aa06.json
 
 
-class MassPerAreaUnit(Enum):
+class MassPerAreaUnit(UnitEnum):
     kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
     """
     kg/m²
@@ -27748,7 +27750,7 @@ class AreicMass(MassPerArea):
 #   filename:  OSW80447c001b965c23a3d75ae4dc365fa8.json
 
 
-class MolarVolumeUnit(Enum):
+class MolarVolumeUnit(UnitEnum):
     meter_cubed_per_mole = Unit.meter_cubed_per_mole.value
     """
     m³/mol
@@ -28002,7 +28004,7 @@ class Illuminance1(LuminousFluxPerArea):
 #   filename:  OSW80e9cf7556915b54b8326b588abc2531.json
 
 
-class PermeanceUnit(Enum):
+class PermeanceUnit(UnitEnum):
     henry = Unit.henry.value
     """
     H
@@ -28075,7 +28077,7 @@ class Permeance(QuantityValue):
 #   filename:  OSW8139b63734d3516c827b33f08ced96fb.json
 
 
-class ThermalInsulanceUnit(Enum):
+class ThermalInsulanceUnit(UnitEnum):
     kelvin_meter_squared_per_watt = Unit.kelvin_meter_squared_per_watt.value
     """
     m²·K/W
@@ -28125,7 +28127,7 @@ class ThermalInsulance(QuantityValue):
 #   filename:  OSW815fd9089afe56a99cdf0e0ca0c04543.json
 
 
-class ActivityConcentrationUnit(Enum):
+class ActivityConcentrationUnit(UnitEnum):
     becquerel_per_meter_cubed = Unit.becquerel_per_meter_cubed.value
     """
     Bq/m³
@@ -28253,7 +28255,7 @@ class CompressibilityFactor(DimensionlessRatio):
 #   filename:  OSW8189a49e2c98599a8c635dbbfaa6b5b6.json
 
 
-class BasicityUnit(Enum):
+class BasicityUnit(UnitEnum):
     pH_value = "Item:OSW50e9172c55045cb3b1460b1345303ed2"
     """
     pH
@@ -28299,7 +28301,7 @@ class Basicity(QuantityValue):
 #   filename:  OSW81c50bcd5413593ab0b892c5612090fe.json
 
 
-class MassPerElectricChargeUnit(Enum):
+class MassPerElectricChargeUnit(UnitEnum):
     second_tesla = Unit.second_tesla.value
     """
     T·s
@@ -28376,7 +28378,7 @@ class AtomicAttenuationCoefficient(Area):
 #   filename:  OSW81ed93909dda56e5a0a9a1996449f082.json
 
 
-class LagrangeFunctionUnit(Enum):
+class LagrangeFunctionUnit(UnitEnum):
     joule = Unit.joule.value
     """
     J
@@ -28500,7 +28502,7 @@ class LagrangeFunction(QuantityValue):
 #   filename:  OSW824f6df3f16d5447b1892f32fd5f8eb4.json
 
 
-class EnergyCostUnit(Enum):
+class EnergyCostUnit(UnitEnum):
     euro_per_W_s = Unit.euro_per_W_s.value
     """
     €/(W·s)
@@ -28658,7 +28660,7 @@ class EnergyCost(QuantityValue):
 #   filename:  OSW8276dacc03f051d9a4925398eff293b0.json
 
 
-class MassConcentrationUnit(Enum):
+class MassConcentrationUnit(UnitEnum):
     gram_per_liter = Unit.gram_per_liter.value
     """
     g/L
@@ -28866,7 +28868,7 @@ class MassConcentration(QuantityValue):
 #   filename:  OSW82a515de9bcc5af8a2f33974e7ec0f1a.json
 
 
-class MagneticFluxUnit(Enum):
+class MagneticFluxUnit(UnitEnum):
     weber = Unit.weber.value
     """
     Wb
@@ -28939,7 +28941,7 @@ class MagneticFlux(QuantityValue):
 #   filename:  OSW83187ab3c749592a98b262e479fc2524.json
 
 
-class AtomScatteringFactorUnit(Enum):
+class AtomScatteringFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -29018,7 +29020,7 @@ class PressureBurningRateConstant(Dimensionless):
 #   filename:  OSW83b5310c3d625578b62c3727b49bba56.json
 
 
-class PermeabilityRatioUnit(Enum):
+class PermeabilityRatioUnit(UnitEnum):
     dimensionless = Unit.dimensionless.value
     """
     #
@@ -29130,7 +29132,7 @@ class Adaptation(Time):
 #   filename:  OSW844bb46fae8752d2b8e7f59939d7e47d.json
 
 
-class TemperaturePerMagneticFluxDensityUnit(Enum):
+class TemperaturePerMagneticFluxDensityUnit(UnitEnum):
     kelvin_per_tesla = Unit.kelvin_per_tesla.value
     """
     K/T
@@ -29236,7 +29238,7 @@ class PositivePlaneAngle(PlaneAngle):
 #   filename:  OSW85210337b1045b7286972e73a44c6e1b.json
 
 
-class TemporalSummationFunctionUnit(Enum):
+class TemporalSummationFunctionUnit(UnitEnum):
     per_second_per_steradian = Unit.per_second_per_steradian.value
     """
     /(s·sr)
@@ -29501,7 +29503,7 @@ class Enthalpy(Energy):
 #   filename:  OSW878316f29355549a8eb66a25d812bd9e.json
 
 
-class CurvatureUnit(Enum):
+class CurvatureUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -29612,7 +29614,7 @@ class ServiceFactor(DimensionlessRatio):
 #   filename:  OSW87ca7d841fd85fd390f806303cc44c46.json
 
 
-class EinsteinTransitionProbabilityUnit(Enum):
+class EinsteinTransitionProbabilityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -29689,7 +29691,7 @@ class SystolicBloodPressure(Pressure):
 #   filename:  OSW887ffacb064e5cd287c95e352265c417.json
 
 
-class NeutronYieldPerAbsorptionUnit(Enum):
+class NeutronYieldPerAbsorptionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -29764,7 +29766,7 @@ class ElectricalPowerToMassRatio(SpecificPower):
 #   filename:  OSW8961f38102645fbbbd5a925157d7ab9e.json
 
 
-class ExtentOfReactionUnit(Enum):
+class ExtentOfReactionUnit(UnitEnum):
     mole = Unit.mole.value
     """
     mol
@@ -29858,7 +29860,7 @@ class ExtentOfReaction(QuantityValue):
 #   filename:  OSW898394101b5d59868314ca9df841107b.json
 
 
-class ElectricCurrentPerEnergyUnit(Enum):
+class ElectricCurrentPerEnergyUnit(UnitEnum):
     ampere_per_joule = Unit.ampere_per_joule.value
     """
     A/J
@@ -29902,7 +29904,7 @@ class ElectricCurrentPerEnergy(QuantityValue):
 #   filename:  OSW8996de349e2f5dedaa85927e1aa63f96.json
 
 
-class HamiltonFunctionUnit(Enum):
+class HamiltonFunctionUnit(UnitEnum):
     joule = Unit.joule.value
     """
     J
@@ -30065,7 +30067,7 @@ class SoilAdsorptionCoefficient(SpecificVolume):
 #   filename:  OSW8a40f5d0db99505687782d8e905f50d4.json
 
 
-class FugacityUnit(Enum):
+class FugacityUnit(UnitEnum):
     pascal = Unit.pascal.value
     """
     Pa
@@ -30165,7 +30167,7 @@ class Fugacity(QuantityValue):
 #   filename:  OSW8a7f583fbe315d928de45968b0a3403b.json
 
 
-class RotationalFrequencyUnit(Enum):
+class RotationalFrequencyUnit(UnitEnum):
     per_second = Unit.per_second.value
     """
     /s
@@ -30306,7 +30308,7 @@ class Prevalence(DimensionlessRatio):
 #   filename:  OSW8bbfb552acb854199f8cef7cf24ce319.json
 
 
-class SecondPolarMomentOfAreaUnit(Enum):
+class SecondPolarMomentOfAreaUnit(UnitEnum):
     meter_to_the_fourth = Unit.meter_to_the_fourth.value
     """
     m⁴
@@ -30455,7 +30457,7 @@ class Efficiency(DimensionlessRatio):
 #   filename:  OSW8cf0ce0f6ab85ec7b70b73d8f79577cd.json
 
 
-class VentilationRatePerFloorAreaUnit(Enum):
+class VentilationRatePerFloorAreaUnit(UnitEnum):
     liter_per_meter_squared_per_second = "Item:OSW3248fcac4b1b514b81d2b9f7bf05e180"
     """
     L/(s·m²)
@@ -30563,7 +30565,7 @@ class VerticalVelocity(Velocity):
 #   filename:  OSW8db802bc96bb5e84b745867483f6accb.json
 
 
-class FractionalAmountOfSubstanceUnit(Enum):
+class FractionalAmountOfSubstanceUnit(UnitEnum):
     dimensionless = Unit.dimensionless.value
     """
     #
@@ -30641,7 +30643,7 @@ class FractionalAmountOfSubstance(QuantityValue):
 #   filename:  OSW8e087c93ce3a5c18b9ec35d5acbd482c.json
 
 
-class RelativeMassExcessUnit(Enum):
+class RelativeMassExcessUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -30687,7 +30689,7 @@ class RelativeMassExcess(QuantityValue):
 #   filename:  OSW8ec996b0f248559db27d621ab9651953.json
 
 
-class SpectralRadiantEnergyDensityUnit(Enum):
+class SpectralRadiantEnergyDensityUnit(UnitEnum):
     joule_per_meter_to_the_fourth = Unit.joule_per_meter_to_the_fourth.value
     """
     J/m⁴
@@ -30733,7 +30735,7 @@ class SpectralRadiantEnergyDensity(QuantityValue):
 #   filename:  OSW8f096644cd8153709213965da634885d.json
 
 
-class QualityFactorUnit(Enum):
+class QualityFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -30964,7 +30966,7 @@ class RadiantFlux(Power):
 #   filename:  OSW930db2af867152fab4e9728fb7f0ae51.json
 
 
-class PhotosyntheticPhotonFluxDensityUnit(Enum):
+class PhotosyntheticPhotonFluxDensityUnit(UnitEnum):
     mole_per_meter_squared_per_second = Unit.mole_per_meter_squared_per_second.value
     """
     mol/(m²·s)
@@ -31096,7 +31098,7 @@ class PhotosyntheticPhotonFluxDensity(QuantityValue):
 #   filename:  OSW9315ab4cdde456b4948e73cc6ba050b1.json
 
 
-class PressureLossPerLengthUnit(Enum):
+class PressureLossPerLengthUnit(UnitEnum):
     kilo_gram_per_meter_squared_per_second_squared = (
         Unit.kilo_gram_per_meter_squared_per_second_squared.value
     )
@@ -31157,7 +31159,7 @@ class PressureLossPerLength(QuantityValue):
 #   filename:  OSW940166fa5c7053708125f0c10236d916.json
 
 
-class MagnetomotiveForceUnit(Enum):
+class MagnetomotiveForceUnit(UnitEnum):
     ampere_turn = Unit.ampere_turn.value
     """
     AT
@@ -31323,7 +31325,7 @@ class DiastolicBloodPressure(Pressure):
 #   filename:  OSW94e4c35a2f775b81bdf2cd9d259082ba.json
 
 
-class RadiantFluenceUnit(Enum):
+class RadiantFluenceUnit(UnitEnum):
     joule_per_meter_squared = Unit.joule_per_meter_squared.value
     """
     J/m²
@@ -31461,7 +31463,7 @@ class AngularDistance(Angle):
 #   filename:  OSW95d7cb8ca1db560eb936826b8f4444bc.json
 
 
-class InverseTimeTemperatureUnit(Enum):
+class InverseTimeTemperatureUnit(UnitEnum):
     hertz_per_kelvin = Unit.hertz_per_kelvin.value
     """
     Hz/K
@@ -31509,7 +31511,7 @@ class InverseTimeTemperature(QuantityValue):
 #   filename:  OSW96b8069ea0bd588892e7efe11651bcf1.json
 
 
-class SpecificEntropyUnit(Enum):
+class SpecificEntropyUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
     J/(kg·K)
@@ -31684,7 +31686,7 @@ class GaugePressure(Pressure):
 #   filename:  OSW9882e31701b25fa18ff69a38f57debf5.json
 
 
-class IonConcentrationUnit(Enum):
+class IonConcentrationUnit(UnitEnum):
     candela_per_lumen = Unit.candela_per_lumen.value
     """
     cd/lm
@@ -31730,7 +31732,7 @@ class MassDefect(Mass):
 #   filename:  OSW990c8c6a812a50a396497a2038885114.json
 
 
-class AreaTimeUnit(Enum):
+class AreaTimeUnit(UnitEnum):
     meter_squared_second = Unit.meter_squared_second.value
     """
     m²·s
@@ -31911,7 +31913,7 @@ class DiffusionLengthSolidStatePhysics(Length):
 #   filename:  OSW9a1a2b8a06d754dcb2ea44a8cdbd7fd7.json
 
 
-class StandardGravitationalParameterUnit(Enum):
+class StandardGravitationalParameterUnit(UnitEnum):
     meter_cubed_per_second_squared = Unit.meter_cubed_per_second_squared.value
     """
     m³/s²
@@ -31968,7 +31970,7 @@ class StandardGravitationalParameter(QuantityValue):
 #   filename:  OSW9a57ea5fa37f59cfa4eb6ad9d2427c4e.json
 
 
-class WarpingMomentUnit(Enum):
+class WarpingMomentUnit(UnitEnum):
     meter_squared_newton = Unit.meter_squared_newton.value
     """
     N·m²
@@ -32142,7 +32144,7 @@ class FlightPerformanceReservePropellantMass(Mass):
 #   filename:  OSW9b960a08985a560caf48bbf39412b48c.json
 
 
-class ThermalDiffusionRatioUnit(Enum):
+class ThermalDiffusionRatioUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -32219,7 +32221,7 @@ class PartialPressure(Pressure):
 #   filename:  OSW9c2f3029e3d45f76a070dbc43f58ccee.json
 
 
-class UnknownUnit(Enum):
+class UnknownUnit(UnitEnum):
     meter_cubed_per_kilo_gram_per_second_squared = (
         Unit.meter_cubed_per_kilo_gram_per_second_squared.value
     )
@@ -32933,7 +32935,7 @@ class Unknown(QuantityValue):
 #   filename:  OSW9c76ad47f40350a2884c90c49786ec6f.json
 
 
-class CurrentLinkageUnit(Enum):
+class CurrentLinkageUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -33082,7 +33084,7 @@ class Depth(Length):
 #   filename:  OSW9cb88f0c339451c59ecf9587128ee4b5.json
 
 
-class MassicActivityUnit(Enum):
+class MassicActivityUnit(UnitEnum):
     becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram.value
     """
     Bq/kg
@@ -33170,7 +33172,7 @@ class MassicActivity(QuantityValue):
 #   filename:  OSW9cfbce99c0f65684a82590ef1d71f111.json
 
 
-class SpecificHeatCapacityAtConstantVolumeUnit(Enum):
+class SpecificHeatCapacityAtConstantVolumeUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram = Unit.joule_per_kelvin_per_kilo_gram.value
     """
     J/(kg·K)
@@ -33310,7 +33312,7 @@ class RotationalStiffness(TorquePerAngle):
 #   filename:  OSW9eb931426c785245bf64c1fe1dce25c8.json
 
 
-class VolumetricHeatCapacityUnit(Enum):
+class VolumetricHeatCapacityUnit(UnitEnum):
     joule_per_kelvin_per_meter_cubed = Unit.joule_per_kelvin_per_meter_cubed.value
     """
     J/(m³·K)
@@ -33379,7 +33381,7 @@ class VolumetricHeatCapacity(QuantityValue):
 #   filename:  OSW9ecfc2e097565a469701e0a2c23e57fb.json
 
 
-class MomentumPerAngleUnit(Enum):
+class MomentumPerAngleUnit(UnitEnum):
     newton_second_per_radian = Unit.newton_second_per_radian.value
     """
     N·s/rad
@@ -33423,7 +33425,7 @@ class MomentumPerAngle(QuantityValue):
 #   filename:  OSW9eeda948d38a55948bfc8acd78bc8293.json
 
 
-class ReluctanceUnit(Enum):
+class ReluctanceUnit(UnitEnum):
     per_henry = Unit.per_henry.value
     """
     /H
@@ -33508,7 +33510,7 @@ class ThermalDiffusivity(AreaPerTime):
 #   filename:  OSWa04307c2ccbf57d0b16281a3be595f60.json
 
 
-class TemperaturePerTimeUnit(Enum):
+class TemperaturePerTimeUnit(UnitEnum):
     kelvin_per_second = Unit.kelvin_per_second.value
     """
     K/s
@@ -33613,7 +33615,7 @@ class TemperatureRateOfChange(TemperaturePerTime):
 #   filename:  OSWa05bb9d48dca5745bee355865a3109f2.json
 
 
-class LinearVelocityUnit(Enum):
+class LinearVelocityUnit(UnitEnum):
     meter_per_second = Unit.meter_per_second.value
     """
     m/s
@@ -33839,7 +33841,7 @@ class RelativeHumidity(RelativePartialPressure):
 #   filename:  OSWa1191d6116125618b9cb06db9d0b49be.json
 
 
-class SurfaceDensityUnit(Enum):
+class SurfaceDensityUnit(UnitEnum):
     kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
     """
     kg/m²
@@ -34002,7 +34004,7 @@ class InertMass(Mass):
 #   filename:  OSWa1a449c3adf35ee3aba8109c7667b890.json
 
 
-class AngularCrossSectionUnit(Enum):
+class AngularCrossSectionUnit(UnitEnum):
     meter_squared_per_steradian = Unit.meter_squared_per_steradian.value
     """
     m²/sr
@@ -34048,7 +34050,7 @@ class AngularCrossSection(QuantityValue):
 #   filename:  OSWa1c670ea697d58d88f1a79b2c8aca63e.json
 
 
-class PressureCoefficientUnit(Enum):
+class PressureCoefficientUnit(UnitEnum):
     pascal_per_kelvin = Unit.pascal_per_kelvin.value
     """
     Pa/K
@@ -34109,7 +34111,7 @@ class PressureCoefficient(QuantityValue):
 #   filename:  OSWa1ce41c9fb625dbc8d65207d8b47f527.json
 
 
-class RatioOfSpecificHeatCapacitiesUnit(Enum):
+class RatioOfSpecificHeatCapacitiesUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -34310,7 +34312,7 @@ class SpecificHeatsRatio(DimensionlessRatio):
 #   filename:  OSWa2c1b3040a2b51e7a8ebfa4524755702.json
 
 
-class PermittivityUnit(Enum):
+class PermittivityUnit(UnitEnum):
     farad_per_meter = Unit.farad_per_meter.value
     """
     F/m
@@ -34385,7 +34387,7 @@ class Permittivity(QuantityValue):
 #   filename:  OSWa3325a9766ef547a87ed55767d92f4de.json
 
 
-class CouplingFactorUnit(Enum):
+class CouplingFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -34435,7 +34437,7 @@ class CouplingFactor(QuantityValue):
 #   filename:  OSWa37f106768d4575abdb567b17d904d2d.json
 
 
-class DensityOfStatesUnit(Enum):
+class DensityOfStatesUnit(UnitEnum):
     second_per_meter_cubed_per_radian = Unit.second_per_meter_cubed_per_radian.value
     """
     s/(rad·m³)
@@ -34516,7 +34518,7 @@ class MassDelivered(Mass):
 #   filename:  OSWa43ea013a5225362ab7233fa2d33a5aa.json
 
 
-class PoyntingVectorUnit(Enum):
+class PoyntingVectorUnit(UnitEnum):
     watt_per_meter_squared = Unit.watt_per_meter_squared.value
     """
     W/m²
@@ -34635,7 +34637,7 @@ class EnergyImparted(Energy):
 #   filename:  OSWa4e5b51256a65c60be793f4224e41487.json
 
 
-class CombinedNonEvaporativeHeatTransferCoefficientUnit(Enum):
+class CombinedNonEvaporativeHeatTransferCoefficientUnit(UnitEnum):
     watt_per_kelvin_per_meter_squared = Unit.watt_per_kelvin_per_meter_squared.value
     """
     W/(m²·K)
@@ -34818,7 +34820,7 @@ class FinalOrCurrentVehicleMass(Mass):
 #   filename:  OSWa74a41713cc154b88da68cd2d1399e71.json
 
 
-class ModulusOfSubgradeReactionUnit(Enum):
+class ModulusOfSubgradeReactionUnit(UnitEnum):
     newton_per_meter_cubed = Unit.newton_per_meter_cubed.value
     """
     N/m³
@@ -34966,7 +34968,7 @@ class PropellantTemperature(Temperature):
 #   filename:  OSWa78b60b5e433540bba1f2970c4a21f07.json
 
 
-class RichardsonConstantUnit(Enum):
+class RichardsonConstantUnit(UnitEnum):
     ampere_per_kelvin_squared_per_meter_squared = (
         Unit.ampere_per_kelvin_squared_per_meter_squared.value
     )
@@ -35111,7 +35113,7 @@ class NormalStress(Stress):
 #   filename:  OSWa9de537305c3518c81b37eb9ee254fba.json
 
 
-class TemperaturePerSquareTimeUnit(Enum):
+class TemperaturePerSquareTimeUnit(UnitEnum):
     kelvin_per_second_squared = Unit.kelvin_per_second_squared.value
     """
     K/s²
@@ -35155,7 +35157,7 @@ class TemperaturePerSquareTime(QuantityValue):
 #   filename:  OSWaa1087e428445c44b8c91a4c7ca76806.json
 
 
-class CoercivityUnit(Enum):
+class CoercivityUnit(UnitEnum):
     ampere_per_meter = Unit.ampere_per_meter.value
     """
     A/m
@@ -35223,7 +35225,7 @@ class Coercivity(QuantityValue):
 #   filename:  OSWaa15cc29d89d51b089b74915a1b7d332.json
 
 
-class InternalConversionFactorUnit(Enum):
+class InternalConversionFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -35300,7 +35302,7 @@ class EllipticalOrbitPerigeeVelocity(VehicleVelocity):
 #   filename:  OSWab83a0c29273584bb4267cdde76fb928.json
 
 
-class MobilityUnit(Enum):
+class MobilityUnit(UnitEnum):
     meter_squared_per_second_per_volt = Unit.meter_squared_per_second_per_volt.value
     """
     m²/(V·s)
@@ -35533,7 +35535,7 @@ class MachNumber(DimensionlessRatio):
 #   filename:  OSWad99acb7711152a5ad91363577e00430.json
 
 
-class ElectricPolarizabilityUnit(Enum):
+class ElectricPolarizabilityUnit(UnitEnum):
     joule_per_mole = Unit.joule_per_mole.value
     """
     J/mol
@@ -35586,7 +35588,7 @@ class ElectricPolarizability(QuantityValue):
 #   filename:  OSWada455630bff528dbbf65f20a630212b.json
 
 
-class AreaAngleUnit(Enum):
+class AreaAngleUnit(UnitEnum):
     meter_squared_steradian = Unit.meter_squared_steradian.value
     """
     m²·sr
@@ -35661,7 +35663,7 @@ class CorrelatedColourTemperature(ThermodynamicTemperature):
 #   filename:  OSWaee74c2e34ed58939c1ab03d0f115a0f.json
 
 
-class LuminousFluxUnit(Enum):
+class LuminousFluxUnit(UnitEnum):
     lumen = Unit.lumen.value
     """
     lm
@@ -35808,7 +35810,7 @@ class SpecificInternalEnergy(SpecificEnergy):
 #   filename:  OSWb04b04b17e565e948eaa8d84e2d76678.json
 
 
-class GFactorOfNucleusUnit(Enum):
+class GFactorOfNucleusUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -35854,7 +35856,7 @@ class GFactorOfNucleus(QuantityValue):
 #   filename:  OSWb08c515569015c02ba889380cb0808ff.json
 
 
-class MagneticTensionUnit(Enum):
+class MagneticTensionUnit(UnitEnum):
     ampere = Unit.ampere.value
     """
     A
@@ -35972,7 +35974,7 @@ class MagneticTension(QuantityValue):
 #   filename:  OSWb0a0f821d413556691eb1027578097ed.json
 
 
-class HallCoefficientUnit(Enum):
+class HallCoefficientUnit(UnitEnum):
     meter_cubed_per_coulomb = Unit.meter_cubed_per_coulomb.value
     """
     m³/C
@@ -36140,7 +36142,7 @@ class AtmosphericPressure(Pressure):
 #   filename:  OSWb294fadc8e775ce98845484251019444.json
 
 
-class ImpulseUnit(Enum):
+class ImpulseUnit(UnitEnum):
     kilo_gram_meter_per_second = Unit.kilo_gram_meter_per_second.value
     """
     kg·m/s
@@ -36201,7 +36203,7 @@ class Impulse(QuantityValue):
 #   filename:  OSWb2bd139ac43a5114bff874df05d1022e.json
 
 
-class DebyeWallerFactorUnit(Enum):
+class DebyeWallerFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -36247,7 +36249,7 @@ class DebyeWallerFactor(QuantityValue):
 #   filename:  OSWb2db95008e175cf791d9135cefe43650.json
 
 
-class CostPerPowerUnit(Enum):
+class CostPerPowerUnit(UnitEnum):
     euro_per_W = Unit.euro_per_W.value
     """
     €/W
@@ -36328,7 +36330,7 @@ class PlanarForce(ForcePerArea):
 #   filename:  OSWb2f047e5e8fe5cc8bc80399216214caa.json
 
 
-class ElectricPolarizationUnit(Enum):
+class ElectricPolarizationUnit(UnitEnum):
     coulomb_per_meter_squared = Unit.coulomb_per_meter_squared.value
     """
     C/m²
@@ -36416,7 +36418,7 @@ class ElectricPolarization(QuantityValue):
 #   filename:  OSWb341ca5380495b7e992e1d7cf3c06ddc.json
 
 
-class ModulusOfElasticityUnit(Enum):
+class ModulusOfElasticityUnit(UnitEnum):
     pascal = Unit.pascal.value
     """
     Pa
@@ -36516,7 +36518,7 @@ class ModulusOfElasticity(QuantityValue):
 #   filename:  OSWb3794ddaf0f551c1bccb9b12a0190888.json
 
 
-class ResistanceUnit(Enum):
+class ResistanceUnit(UnitEnum):
     ohm = Unit.ohm.value
     """
     Ω
@@ -36622,7 +36624,7 @@ class Resistance(QuantityValue):
 #   filename:  OSWb3de57b2dac651aaa2f72a50ded04fb2.json
 
 
-class ElectricChargeUnit(Enum):
+class ElectricChargeUnit(UnitEnum):
     coulomb = Unit.coulomb.value
     """
     C
@@ -36869,7 +36871,7 @@ class AtomicCharge(ElectricCharge):
 #   filename:  OSWb43cba22fb1d5124bd569a3e18826b1f.json
 
 
-class ElectricCurrentDensityUnit(Enum):
+class ElectricCurrentDensityUnit(UnitEnum):
     ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
     """
     A/m²
@@ -37031,7 +37033,7 @@ class FuelBias(Dimensionless):
 #   filename:  OSWb56d701632ee5ee3afe3ef624ae41753.json
 
 
-class PressureInRelationToVolumeFlowRateUnit(Enum):
+class PressureInRelationToVolumeFlowRateUnit(UnitEnum):
     pascal_second_per_meter_cubed = Unit.pascal_second_per_meter_cubed.value
     """
     Pa·s/m³
@@ -37110,7 +37112,7 @@ class StaticFrictionCoefficient(FrictionCoefficient):
 #   filename:  OSWb61a75d702365027b17cfa7e8ae10cb3.json
 
 
-class MassPerTimeUnit(Enum):
+class MassPerTimeUnit(UnitEnum):
     kilo_gram_per_second = Unit.kilo_gram_per_second.value
     """
     kg/s
@@ -37327,7 +37329,7 @@ class AbsoluteTypographicMeasurement(Length):
 #   filename:  OSWb691a525fb3f5892a203e1246382b04b.json
 
 
-class IonicStrengthUnit(Enum):
+class IonicStrengthUnit(UnitEnum):
     mole_per_kilo_gram = Unit.mole_per_kilo_gram.value
     """
     mol/kg
@@ -37484,7 +37486,7 @@ class UpperCriticalMagneticFluxDensity(MagneticFluxDensity):
 #   filename:  OSWb7d41b44919f53239bac585d326e7933.json
 
 
-class EquilibriumConstantUnit(Enum):
+class EquilibriumConstantUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -37561,7 +37563,7 @@ class ThermalAdmittance(CoefficientOfHeatTransfer):
 #   filename:  OSWb9040e28a613542099ff6799d514a4e3.json
 
 
-class MobilityRatioUnit(Enum):
+class MobilityRatioUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -37640,7 +37642,7 @@ class MaximumExpectedOperatingPressure(Pressure):
 #   filename:  OSWb9af704c91fc54a39428fceb4052d840.json
 
 
-class ElectricSusceptibilityUnit(Enum):
+class ElectricSusceptibilityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -37786,7 +37788,7 @@ class AtomicMass(Mass):
 #   filename:  OSWbade8d0a825f5900be44268cec649801.json
 
 
-class SeebeckCoefficientUnit(Enum):
+class SeebeckCoefficientUnit(UnitEnum):
     volt_per_kelvin = Unit.volt_per_kelvin.value
     """
     V/K
@@ -37898,7 +37900,7 @@ class AuditoryThresholds(SoundPowerLevel):
 #   filename:  OSWbb3d87d090f75ebd84ac6ee5537c3289.json
 
 
-class LongRangeOrderParameterUnit(Enum):
+class LongRangeOrderParameterUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -37944,7 +37946,7 @@ class LongRangeOrderParameter(QuantityValue):
 #   filename:  OSWbb4c4273347b5d59b4d0b083dd8135a5.json
 
 
-class MagneticFluxPerLengthUnit(Enum):
+class MagneticFluxPerLengthUnit(UnitEnum):
     newton_per_ampere = Unit.newton_per_ampere.value
     """
     N/A
@@ -38124,7 +38126,7 @@ class OrbitalRadialDistance(Length):
 #   filename:  OSWbc5a62d98afe5e14906cac7af329389e.json
 
 
-class ElectricChargePerAmountOfSubstanceUnit(Enum):
+class ElectricChargePerAmountOfSubstanceUnit(UnitEnum):
     coulomb_per_mole = Unit.coulomb_per_mole.value
     """
     C/mol
@@ -38174,7 +38176,7 @@ class ElectricChargePerAmountOfSubstance(QuantityValue):
 #   filename:  OSWbd5f31fa763d5f4b9f8be79284269e47.json
 
 
-class SecondMomentOfAreaUnit(Enum):
+class SecondMomentOfAreaUnit(UnitEnum):
     meter_to_the_fourth = Unit.meter_to_the_fourth.value
     """
     m⁴
@@ -38232,7 +38234,7 @@ class SecondMomentOfArea(QuantityValue):
 #   filename:  OSWbe341bf87603555997ff120bc0dcaf41.json
 
 
-class NonLeakageProbabilityUnit(Enum):
+class NonLeakageProbabilityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -38309,7 +38311,7 @@ class EnergyFluenceRate(PowerPerArea):
 #   filename:  OSWbe5794638aff5dcdb9fd6a34466c98b4.json
 
 
-class CatalyticActivityUnit(Enum):
+class CatalyticActivityUnit(UnitEnum):
     katal = Unit.katal.value
     """
     kat
@@ -38488,7 +38490,7 @@ class PolarMomentOfInertia(MomentOfInertia):
 #   filename:  OSWbf3f5ff23cab541e8091f7c1d3dfd1e6.json
 
 
-class RelativeMassConcentrationOfVapourUnit(Enum):
+class RelativeMassConcentrationOfVapourUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -38534,7 +38536,7 @@ class RelativeMassConcentrationOfVapour(QuantityValue):
 #   filename:  OSWbfe47b8cb99f58f29d1e92f296918428.json
 
 
-class OrderOfReflectionUnit(Enum):
+class OrderOfReflectionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -38580,7 +38582,7 @@ class OrderOfReflection(QuantityValue):
 #   filename:  OSWc00b3d7abb405127b2b492f5bda88d14.json
 
 
-class SpecificAcousticImpedanceUnit(Enum):
+class SpecificAcousticImpedanceUnit(UnitEnum):
     rayl = Unit.rayl.value
     """
     rayl
@@ -38638,7 +38640,7 @@ class SpecificAcousticImpedance(QuantityValue):
 #   filename:  OSWc02cab0088b05f12b174944247c8e903.json
 
 
-class TotalMassStoppingPowerUnit(Enum):
+class TotalMassStoppingPowerUnit(UnitEnum):
     joule_meter_squared_per_kilo_gram = Unit.joule_meter_squared_per_kilo_gram.value
     """
     J·m²/kg
@@ -38795,7 +38797,7 @@ class FissionFuelUtilizationFactor(Dimensionless):
 #   filename:  OSWc1785119277b56f0b8b069c41b019d06.json
 
 
-class MassPerLengthUnit(Enum):
+class MassPerLengthUnit(UnitEnum):
     kilo_gram_per_meter = Unit.kilo_gram_per_meter.value
     """
     kg/m
@@ -38906,7 +38908,7 @@ class Height(Length):
 #   filename:  OSWc2294c7dee7252b4a277d3e03eb1e8f8.json
 
 
-class SurfaceActivityDensityUnit(Enum):
+class SurfaceActivityDensityUnit(UnitEnum):
     becquerel_per_meter_squared = Unit.becquerel_per_meter_squared.value
     """
     Bq/m²
@@ -39012,7 +39014,7 @@ class Breadth(Length):
 #   filename:  OSWc33c63c63b205b29aa1538ce8a8a3195.json
 
 
-class ElectricalConductanceUnit(Enum):
+class ElectricalConductanceUnit(UnitEnum):
     siemens = Unit.siemens.value
     """
     S
@@ -39161,7 +39163,7 @@ class EquilibriumConstantOnConcentrationBasis(EquilibriumConstant):
 #   filename:  OSWc56f5d63f59d527e9a105d4c7edda71e.json
 
 
-class ThomsonCoefficientUnit(Enum):
+class ThomsonCoefficientUnit(UnitEnum):
     volt_per_kelvin = Unit.volt_per_kelvin.value
     """
     V/K
@@ -39207,7 +39209,7 @@ class ThomsonCoefficient(QuantityValue):
 #   filename:  OSWc579ba41d14059ce8527252f610fd8bf.json
 
 
-class AreaPerLengthUnit(Enum):
+class AreaPerLengthUnit(UnitEnum):
     meter = "Item:OSWf63766f7c83852d7a1d8e12deeee90c7"
     """
     m²/m
@@ -39253,7 +39255,7 @@ class AreaPerLength(QuantityValue):
 #   filename:  OSWc635dd8c8ae65263a6d2b3777f5776bb.json
 
 
-class InverseSquareTimeUnit(Enum):
+class InverseSquareTimeUnit(UnitEnum):
     radian_per_second_squared = Unit.radian_per_second_squared.value
     """
     rad/s²
@@ -39328,7 +39330,7 @@ class AngularAcceleration(InverseSquareTime):
 #   filename:  OSWc64d0369be9152ea97312548eb67383d.json
 
 
-class VolumePerUnitAreaUnit(Enum):
+class VolumePerUnitAreaUnit(UnitEnum):
     meter = "Item:OSWa2c814499650570090ea4ac058c81e3b"
     """
     m³/m²
@@ -39407,7 +39409,7 @@ class OlfactoryThreshold(Concentration):
 #   filename:  OSWc66c35bcf6bd5b08a2e9763d78a082cb.json
 
 
-class ElectricFieldStrengthUnit(Enum):
+class ElectricFieldStrengthUnit(UnitEnum):
     volt_per_meter = Unit.volt_per_meter.value
     """
     V/m
@@ -39648,7 +39650,7 @@ class LuminousEmmitance(LuminousFluxPerArea):
 #   filename:  OSWc95523dc3a3259a68e78e89f44b2f07a.json
 
 
-class VapourPermeanceUnit(Enum):
+class VapourPermeanceUnit(UnitEnum):
     second_per_meter = Unit.second_per_meter.value
     """
     s/m
@@ -39849,7 +39851,7 @@ class LinkedFlux(MagneticFlux):
 #   filename:  OSWca8833707e3c5a778696fa2c53877a28.json
 
 
-class TorsionalSpringConstantUnit(Enum):
+class TorsionalSpringConstantUnit(UnitEnum):
     meter_newton_per_radian = Unit.meter_newton_per_radian.value
     """
     N·m/rad
@@ -40030,7 +40032,7 @@ class InitialNozzleThroatDiameter(NozzleThroatDiameter):
 #   filename:  OSWcb348455e271512e9dafd64590f71d78.json
 
 
-class IsentropicCompressibilityUnit(Enum):
+class IsentropicCompressibilityUnit(UnitEnum):
     per_pascal = Unit.per_pascal.value
     """
     /Pa
@@ -40080,7 +40082,7 @@ class IsentropicCompressibility(QuantityValue):
 #   filename:  OSWcb71f0cf941a58709eace6b2c98ebeda.json
 
 
-class EntropyUnit(Enum):
+class EntropyUnit(UnitEnum):
     joule_per_kelvin = Unit.joule_per_kelvin.value
     """
     J/K
@@ -40169,7 +40171,7 @@ class Heat(ThermalEnergy):
 #   filename:  OSWcba98ce636dd5ee298bccadb7792faa8.json
 
 
-class EnergyPerSquareMagneticFluxDensityUnit(Enum):
+class EnergyPerSquareMagneticFluxDensityUnit(UnitEnum):
     joule_per_tesla_squared = Unit.joule_per_tesla_squared.value
     """
     J/T²
@@ -40215,7 +40217,7 @@ class EnergyPerSquareMagneticFluxDensity(QuantityValue):
 #   filename:  OSWcbd09a3b3c5356f6b501044b7a9cd13b.json
 
 
-class LinearThermalExpansionUnit(Enum):
+class LinearThermalExpansionUnit(UnitEnum):
     meter_per_kelvin = Unit.meter_per_kelvin.value
     """
     m/K
@@ -40278,7 +40280,7 @@ class LinearThermalExpansion(QuantityValue):
 #   filename:  OSWcc0f0bae47e750328049bb60b9a878a6.json
 
 
-class DissipanceUnit(Enum):
+class DissipanceUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -40324,7 +40326,7 @@ class Dissipance(QuantityValue):
 #   filename:  OSWcc185b33860b596a82edbb6eae8f7377.json
 
 
-class LengthMolarEnergyUnit(Enum):
+class LengthMolarEnergyUnit(UnitEnum):
     joule_meter_per_mole = Unit.joule_meter_per_mole.value
     """
     J·m/mol
@@ -40399,7 +40401,7 @@ class RestMass(Mass):
 #   filename:  OSWcca5fb126c335044b494f4a9e7a34913.json
 
 
-class PhotonRadianceUnit(Enum):
+class PhotonRadianceUnit(UnitEnum):
     per_meter_squared_per_second_per_steradian = (
         Unit.per_meter_squared_per_second_per_steradian.value
     )
@@ -40447,7 +40449,7 @@ class PhotonRadiance(QuantityValue):
 #   filename:  OSWccf7deb1ac095b5082365d40e54f6d56.json
 
 
-class ElectricConductivityUnit(Enum):
+class ElectricConductivityUnit(UnitEnum):
     siemens_per_meter = Unit.siemens_per_meter.value
     """
     S/m
@@ -40618,7 +40620,7 @@ class MolarInternalEnergy(MolarEnergy):
 #   filename:  OSWcd5084e98d8a541eb5d121ae983fad3d.json
 
 
-class LuminousIntensityUnit(Enum):
+class LuminousIntensityUnit(UnitEnum):
     candela = Unit.candela.value
     """
     cd
@@ -40712,7 +40714,7 @@ class ShearStrain(Strain):
 #   filename:  OSWcd73bd1d42a75671896bbf11ed611b6e.json
 
 
-class EnergyDensityOfStatesUnit(Enum):
+class EnergyDensityOfStatesUnit(UnitEnum):
     per_joule_per_meter_cubed = Unit.per_joule_per_meter_cubed.value
     """
     /(J·m³)
@@ -40758,7 +40760,7 @@ class EnergyDensityOfStates(QuantityValue):
 #   filename:  OSWcdd31e6abf8253a894c6e44a4282924d.json
 
 
-class TotalCurrentDensityUnit(Enum):
+class TotalCurrentDensityUnit(UnitEnum):
     ampere_per_meter_squared = Unit.ampere_per_meter_squared.value
     """
     A/m²
@@ -40826,7 +40828,7 @@ class TotalCurrentDensity(QuantityValue):
 #   filename:  OSWcddea398bde45403a70adb55b09c0053.json
 
 
-class ElectricFluxUnit(Enum):
+class ElectricFluxUnit(UnitEnum):
     meter_volt = Unit.meter_volt.value
     """
     V·m
@@ -40872,7 +40874,7 @@ class ElectricFlux(QuantityValue):
 #   filename:  OSWce3eefbdaa425a1b90bd544840917d6a.json
 
 
-class PowerAreaUnit(Enum):
+class PowerAreaUnit(UnitEnum):
     meter_squared_watt = Unit.meter_squared_watt.value
     """
     W·m²
@@ -40949,7 +40951,7 @@ class SerumOrPlasmaLevel(AmountOfSubstancePerVolume):
 #   filename:  OSWcebde8e38e9c5492ace1a90e9d48a097.json
 
 
-class InverseSquareMassUnit(Enum):
+class InverseSquareMassUnit(UnitEnum):
     per_kilo_gram_squared = Unit.per_kilo_gram_squared.value
     """
     /kg²
@@ -41088,7 +41090,7 @@ class FundamentalLatticeVector(LatticeVector):
 #   filename:  OSWcfe6332cb5935e5cb59602e245a610cd.json
 
 
-class VolumicElectromagneticEnergyUnit(Enum):
+class VolumicElectromagneticEnergyUnit(UnitEnum):
     joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
     """
     J/m³
@@ -41200,7 +41202,7 @@ class BioconcentrationFactor(DimensionlessRatio):
 #   filename:  OSWd15c0a83636b5e1293aaef6b1e619c4f.json
 
 
-class LinearCompressibilityUnit(Enum):
+class LinearCompressibilityUnit(UnitEnum):
     meter_per_newton = Unit.meter_per_newton.value
     """
     m/N
@@ -41291,7 +41293,7 @@ class InstantaneousPower(ElectricPower):
 #   filename:  OSWd28e781886de5a3fbab07eefc7bb9aa2.json
 
 
-class LengthTemperatureUnit(Enum):
+class LengthTemperatureUnit(UnitEnum):
     kelvin_meter = Unit.kelvin_meter.value
     """
     m·K
@@ -41387,7 +41389,7 @@ class Thickness(Length):
 #   filename:  OSWd3bbec0b8c445d8a9b7aa98383fce1ad.json
 
 
-class MolarHeatCapacityUnit(Enum):
+class MolarHeatCapacityUnit(UnitEnum):
     joule_per_kelvin_per_mole = Unit.joule_per_kelvin_per_mole.value
     """
     J/(mol·K)
@@ -41615,7 +41617,7 @@ class LiquidVolume(Volume):
 #   filename:  OSWd50af2b5cb4c50b999266c4888e59657.json
 
 
-class RadianceUnit(Enum):
+class RadianceUnit(UnitEnum):
     watt_per_meter_squared_per_steradian = (
         Unit.watt_per_meter_squared_per_steradian.value
     )
@@ -41663,7 +41665,7 @@ class Radiance(QuantityValue):
 #   filename:  OSWd53baee838e6500ab00d08482dd8b0dc.json
 
 
-class RefractiveIndexUnit(Enum):
+class RefractiveIndexUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -41709,7 +41711,7 @@ class RefractiveIndex(QuantityValue):
 #   filename:  OSWd5b78fad165c5fae8a856a349a1997e1.json
 
 
-class ElectricChargeDensityUnit(Enum):
+class ElectricChargeDensityUnit(UnitEnum):
     coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed.value
     """
     C/m³
@@ -41803,7 +41805,7 @@ class ElectricChargeDensity(QuantityValue):
 #   filename:  OSWd5e8eafcbbde58b8bedf83cd39c4a0d5.json
 
 
-class CostPerMassUnit(Enum):
+class CostPerMassUnit(UnitEnum):
     chf_per_kg = Unit.chf_per_kg.value
     """
     CHF/kg
@@ -41919,7 +41921,7 @@ class RelativeMassDefect(DimensionlessRatio):
 #   filename:  OSWd6ce0df1d9eb5b72991449f83965927c.json
 
 
-class MassConcentrationOfWaterUnit(Enum):
+class MassConcentrationOfWaterUnit(UnitEnum):
     gram_per_deci_meter_cubed = Unit.gram_per_deci_meter_cubed.value
     """
     g/dm³
@@ -42025,7 +42027,7 @@ class MassConcentrationOfWater(QuantityValue):
 #   filename:  OSWd6e7af5891785a8eb9b54036c37a8bcb.json
 
 
-class PowerAreaPerSolidAngleUnit(Enum):
+class PowerAreaPerSolidAngleUnit(UnitEnum):
     meter_squared_watt_per_steradian = Unit.meter_squared_watt_per_steradian.value
     """
     W·m²/sr
@@ -42100,7 +42102,7 @@ class ControlMass(Mass):
 #   filename:  OSWd74bd57b722d57c0bd1316fb700b8043.json
 
 
-class AcidityUnit(Enum):
+class AcidityUnit(UnitEnum):
     pH_value = "Item:OSW50e9172c55045cb3b1460b1345303ed2"
     """
     pH
@@ -42150,7 +42152,7 @@ class Acidity(QuantityValue):
 #   filename:  OSWd762c41183225469b74fb0626b36aa70.json
 
 
-class ElectromagneticEnergyDensityUnit(Enum):
+class ElectromagneticEnergyDensityUnit(UnitEnum):
     joule_per_meter_cubed = Unit.joule_per_meter_cubed.value
     """
     J/m³
@@ -42355,7 +42357,7 @@ class Azimuth(Angle):
 #   filename:  OSWd95e7eb103785c8597c8cd21e96c3c86.json
 
 
-class TotalLinearStoppingPowerUnit(Enum):
+class TotalLinearStoppingPowerUnit(UnitEnum):
     joule_per_meter = Unit.joule_per_meter.value
     """
     J/m
@@ -42422,7 +42424,7 @@ class TotalLinearStoppingPower(QuantityValue):
 #   filename:  OSWda38a6d51c385b428998b15f68bd787e.json
 
 
-class ThermalConductanceUnit(Enum):
+class ThermalConductanceUnit(UnitEnum):
     watt_per_kelvin = Unit.watt_per_kelvin.value
     """
     W/K
@@ -42526,7 +42528,7 @@ class ExhaustStreamPower(Power):
 #   filename:  OSWdac4a86a255853e6835f1f526ebc7d4b.json
 
 
-class SoundExposureUnit(Enum):
+class SoundExposureUnit(UnitEnum):
     pascal_squared_second = Unit.pascal_squared_second.value
     """
     Pa²·s
@@ -42694,7 +42696,7 @@ class MassOfElectricalPowerSupply(Mass):
 #   filename:  OSWdbee78c71c255e02babd2e594e503815.json
 
 
-class MassPerEnergyUnit(Enum):
+class MassPerEnergyUnit(UnitEnum):
     kilo_gram_per_joule = Unit.kilo_gram_per_joule.value
     """
     kg/J
@@ -42785,7 +42787,7 @@ class Piece(Count):
 #   filename:  OSWdcee8dd4e72258d5abb828567c3e7a0c.json
 
 
-class LuminousEnergyUnit(Enum):
+class LuminousEnergyUnit(UnitEnum):
     lumen_second = Unit.lumen_second.value
     """
     lm·s
@@ -42831,7 +42833,7 @@ class LuminousEnergy(QuantityValue):
 #   filename:  OSWdd95fa0b1f0b5917acc7e3aa22585ebc.json
 
 
-class InversePressureUnit(Enum):
+class InversePressureUnit(UnitEnum):
     per_pascal = Unit.per_pascal.value
     """
     /Pa
@@ -42911,7 +42913,7 @@ class Tilt(Angle):
 #   filename:  OSWdebc07cdf325591e92b5a4bfd1d19910.json
 
 
-class PoissonRatioUnit(Enum):
+class PoissonRatioUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -42986,7 +42988,7 @@ class PropellantMeanBulkTemperature(PropellantTemperature):
 #   filename:  OSWdfb58dc7a9105628ba7837381d565c57.json
 
 
-class NumberOfParticlesUnit(Enum):
+class NumberOfParticlesUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -43032,7 +43034,7 @@ class NumberOfParticles(QuantityValue):
 #   filename:  OSWe08204ee5deb50bcb5103e916d3081cd.json
 
 
-class BindingFractionUnit(Enum):
+class BindingFractionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -43078,7 +43080,7 @@ class BindingFraction(QuantityValue):
 #   filename:  OSWe08b19a7b5ef582882979b450b729fe6.json
 
 
-class KermaRateUnit(Enum):
+class KermaRateUnit(UnitEnum):
     gray_per_second = Unit.gray_per_second.value
     """
     Gy/s
@@ -43230,7 +43232,7 @@ class MeanEnergyImparted(Energy):
 #   filename:  OSWe1380e899bfe51bdab985a0c3581e8c4.json
 
 
-class MeanMassRangeUnit(Enum):
+class MeanMassRangeUnit(UnitEnum):
     kilo_gram_per_meter_squared = Unit.kilo_gram_per_meter_squared.value
     """
     kg/m²
@@ -43342,7 +43344,7 @@ class MeanMassRange(QuantityValue):
 #   filename:  OSWe1ce3c9278dd5766b37e01a7c94e5445.json
 
 
-class RotationalMassUnit(Enum):
+class RotationalMassUnit(UnitEnum):
     kilo_gram_meter_squared = Unit.kilo_gram_meter_squared.value
     """
     kg·m²
@@ -43405,7 +43407,7 @@ class RotationalMass(QuantityValue):
 #   filename:  OSWe21f6c5e4c5e5b5b9f86920aec0eaae7.json
 
 
-class ElectricDipoleMomentUnit(Enum):
+class ElectricDipoleMomentUnit(UnitEnum):
     coulomb_meter = Unit.coulomb_meter.value
     """
     C·m
@@ -43458,7 +43460,7 @@ class ElectricDipoleMoment(QuantityValue):
 #   filename:  OSWe295c46afeeb511fb50ec7307a013593.json
 
 
-class TransmittanceDensityUnit(Enum):
+class TransmittanceDensityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -43504,7 +43506,7 @@ class TransmittanceDensity(QuantityValue):
 #   filename:  OSWe45b76ea9ca85972997b6808b31b3b92.json
 
 
-class ExchangeIntegralUnit(Enum):
+class ExchangeIntegralUnit(UnitEnum):
     joule = Unit.joule.value
     """
     J
@@ -43662,7 +43664,7 @@ class Activity(StochasticProcess):
 #   filename:  OSWe471db8fa7d85359a1ad86773c4d671b.json
 
 
-class LinearEnergyTransferUnit(Enum):
+class LinearEnergyTransferUnit(UnitEnum):
     joule_per_meter = Unit.joule_per_meter.value
     """
     J/m
@@ -43878,7 +43880,7 @@ class ThermodynamicEnergy(Energy):
 #   filename:  OSWe6037d9f43ba5a3680d56b8d7bfc3268.json
 
 
-class OsmoticCoefficientUnit(Enum):
+class OsmoticCoefficientUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -43924,7 +43926,7 @@ class OsmoticCoefficient(QuantityValue):
 #   filename:  OSWe6d85f03e75c5740a25a00bc1ebb03a8.json
 
 
-class SectionAreaIntegralUnit(Enum):
+class SectionAreaIntegralUnit(UnitEnum):
     meter_to_the_fifth = Unit.meter_to_the_fifth.value
     """
     m⁵
@@ -43970,7 +43972,7 @@ class SectionAreaIntegral(QuantityValue):
 #   filename:  OSWe7fa402cf56d511e81727e5f976a1c9f.json
 
 
-class RadiantIntensityUnit(Enum):
+class RadiantIntensityUnit(UnitEnum):
     watt_per_steradian = Unit.watt_per_steradian.value
     """
     W/sr
@@ -44016,7 +44018,7 @@ class RadiantIntensity(QuantityValue):
 #   filename:  OSWe81fc91ea0715270aadd01d6aaf80e62.json
 
 
-class PackingFractionUnit(Enum):
+class PackingFractionUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -44062,7 +44064,7 @@ class PackingFraction(QuantityValue):
 #   filename:  OSWe86c6ab0958a515da6b37bbec5a4c8e6.json
 
 
-class ThermalDiffusionCoefficientUnit(Enum):
+class ThermalDiffusionCoefficientUnit(UnitEnum):
     meter_squared_per_second = Unit.meter_squared_per_second.value
     """
     m²/s
@@ -44118,7 +44120,7 @@ class ThermalDiffusionCoefficient(QuantityValue):
 #   filename:  OSWe88b7d960c9a542a8202c70965346701.json
 
 
-class SignalDetectionThresholdUnit(Enum):
+class SignalDetectionThresholdUnit(UnitEnum):
     dBc = Unit.dBc.value
     """
     dBc
@@ -44162,7 +44164,7 @@ class SignalDetectionThreshold(QuantityValue):
 #   filename:  OSWe88cb4482e6e587d922c9004a3d73a8d.json
 
 
-class ElectricPotentialUnit(Enum):
+class ElectricPotentialUnit(UnitEnum):
     volt = Unit.volt.value
     """
     V
@@ -44296,7 +44298,7 @@ class ElectricPotential(QuantityValue):
 #   filename:  OSWe98ffe7d93775d5eae95108872432f2f.json
 
 
-class CompressibilityUnit(Enum):
+class CompressibilityUnit(UnitEnum):
     per_pascal = Unit.per_pascal.value
     """
     /Pa
@@ -44424,7 +44426,7 @@ class SpeedOfLight(Speed):
 #   filename:  OSWeb633138f3155fd09a5fa2b6ac5b5bc2.json
 
 
-class SpecificActivityUnit(Enum):
+class SpecificActivityUnit(UnitEnum):
     becquerel_per_kilo_gram = Unit.becquerel_per_kilo_gram.value
     """
     Bq/kg
@@ -44512,7 +44514,7 @@ class SpecificActivity(QuantityValue):
 #   filename:  OSWebd21870684d59d895659eef19e04241.json
 
 
-class LogarithmicFrequencyIntervalUnit(Enum):
+class LogarithmicFrequencyIntervalUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -44594,7 +44596,7 @@ class ModulusOfLinearSubgradeReaction(ForcePerArea):
 #   filename:  OSWebfe11838eec5b17a7f242ea30869fbb.json
 
 
-class LengthEnergyUnit(Enum):
+class LengthEnergyUnit(UnitEnum):
     electron_volt_meter = Unit.electron_volt_meter.value
     """
     eV·m
@@ -44642,7 +44644,7 @@ class LengthEnergy(QuantityValue):
 #   filename:  OSWec17c4ff58f052d489572a95d9024b78.json
 
 
-class InverseMagneticFluxUnit(Enum):
+class InverseMagneticFluxUnit(UnitEnum):
     hertz_per_volt = Unit.hertz_per_volt.value
     """
     Hz/V
@@ -44756,7 +44758,7 @@ class AmountOfSubstanceOfConcentration(Concentration):
 #   filename:  OSWed059354cf7c596ea0b5428168ff59fc.json
 
 
-class ThermalDiffusionFactorUnit(Enum):
+class ThermalDiffusionFactorUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -44802,7 +44804,7 @@ class ThermalDiffusionFactor(QuantityValue):
 #   filename:  OSWed71b6bba4a758b5b10082861ad0ea44.json
 
 
-class ViscosityUnit(Enum):
+class ViscosityUnit(UnitEnum):
     pascal_second = Unit.pascal_second.value
     """
     Pa·s
@@ -44984,7 +44986,7 @@ class EffectiveExhaustvelocity(Velocity):
 #   filename:  OSWeec705c7a60052698e01058732a6d8de.json
 
 
-class SpectralCrossSectionUnit(Enum):
+class SpectralCrossSectionUnit(UnitEnum):
     meter_squared_per_joule = Unit.meter_squared_per_joule.value
     """
     m²/J
@@ -45030,7 +45032,7 @@ class SpectralCrossSection(QuantityValue):
 #   filename:  OSWeee790c23e775ec2a852845b671532df.json
 
 
-class PropagationCoefficientUnit(Enum):
+class PropagationCoefficientUnit(UnitEnum):
     per_meter = Unit.per_meter.value
     """
     /m
@@ -45141,7 +45143,7 @@ class AccelerationOfGravity(Acceleration):
 #   filename:  OSWef9be82e83295e35a630f2703fd7595d.json
 
 
-class ElectricChargeVolumeDensityUnit(Enum):
+class ElectricChargeVolumeDensityUnit(UnitEnum):
     coulomb_per_meter_cubed = Unit.coulomb_per_meter_cubed.value
     """
     C/m³
@@ -45332,7 +45334,7 @@ class MicroCanonicalPartitionFunction(CanonicalPartitionFunction):
 #   filename:  OSWf182572936955b6e9f54d4d9bb89daf1.json
 
 
-class EnergyFluenceUnit(Enum):
+class EnergyFluenceUnit(UnitEnum):
     joule_per_meter_squared = Unit.joule_per_meter_squared.value
     """
     J/m²
@@ -45400,7 +45402,7 @@ class EnergyFluence(QuantityValue):
 #   filename:  OSWf27c1fdb12955ad2b62450acb52f702f.json
 
 
-class SpecificHeatPressureUnit(Enum):
+class SpecificHeatPressureUnit(UnitEnum):
     joule_per_kelvin_per_kilo_gram_per_pascal = (
         Unit.joule_per_kelvin_per_kilo_gram_per_pascal.value
     )
@@ -45577,7 +45579,7 @@ class StagePropellantMass(Mass):
 #   filename:  OSWf46a3d86783554a19d5bce2a41a98552.json
 
 
-class ElectricCurrentPerAngleUnit(Enum):
+class ElectricCurrentPerAngleUnit(UnitEnum):
     ampere_per_radian = Unit.ampere_per_radian.value
     """
     A/rad
@@ -45687,7 +45689,7 @@ class FishBiotransformationHalfLife(Time):
 #   filename:  OSWf7cbdd37870f51bfb9f262d8bb177df7.json
 
 
-class MolarAbsorptionCoefficientUnit(Enum):
+class MolarAbsorptionCoefficientUnit(UnitEnum):
     meter_squared_per_mole = Unit.meter_squared_per_mole.value
     """
     m²/mol
@@ -45733,7 +45735,7 @@ class MolarAbsorptionCoefficient(QuantityValue):
 #   filename:  OSWf8e46376106556cfbbf27ebe2af14849.json
 
 
-class MolarRefractivityUnit(Enum):
+class MolarRefractivityUnit(UnitEnum):
     meter_cubed_per_mole = Unit.meter_cubed_per_mole.value
     """
     m³/mol
@@ -45869,7 +45871,7 @@ class WorkFunction(Energy):
 #   filename:  OSWfa14092de387562aaacbb2a35059aa60.json
 
 
-class VolumeFlowRateUnit(Enum):
+class VolumeFlowRateUnit(UnitEnum):
     meter_cubed_per_second = Unit.meter_cubed_per_second.value
     """
     m³/s
@@ -46047,7 +46049,7 @@ class VolumeFlowRate(QuantityValue):
 #   filename:  OSWfa99fdcfe84d5a008472386406ac1416.json
 
 
-class VolumeThermalExpansionUnit(Enum):
+class VolumeThermalExpansionUnit(UnitEnum):
     meter_cubed_per_kelvin = Unit.meter_cubed_per_kelvin.value
     """
     m³/K
@@ -46120,7 +46122,7 @@ class VolumeThermalExpansion(QuantityValue):
 #   filename:  OSWfad284976682566cab9ebd9d6bd15711.json
 
 
-class LuminanceUnit(Enum):
+class LuminanceUnit(UnitEnum):
     candela_per_meter_squared = Unit.candela_per_meter_squared.value
     """
     cd/m²
@@ -46170,7 +46172,7 @@ class Luminance(QuantityValue):
 #   filename:  OSWfad7c5659feb576d8be24a8dd5ec3d7a.json
 
 
-class EnergyPerAreaElectricChargeUnit(Enum):
+class EnergyPerAreaElectricChargeUnit(UnitEnum):
     volt_per_meter_squared = Unit.volt_per_meter_squared.value
     """
     V/m²
@@ -46278,7 +46280,7 @@ class GrowingDegreeDaysCereals(TimeTemperature):
 #   filename:  OSWfb411b0cb69955a393f6bcd55f1ab03e.json
 
 
-class GeneralizedVelocityUnit(Enum):
+class GeneralizedVelocityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -46386,7 +46388,7 @@ class ReactionEnergy(Energy):
 #   filename:  OSWfbdd4e78d6e252bb9859a4a4d6ad15fe.json
 
 
-class FluidityUnit(Enum):
+class FluidityUnit(UnitEnum):
     per_pascal_per_second = Unit.per_pascal_per_second.value
     """
     /(Pa·s)
@@ -46432,7 +46434,7 @@ class Fluidity(QuantityValue):
 #   filename:  OSWfc2897c7035c550989727b6048ec5154.json
 
 
-class MagneticSusceptabilityUnit(Enum):
+class MagneticSusceptabilityUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -46478,7 +46480,7 @@ class MagneticSusceptability(QuantityValue):
 #   filename:  OSWfc683fda817d517c9b858513530f45e5.json
 
 
-class DeltaUVUnit(Enum):
+class DeltaUVUnit(UnitEnum):
     unitless = Unit.unitless.value
     """
     一
@@ -46524,7 +46526,7 @@ class DeltaUV(QuantityValue):
 #   filename:  OSWfc761e5fae6951f2a4f563e06b6cfc85.json
 
 
-class ScalarMagneticPotentialUnit(Enum):
+class ScalarMagneticPotentialUnit(UnitEnum):
     second_volt_per_meter = Unit.second_volt_per_meter.value
     """
     V·s/m
@@ -46570,7 +46572,7 @@ class ScalarMagneticPotential(QuantityValue):
 #   filename:  OSWfcaf254c1f7b575a8fcd8c480130dd4c.json
 
 
-class BatteryCapacityUnit(Enum):
+class BatteryCapacityUnit(UnitEnum):
     ampere_second = Unit.ampere_second.value
     """
     A·s
@@ -46638,7 +46640,7 @@ class BatteryCapacity(QuantityValue):
 #   filename:  OSWfcd8d6e69a0d595bb4e9fb4969abf37c.json
 
 
-class MomentumUnit(Enum):
+class MomentumUnit(UnitEnum):
     newton_second = Unit.newton_second.value
     """
     N·s
@@ -46751,7 +46753,7 @@ class ResonanceEscapeProbabilityForFission(Dimensionless):
 #   filename:  OSWfced912391da5a0a970ad301b27c36d7.json
 
 
-class VapourPermeabilityUnit(Enum):
+class VapourPermeabilityUnit(UnitEnum):
     kilo_gram_per_meter_per_pascal_per_second = (
         Unit.kilo_gram_per_meter_per_pascal_per_second.value
     )
@@ -46837,7 +46839,7 @@ class CrossSectionalArea(Area):
 #   filename:  OSWfd1bbc6978425fe9869574ec4a5976a6.json
 
 
-class LinearDensityUnit(Enum):
+class LinearDensityUnit(UnitEnum):
     kilo_gram_per_meter = Unit.kilo_gram_per_meter.value
     """
     kg/m
@@ -46917,7 +46919,7 @@ class LinearDensity(QuantityValue):
 #   filename:  OSWfd24274b97b557ebad5fbc98060ffcf6.json
 
 
-class ParticleSourceDensityUnit(Enum):
+class ParticleSourceDensityUnit(UnitEnum):
     per_meter_cubed_per_second = Unit.per_meter_cubed_per_second.value
     """
     /(m³·s)
@@ -46963,7 +46965,7 @@ class ParticleSourceDensity(QuantityValue):
 #   filename:  OSWfd98416f9f0b5cb681576143d2d4ab05.json
 
 
-class MolarOpticalRotatoryPowerUnit(Enum):
+class MolarOpticalRotatoryPowerUnit(UnitEnum):
     meter_squared_radian_per_mole = Unit.meter_squared_radian_per_mole.value
     """
     rad·m²/mol
@@ -47069,7 +47071,7 @@ class DryBulbTemperature(Temperature):
 #   filename:  OSWfde2a0718a7c5aeca1582631aec8f5e1.json
 
 
-class MassSpecificBiogeochemicalRateUnit(Enum):
+class MassSpecificBiogeochemicalRateUnit(UnitEnum):
     per_day = "Item:OSW5790f83829ea55eb80619a42de61fd8c"
     """
     g/(g·d)
@@ -47213,7 +47215,7 @@ class DoseEquivalent(SpecificEnergy):
 #   filename:  OSWfe778dcecbe858509d42538c1ed9aca8.json
 
 
-class EvaporativeHeatTransferCoefficientUnit(Enum):
+class EvaporativeHeatTransferCoefficientUnit(UnitEnum):
     watt_per_meter_squared_per_pascal = Unit.watt_per_meter_squared_per_pascal.value
     """
     W/(m²·Pa)
@@ -47433,7 +47435,7 @@ class Volume1(QuantityValue):
 #   filename:  OSWff3b7c47e67150a481382e342ac8395e.json
 
 
-class EmissivityUnit(Enum):
+class EmissivityUnit(UnitEnum):
     dimensionless = Unit.dimensionless.value
     """
     #
@@ -47487,7 +47489,7 @@ class Emissivity(QuantityValue):
 #   filename:  OSWff5fdfacc614548fb4705bd8cc2a9b68.json
 
 
-class UnbalanceUnit(Enum):
+class UnbalanceUnit(UnitEnum):
     kilo_gram_meter = Unit.kilo_gram_meter.value
     """
     kg·m
